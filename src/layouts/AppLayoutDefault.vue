@@ -1,5 +1,5 @@
 <template>
-  <h1>Admin Layout</h1>
+  <h1>Default Layout</h1>
   <slot />
 </template>
 
