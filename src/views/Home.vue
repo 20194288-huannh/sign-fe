@@ -1,6 +1,5 @@
 <template>
-  <h1>Admin Layout</h1>
-  <slot />
+  <h2>Admin View</h2>
 </template>
 
 <script>
