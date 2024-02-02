@@ -24,6 +24,21 @@ const router = createRouter({
       path: '/',
       component: () => import('@/views/Home.vue'),
       meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/first-page',
+      component: () => import('@/views/FirstPage.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/second-page',
+      component: () => import('@/views/SecondPage.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/third-page',
+      component: () => import('@/views/ThirdPage.vue'),
+      meta: { layout: 'AppLayoutDefault' }
     }
   ]
 })
