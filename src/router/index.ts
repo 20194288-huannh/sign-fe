@@ -6,12 +6,14 @@ const router = createRouter({
     {
       path: '/sign-in',
       name: 'signIn',
-      component: () => import('../views/SignIn.vue')
+      component: () => import('../views/SignIn.vue'),
+      meta: { layout: 'GuestLayout' }
     },
     {
       path: '/sign-up',
       name: 'signUp',
-      component: () => import('../views/SignUp.vue')
+      component: () => import('../views/SignUp.vue'),
+      meta: { layout: 'GuestLayout' }
     },
     {
       path: '/about',

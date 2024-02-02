@@ -1,10 +1,10 @@
 <template>
-  <Navbar />
-  <div>1</div>
-  <slot />
+  <div class="grid grid-cols-[80px_1fr] h-screen">
+    <Navbar />
+    <slot />
+  </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import Navbar from '../components/Navbar.vue'
-export default {}
 </script>

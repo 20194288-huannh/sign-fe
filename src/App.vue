@@ -1,10 +1,27 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <RouterView />
+  <main>
+    <AppLayout />
+  </main>
 </template>
 
-<style scoped></style>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import AppLayout from '@/layouts/AppLayout.vue'
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    AppLayout,
+  }
+})
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+</style>
