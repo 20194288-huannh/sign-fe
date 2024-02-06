@@ -1,8 +1,8 @@
 export const routes = [
   {
-    path: '/first-page',
+    path: '/sign-own',
     icon: 'Flag',
-    name: 'first-page'
+    name: 'sign-own'
   },
   {
     path: '/second-page',

@@ -26,7 +26,7 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault' }
     },
     {
-      path: '/first-page',
+      path: '/sign-own',
       component: () => import('@/views/FirstPage.vue'),
       meta: { layout: 'AppLayoutDefault' }
     },
