@@ -42,22 +42,63 @@
         </nav>
       </div>
     </div>
-    <div style="height: 1500px" class="flex">
-      <el-steps direction="vertical" :active="2">
-        <el-step></el-step>
-        <el-step></el-step>
-        <el-step></el-step>
-      </el-steps>
-      <div class="flex flex-col flex-1">
-        <StepCard title="Add file" sub-title="What do you want to upload?"/>
-        <StepCard title="Add file" sub-title="What do you want to upload?"/>
+    <div ref="refElement">
+      <div v-for="(item, idx) in customStep" :key="item.id" class="hidden-step">
+        <div class="flex gap-5">
+          <div class="w-16 relative flex justify-center custom-step">
+            <div
+              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+              @click="scrollToView(idx)"
+            >
+              {{ item.id }}
+            </div>
+          </div>
+          <div class="w-full">
+            <component :is="item.component" />
+          </div>
+        </div>
       </div>
     </div>
+    <!-- <div style="height: 1500px" class="flex"> -->
+    <!-- <el-steps direction="vertical" :active="2">
+        <el-step></el-step>
+        <el-step></el-step>
+        <el-step></el-step>
+      </el-steps> -->
+    <!-- <div class="flex flex-col flex-1" ref="a">
+        <StepCard title="Add file" sub-title="What do you want to upload?" />
+        <StepCard title="Add file" sub-title="What do you want to upload?" :ref="b" />
+      </div> -->
+    <!-- </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import StepCard from '@/components/StepCard.vue';
+import { ref, watch } from 'vue'
+import StepCard from '@/components/StepCard.vue'
+import Step1 from './FirstPage/Step1.vue'
+import Step2 from './FirstPage/Step2.vue'
+import Step3 from './FirstPage/Step3.vue'
+
+const refElement = ref()
+const indexRef = ref(0)
+const customStep = ref([
+  { id: 1, component: Step1 },
+  { id: 2, component: Step2 },
+  { id: 3, component: Step3 }
+])
+
+watch(
+  () => indexRef.value,
+  () => {
+    console.log(123)
+  }
+)
+
+const scrollToView = (idx: number) => {
+  const scrollToElement = refElement.value?.children[idx]
+  scrollToElement.scrollIntoView({ behavior: 'smooth' })
+}
 </script>
 <style lang="css" scoped>
 .main {
