@@ -54,7 +54,13 @@
             </div>
           </div>
           <div class="w-full">
-            <component :is="item.component" />
+            <StepCard :title="item.title" :sub-title="item.subTitle">
+              <template #header-icon>
+                <el-icon color="#00b3b3" size="30" class="mr-5"
+                  ><component :is="item.component"
+                /></el-icon>
+              </template>
+            </StepCard>
           </div>
         </div>
       </div>
@@ -83,9 +89,14 @@ import Step3 from './FirstPage/Step3.vue'
 const refElement = ref()
 const indexRef = ref(0)
 const customStep = ref([
-  { id: 1, component: Step1 },
-  { id: 2, component: Step2 },
-  { id: 3, component: Step3 }
+  { id: 1, title: 'Add file', subTitle: 'What do you want to upload?', component: 'UploadFilled' },
+  {
+    id: 2,
+    title: 'Prepare Document',
+    subTitle: 'Where can the recipients be added to sign the document?',
+    component: 'UploadFilled'
+  },
+  { id: 3, title: 'Add file', subTitle: 'What do you want to upload?', component: 'UploadFilled' }
 ])
 
 watch(

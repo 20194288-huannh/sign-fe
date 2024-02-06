@@ -39,6 +39,11 @@ const router = createRouter({
       path: '/third-page',
       component: () => import('@/views/ThirdPage.vue'),
       meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/change-password',
+      component: () => import('@/views/ChangePassword.vue'),
+      meta: { layout: 'AppLayoutDefault' }
     }
   ]
 })
