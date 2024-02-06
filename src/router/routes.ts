@@ -10,8 +10,8 @@ export const routes = [
     name: 'first-page'
   },
   {
-    path: '/third-page',
+    path: '/documents',
     icon: 'TrendCharts',
-    name: 'first-page'
+    name: 'documents'
   }
 ]
