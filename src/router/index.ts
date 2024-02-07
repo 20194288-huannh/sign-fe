@@ -21,6 +21,11 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
+      path: '/me',
+      name: 'Me',
+      component: () => import('../views/Profile.vue')
+    },
+    {
       path: '/',
       component: () => import('@/views/Home.vue'),
       meta: { layout: 'AppLayoutDefault' }
@@ -36,8 +41,8 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault' }
     },
     {
-      path: '/third-page',
-      component: () => import('@/views/ThirdPage.vue'),
+      path: '/documents',
+      component: () => import('@/views/Documents.vue'),
       meta: { layout: 'AppLayoutDefault' }
     },
     {

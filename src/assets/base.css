@@ -84,7 +84,7 @@ body {
   width: 2px;
   height: calc(100% - 48px);
   top: 48px;
-  background: #DBE0E0;
+  background: #dbe0e0;
 }
 
 .hidden-step:last-child > div > .custom-step::before {

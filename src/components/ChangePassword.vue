@@ -7,9 +7,11 @@
     <el-card class="box-card">
       <div class="col-span-full pl-5 pr-5 max-w-5xl">
         <div class="mt-2 flex items-center gap-x-3">
-            <label for="current-password" class="basis-1/4 text-sm font-semibold leading-6 text-gray-900"
-              >Current Password</label
-            >
+          <label
+            for="current-password"
+            class="basis-1/4 text-sm font-semibold leading-6 text-gray-900"
+            >Current Password</label
+          >
           <el-input
             id="current-password"
             v-model="password"
@@ -22,9 +24,9 @@
       </div>
       <div class="col-span-full pl-5 pr-5 max-w-5xl">
         <div class="mt-2 flex items-center gap-x-3">
-            <label for="new-password" class="basis-1/4 text-sm font-semibold leading-6 text-gray-900"
-              >New Password</label
-            >
+          <label for="new-password" class="basis-1/4 text-sm font-semibold leading-6 text-gray-900"
+            >New Password</label
+          >
           <el-input
             id="new-password"
             v-model="newPassword"
@@ -37,9 +39,11 @@
       </div>
       <div class="col-span-full pl-5 pr-5 max-w-5xl">
         <div class="mt-2 flex items-center gap-x-3">
-            <label for="confirm-new-password" class="basis-1/4 text-sm font-semibold leading-6 text-gray-900"
-              >Confirm New Password</label
-            >
+          <label
+            for="confirm-new-password"
+            class="basis-1/4 text-sm font-semibold leading-6 text-gray-900"
+            >Confirm New Password</label
+          >
           <el-input
             id="confirm-new-password"
             v-model="confirmPassword"
