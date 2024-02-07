@@ -21,6 +21,11 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
+      path: '/me',
+      name: 'Me',
+      component: () => import('../views/Profile.vue')
+    },
+    {
       path: '/',
       component: () => import('@/views/Home.vue'),
       meta: { layout: 'AppLayoutDefault' }
@@ -38,6 +43,11 @@ const router = createRouter({
     {
       path: '/documents',
       component: () => import('@/views/Documents.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/change-password',
+      component: () => import('@/views/ChangePassword.vue'),
       meta: { layout: 'AppLayoutDefault' }
     }
   ]

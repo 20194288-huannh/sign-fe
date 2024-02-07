@@ -1,6 +1,10 @@
 <template>
   <Disclosure as="nav" class="bg-gradient-to-t from-sky-700 via-purple-500 to-blue-300">
-    <el-icon class="!text-white !w-12 !h-12 mt-5"><CirclePlusFilled class="!h-12 !w-12" /></el-icon>
+    <div class="flex justify-center">
+      <el-icon class="!text-white !w-12 !h-12 mt-5 mb-3"
+        ><CirclePlusFilled class="!h-12 !w-12"
+      /></el-icon>
+    </div>
     <div class="mx-auto text-white py-5 hover:bg-sky-500" v-for="route in routes" :key="route.path">
       <router-link :to="route.path">
         <component :is="route.icon" class="h-8 w-8 m-auto" />
