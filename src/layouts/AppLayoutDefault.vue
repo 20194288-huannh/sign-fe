@@ -20,7 +20,9 @@
           <div>
             <p>Nguyen Huu Huan</p>
             <p>huan.nh194288</p>
-            <router-link to="/me" class="text-blue-500 cursor-pointer underline">View Profile</router-link>
+            <router-link to="/me" class="text-blue-500 cursor-pointer underline"
+              >View Profile</router-link
+            >
           </div>
         </div>
         <div class="mt-4">

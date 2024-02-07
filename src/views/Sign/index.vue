@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Profile />
+    <Sign />
   </div>
 </template>
 
 <script setup lang="ts">
-import Profile from '@/components/Profile.vue'
+import Sign from '@/components/Sign.vue'
 </script>
 
 <style scoped></style>

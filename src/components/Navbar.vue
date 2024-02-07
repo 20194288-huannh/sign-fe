@@ -1,11 +1,10 @@
 <template>
-  <Disclosure as="nav" class="bg-gradient-to-t from-sky-700 via-purple-500 to-blue-300">
-    <div class="flex justify-center">
-      <el-icon class="!text-white !w-12 !h-12 mt-5 mb-3"
-        ><CirclePlusFilled class="!h-12 !w-12"
-      /></el-icon>
-    </div>
-    <div class="mx-auto text-white py-5 hover:bg-sky-500" v-for="route in routes" :key="route.path">
+  <Disclosure as="nav" class="background">
+    <div
+      :class="`mx-auto text-white py-5 hover:bg-sky-500 ${path.includes(route.path) ? 'active' : ''}`"
+      v-for="route in routes"
+      :key="route.path"
+    >
       <router-link :to="route.path">
         <component :is="route.icon" class="h-8 w-8 m-auto" />
       </router-link>
@@ -13,24 +12,22 @@
   </Disclosure>
 </template>
 
-<script setup>
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems
-} from '@headlessui/vue'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+<script lang="ts" setup>
+import { Disclosure } from '@headlessui/vue'
 import { routes } from '@/router/routes.ts'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
-const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false }
-]
+const route = useRoute()
+
+const path = computed(() => route.path)
 </script>
+
+<style scoped>
+.background {
+  background: linear-gradient(to bottom, #00b3b3 0, #1370f8 100%);
+}
+.active {
+  background: rgba(0, 0, 0, 0.1);
+}
+</style>
