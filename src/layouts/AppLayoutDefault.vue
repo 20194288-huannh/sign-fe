@@ -24,19 +24,21 @@
           </div>
         </div>
         <div class="mt-4">
-          <div v-for="item in actionPopover" :key="item.label">
+          <router-link :to="item.action" v-for="item in actionPopover" :key="item.label">
             <div
               class="flex items-center gap-2 cursor-pointer hover:bg-purple-400 hover:text-white p-1"
             >
               <el-icon><component :is="item.icon" /></el-icon> {{ item.label }}
             </div>
-          </div>
+          </router-link>
         </div>
       </el-popover>
     </div>
     <div class="grid grid-cols-[80px_1fr] h-[calc(100vh-64px)]">
       <Navbar />
-      <slot />
+      <div class="overflow-auto">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -47,8 +49,8 @@ import Navbar from '../components/Navbar.vue'
 import { ClickOutside as vClickOutside } from 'element-plus'
 
 const actionPopover = [
-  { icon: 'Rank', label: 'My Signature', action: '/my-signature' },
-  { icon: 'Rank', label: 'Change Password', action: '/change-password' },
+  { icon: 'Edit', label: 'My Signature', action: '/my-signature' },
+  { icon: 'Lock', label: 'Change Password', action: '/change-password' },
   { icon: 'Rank', label: 'Log Out', action: '/log-out' }
 ]
 const popoverRef = ref()
