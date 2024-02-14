@@ -11,13 +11,14 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import CKEditor from '@ckeditor/ckeditor5-vue'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
 
-app.use(ElementPlus)
+app.use(ElementPlus).use(CKEditor)
 app.use(VueAxios, axios)
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

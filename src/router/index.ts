@@ -31,8 +31,18 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault' }
     },
     {
-      path: '/sign-own',
+      path: '/sign',
+      component: () => import('@/views/Sign/index.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/sign/sign-own',
       component: () => import('@/views/FirstPage.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/sign/send-sign',
+      component: () => import('@/views/Sign/SendSign.vue'),
       meta: { layout: 'AppLayoutDefault' }
     },
     {

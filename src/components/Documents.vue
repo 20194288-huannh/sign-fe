@@ -98,7 +98,7 @@
       </div>
     </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase header bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
           <th scope="col" class="p-4">
             <div class="flex items-center">
@@ -112,13 +112,14 @@
           </th>
           <th scope="col" class="px-6 py-3 font-semibold">Name</th>
           <th scope="col" class="px-6 py-3 font-semibold">Request By</th>
+          <th scope="col" class="px-6 py-3 font-semibold">Request On</th>
           <th scope="col" class="px-6 py-3 font-semibold">Status</th>
           <th scope="col" class="px-6 py-3 font-semibold">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+          class="bg-white border-s border-e border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
         >
           <td class="w-4 p-4">
             <div class="flex items-center">
@@ -130,7 +131,7 @@
               <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-6">
             <div
               scope="row"
               class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-sm font-semibold"
@@ -139,7 +140,7 @@
             </div>
           </td>
 
-          <td class="px-6 py-4">
+          <td class="px-6">
             <div
               scope="row"
               class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -152,13 +153,13 @@
               <div class="ps-3 text-sm font-semibold">Bonnie Green</div>
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-6">
             <div class="flex items-center">
               <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
               Online
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-6">
             <el-button type="primary" plain>
               <el-icon size="16" class="pt-1"><MoreFilled /></el-icon>
             </el-button>
@@ -168,7 +169,7 @@
           </td>
         </tr>
         <tr
-          class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+          class="bg-white border-s border-e border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
         >
           <td class="w-4 p-4">
             <div class="flex items-center">
@@ -180,7 +181,7 @@
               <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-6">
             <div
               scope="row"
               class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-sm font-semibold"
@@ -189,7 +190,7 @@
             </div>
           </td>
 
-          <td class="px-6 py-4">
+          <td class="px-6">
             <div
               scope="row"
               class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -202,12 +203,13 @@
               <div class="ps-3 text-sm font-semibold">Bonnie Green</div>
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-6">
             <div class="flex items-center">
-                <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Offline
+              <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
+              Offline
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-6">
             <el-button type="primary" plain>
               <el-icon size="16" class="pt-1"><MoreFilled /></el-icon>
             </el-button>
@@ -255,4 +257,10 @@
 
 <script setup lang="ts"></script>
 
-<style scoped></style>
+<style scoped>
+.header{
+  background-color: #f1f1f1;
+  padding: 7px 10px;
+  border-bottom: 2px solid #dee2e6;
+  border-top: 2px solid #dee2e6;
+}</style>

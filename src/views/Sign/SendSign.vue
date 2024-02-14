@@ -1,9 +1,9 @@
 <template>
   <div class="main">
     <div class="flex">
-      <img class="mr-3" width="55px" src="@/assets/img/sign_own.png" />
+      <img class="mr-3" width="55px" src="@/assets/img/send_sign.png" />
       <div class="flex flex-col items-start">
-        <div class="font-bold">Sign your Own</div>
+        <div class="font-bold">Send for Signature</div>
         <nav class="flex" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -34,7 +34,7 @@
                 <a
                   href="#"
                   class="ms-1 text-xs font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
-                  >Sign your own</a
+                  >Send for Signature</a
                 >
               </div>
             </li>
@@ -42,7 +42,7 @@
         </nav>
       </div>
     </div>
-    <div ref="refElement">
+    <div ref="refElement" class="mt-6">
       <div v-for="(item, idx) in customStep" :key="item.id" class="hidden-step">
         <div class="flex gap-5">
           <div class="w-16 relative flex justify-center custom-step">
@@ -53,7 +53,7 @@
               {{ item.id }}
             </div>
           </div>
-          <div class="w-full">
+          <div class="w-full pb-5">
             <StepCard :title="item.title" :sub-title="item.subTitle">
               <template #header-icon>
                 <el-icon color="#00b3b3" size="30" class="mr-5"
@@ -70,14 +70,14 @@
     </div>
     <!-- <div style="height: 1500px" class="flex"> -->
     <!-- <el-steps direction="vertical" :active="2">
-        <el-step></el-step>
-        <el-step></el-step>
-        <el-step></el-step>
-      </el-steps> -->
+          <el-step></el-step>
+          <el-step></el-step>
+          <el-step></el-step>
+        </el-steps> -->
     <!-- <div class="flex flex-col flex-1" ref="a">
-        <StepCard title="Add file" sub-title="What do you want to upload?" />
-        <StepCard title="Add file" sub-title="What do you want to upload?" :ref="b" />
-      </div> -->
+          <StepCard title="Add file" sub-title="What do you want to upload?" />
+          <StepCard title="Add file" sub-title="What do you want to upload?" :ref="b" />
+        </div> -->
     <!-- </div> -->
   </div>
 </template>
@@ -86,6 +86,8 @@
 import { ref, watch } from 'vue'
 import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
+import AddRecipients from '@/components/MainStep/AddRecipients.vue'
+import Send from '@/components/MainStep/Send/index.vue'
 
 const refElement = ref()
 const indexRef = ref(0)
@@ -99,17 +101,17 @@ const customStep = ref([
   },
   {
     id: 2,
-    title: 'Prepare Document',
-    subTitle: 'Where can the recipients be added to sign the document?',
-    iconComponent: 'UploadFilled',
-    mainComponent: AddFile
+    title: 'Add Recipients',
+    subTitle: 'Who can sign / view this document?',
+    iconComponent: 'User',
+    mainComponent: AddRecipients
   },
   {
     id: 3,
-    title: 'Add file',
-    subTitle: 'What do you want to upload?',
-    iconComponent: 'UploadFilled',
-    mainComponent: AddFile
+    title: 'Send',
+    subTitle: 'What do you want to convey to the recipients?',
+    iconComponent: 'Message',
+    mainComponent: Send
   }
 ])
 
