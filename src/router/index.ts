@@ -56,6 +56,11 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault' }
     },
     {
+      path: '/my-signature',
+      component: () => import('@/views/MySignature.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
       path: '/change-password',
       component: () => import('@/views/ChangePassword.vue'),
       meta: { layout: 'AppLayoutDefault' }
