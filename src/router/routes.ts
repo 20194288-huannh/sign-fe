@@ -5,9 +5,9 @@ export const routes = [
     name: 'sign'
   },
   {
-    path: '/sign',
+    path: '/action-center',
     icon: 'Flag',
-    name: 'sign'
+    name: 'action-center'
   },
   {
     path: '/second-page',
@@ -16,7 +16,7 @@ export const routes = [
   },
   {
     path: '/documents',
-    icon: 'TrendCharts',
+    icon: 'Document',
     name: 'documents'
   }
 ]
