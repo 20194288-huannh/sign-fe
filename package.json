@@ -20,9 +20,11 @@
     "@heroicons/vue": "^2.1.1",
     "axios": "^1.6.7",
     "element-plus": "^2.5.4",
+    "pdfjs-dist": "2.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
     "vue-axios": "^3.5.2",
+    "vue-drag-resize": "^1.5.4",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {

@@ -12,14 +12,15 @@ import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import CKEditor from '@ckeditor/ckeditor5-vue'
+import VueDragResize from 'vue-drag-resize'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-
 app.use(ElementPlus).use(CKEditor)
 app.use(VueAxios, axios)
+app.use(VueDragResize)
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
