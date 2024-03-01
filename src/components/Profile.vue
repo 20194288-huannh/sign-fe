@@ -56,9 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import { Avatar } from '@element-plus/icons-vue';
+import { Avatar } from '@element-plus/icons-vue'
 import AvatarComponent from '../components/Profile/Avatar.vue'
-import { ref } from 'vue';
+import { ref } from 'vue'
 </script>
 
 <style scoped>

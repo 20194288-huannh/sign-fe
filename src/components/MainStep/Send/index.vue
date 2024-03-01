@@ -51,12 +51,12 @@ const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive<RuleForm>({
   subject: 'SENDER_NAME (SENDER_EMAIL_ID) Needs Your Signature for the DOCUMENT_NAME',
   expire_date: '',
-  content: '',
+  content: ''
 })
 
 const rules = reactive<FormRules<RuleForm>>({
-    subject: [
-    { required: true, message: 'Please input Subject', trigger: 'blur' },
+  subject: [
+    { required: true, message: 'Please input Subject', trigger: 'blur' }
     // { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' }
   ],
   expire_date: [
@@ -72,7 +72,7 @@ const rules = reactive<FormRules<RuleForm>>({
       message: 'Please input Content',
       trigger: 'change'
     }
-  ],
+  ]
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {

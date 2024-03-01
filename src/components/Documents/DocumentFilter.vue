@@ -9,14 +9,17 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-checkbox-group class="flex flex-col p-3" v-model="checkedTypes">
-            <el-checkbox v-for="item in types" :key="item" :label="item">{{
-              item
-            }}</el-checkbox>
+            <el-checkbox v-for="item in types" :key="item" :label="item">{{ item }}</el-checkbox>
           </el-checkbox-group>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
-    <FilterCard v-for="(checkedType, index) in checkedTypes" :key="index" :label="checkedType" @remove="remove(index)"/>
+    <FilterCard
+      v-for="(checkedType, index) in checkedTypes"
+      :key="index"
+      :label="checkedType"
+      @remove="remove(index)"
+    />
   </div>
 </template>
 
@@ -28,7 +31,7 @@ const checkedTypes = ref(['Need Reviews', 'Draft'])
 const types = ['Need Reviews', 'Draft', 'In-Progress', 'Completed', 'Sent', 'Expired']
 
 const remove = (key: string) => {
-  checkedTypes.value.splice(+key, 1);
+  checkedTypes.value.splice(+key, 1)
 }
 </script>
 
