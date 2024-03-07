@@ -1,49 +1,61 @@
 <template>
-  <VueDragResize :isActive="true" :w="200" :h="200" v-on:resizing="resize" v-on:dragging="resize">
-    <h3>Hello World!</h3>
-    <p>{{ position.top }} х {{ position.left }}</p>
-    <p>{{ position.width }} х {{ position.height }}</p>
-  </VueDragResize>
-  <div id="pageContainer">
-    <div id="viewer" class="pdfViewer"></div>
+  <div class="relative">
+    <div class="flex items-center justify-center bg-[#f4f4f4] h-[55px]">
+
+      <DropDragSign :width="position1.width" :height="position1.height" :top="position1.top" :left="position1.left" @resize="resize"/>
+      <DropDragSign :width="position2.width" :height="position2.height" :top="position2.top" :left="position2.left" @resize="resize"/>
+    </div>
+    <div id="pageContainer">
+      <div id="viewer" class="pdfViewer">
+        
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import  pdfjsLib from "pdfjs-dist/build/pdf";
-import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
-import "pdfjs-dist/web/pdf_viewer.css";
+import pdfjsLib from 'pdfjs-dist/build/pdf'
+import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
+import 'pdfjs-dist/web/pdf_viewer.css'
 import { onMounted, ref } from 'vue'
+import DropDragSign from '@/components/DropDragSign.vue'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js";
+  'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 onMounted(() => {
   getPdf()
 })
 
-const position = ref({
+const resize = (newRect: { width: number; height: number; top: number; left: number; }) => {
+  console.log(newRect)
+  position.value.width = newRect.width
+  position.value.height = newRect.height
+  position.value.top = newRect.top
+  position.value.left = newRect.left
+}
+
+const position1 = ref({
+  width: 0,
+  height: 0,
+  top: 0,
+  left: 0
+})
+const position2 = ref({
   width: 0,
   height: 0,
   top: 0,
   left: 0
 })
 
-const resize(newRect) {
-                this.width = newRect.width;
-                this.height = newRect.height;
-                this.top = newRect.top;
-                this.left = newRect.left;
-            }
-
 const getPdf = async () => {
-  let container = document.getElementById("pageContainer");
+  let container = document.getElementById('pageContainer')
   let pdfViewer = new PDFViewer({
-      container: container
-  });
-  let loadingTask = pdfjsLib.getDocument("./pdf-sample.pdf");
-  let pdf = await loadingTask.promise;
-  pdfViewer.setDocument(pdf);
+    container: container
+  })
+  let loadingTask = pdfjsLib.getDocument('./pdf-sample.pdf')
+  let pdf = await loadingTask.promise
+  pdfViewer.setDocument(pdf)
 }
 </script>
 

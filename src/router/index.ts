@@ -59,6 +59,11 @@ const router = createRouter({
       path: '/change-password',
       component: () => import('@/views/ChangePassword.vue'),
       meta: { layout: 'AppLayoutDefault' }
+    },
+    {
+      path: '/test',
+      component: () => import('@/views/Test.vue'),
+      meta: { layout: 'AppLayoutDefault' }
     }
   ]
 })
