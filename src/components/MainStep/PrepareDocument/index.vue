@@ -29,12 +29,12 @@ const position = ref({
   left: 0
 })
 
-const resize(newRect) {
-                this.width = newRect.width;
-                this.height = newRect.height;
-                this.top = newRect.top;
-                this.left = newRect.left;
-            }
+const resize = (newRect) => {
+  position.width = newRect.width;
+  position.height = newRect.height;
+  position.top = newRect.top;
+  position.left = newRect.left;
+}
 
 const getPdf = async () => {
   let container = document.getElementById("pageContainer");

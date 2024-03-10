@@ -13,6 +13,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import VueDragResize from 'vue-drag-resize'
+import VueSignaturePad from 'vue-signature-pad'
 
 const app = createApp(App)
 
@@ -21,6 +22,7 @@ app.use(router)
 app.use(ElementPlus).use(CKEditor)
 app.use(VueAxios, axios)
 app.use(VueDragResize)
+app.use(VueSignaturePad)
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)

@@ -25,7 +25,8 @@
     "vue": "^3.4.15",
     "vue-axios": "^3.5.2",
     "vue-drag-resize": "^1.5.4",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vue-signature-pad": "^3.0.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",
