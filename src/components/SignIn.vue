@@ -27,6 +27,7 @@
           >
           <div class="mt-2">
             <input
+              v-model="form.email"
               id="email"
               name="email"
               type="email"
@@ -50,6 +51,7 @@
           </div>
           <div class="mt-2">
             <input
+              v-model="form.password"
               id="password"
               name="password"
               type="password"
@@ -62,6 +64,7 @@
 
         <div>
           <button
+            @click="signIn"
             type="submit"
             class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
@@ -83,11 +86,17 @@
   </div>
 </template>
 
-<script>
-export default {
-  setup() {
-    return {}
-  }
+<script setup>
+import { ref } from 'vue';
+import { AuthService } from '@/services'
+
+const form = ref({
+  email: '',
+  password: ''
+})
+
+const signIn = () => {
+  const response = AuthService.signIn(form.value)
 }
 </script>
 

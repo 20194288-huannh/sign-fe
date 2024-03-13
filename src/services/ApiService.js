@@ -1,10 +1,21 @@
 import axios from 'axios'
 let activeRequests = 0;
+const baseDomain = import.meta.env.VITE_API_URL;
+
+const baseURL = `${baseDomain}`;
+const instance = axios.create({
+    baseURL,
+    headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+        "Access-Control-Allow-Origin": "*",
+        "X-Requested-With": "XMLHttpRequest",
+        "Accept": "application/json"
+    }
+});
 const ApiService = {
     init() {
-        axios.defaults.baseURL = import.meta.env.VITE_APP_BASE_URL
-        // intercept every request
-        axios.interceptors.request.use(
+        instance.interceptors.request.use(
             (request) => {
                 if (activeRequests === 0) {
                     // userStore().setLoading();
@@ -26,7 +37,7 @@ const ApiService = {
                 return Promise.reject(response)
             }
         )
-        axios.interceptors.response.use(
+        instance.interceptors.response.use(
             (response) => {
                 activeRequests--;
                 // const {config} = response;
@@ -47,28 +58,28 @@ const ApiService = {
         )
     },
     get(resource, params = {}, config = {}) {
-        return axios.get(resource, {
+        return instance.get(resource, {
             ...config,
             params: params,
         });
     },
     post(resource, params, config = {}) {
-        return axios.post(`${resource}`, params, config)
+        return instance.post(`${resource}`, params, config)
     },
     update(resource, params, config = {}) {
-        return axios.put(resource, params, config)
+        return instance.put(resource, params, config)
     },
     updateBulk(resource, params, config = {}) {
-        return axios.put(resource, params, config)
+        return instance.put(resource, params, config)
     },
     delete(resource, config = {}) {
-        return axios.delete(resource, config)
+        return instance.delete(resource, config)
     },
     setHeader: function () {
-        axios.defaults.withCredentials = false;
-        axios.defaults.headers.common['Content-Type'] = 'application/json';
-        axios.defaults.headers.common['Accept'] = 'application/json';
-        axios.defaults.globalErrorHandler = {
+        instance.defaults.withCredentials = false;
+        instance.defaults.headers.common['Content-Type'] = 'application/json';
+        instance.defaults.headers.common['Accept'] = 'application/json';
+        instance.defaults.globalErrorHandler = {
             on: true,
             exclude: [],
         };
