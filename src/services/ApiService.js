@@ -1,6 +1,6 @@
 import axios from 'axios'
 let activeRequests = 0;
-const baseDomain = import.meta.env.VITE_API_URL;
+const baseDomain = import.meta.env.VITE_APP_BASE_URL;
 
 const baseURL = `${baseDomain}`;
 const instance = axios.create({

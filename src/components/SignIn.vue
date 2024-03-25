@@ -20,7 +20,7 @@
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+      <form class="space-y-6" @submit.prevent="signIn">
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
             >Email address</label
@@ -64,7 +64,6 @@
 
         <div>
           <button
-            @click="signIn"
             type="submit"
             class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
@@ -87,16 +86,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 import { AuthService } from '@/services'
+import axios from 'axios'
 
 const form = ref({
   email: '',
   password: ''
 })
 
-const signIn = () => {
-  const response = AuthService.signIn(form.value)
+const signIn = async () => {
+  try {
+    const response = await axios.post('http://localhost:8868/api/auth/login', form.value)
+    // const response = await AuthService.signIn(form.value)
+  } catch (error) {
+    console.log(123)
+  }
 }
 </script>
 
