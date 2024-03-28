@@ -43,25 +43,71 @@
       </div>
     </div>
     <div ref="refElement" class="mt-6">
-      <div v-for="(item, idx) in customStep" :key="item.id" class="hidden-step">
+      <div class="hidden-step">
         <div class="flex gap-5">
           <div class="w-16 relative flex justify-center custom-step">
             <div
               class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-              @click="scrollToView(idx)"
+              @click="scrollToView(1)"
             >
-              {{ item.id }}
+              1
             </div>
           </div>
           <div class="w-full pb-5">
-            <StepCard :title="item.title" :sub-title="item.subTitle">
+            <StepCard title="Add file" sub-title="What do you want to upload?">
               <template #header-icon>
-                <el-icon color="#00b3b3" size="30" class="mr-5"
-                  ><component :is="item.iconComponent"
-                /></el-icon>
+                <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
               </template>
               <template #main>
-                <component :is="item.mainComponent" />
+                <AddFile />
+              </template>
+            </StepCard>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ref="refElement" class="mt-6">
+      <div class="hidden-step">
+        <div class="flex gap-5">
+          <div class="w-16 relative flex justify-center custom-step">
+            <div
+              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+              @click="scrollToView(2)"
+            >
+              2
+            </div>
+          </div>
+          <div class="w-full pb-5">
+            <StepCard title="Add Recipients" sub-title="Who can sign / view this document?">
+              <template #header-icon>
+                <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
+              </template>
+              <template #main>
+                <AddRecipients />
+              </template>
+            </StepCard>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ref="refElement" class="mt-6">
+      <div class="hidden-step">
+        <div class="flex gap-5">
+          <div class="w-16 relative flex justify-center custom-step">
+            <div
+              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+              @click="scrollToView(3)"
+            >
+              3
+            </div>
+          </div>
+          <div class="w-full pb-5">
+            <StepCard title="Send" sub-title="What do you want to convey to the recipients?">
+              <template #header-icon>
+                <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
+              </template>
+              <template #main>
+                <Send />
               </template>
             </StepCard>
           </div>
@@ -97,7 +143,8 @@ const customStep = ref([
     title: 'Add file',
     subTitle: 'What do you want to upload?',
     iconComponent: 'UploadFilled',
-    mainComponent: AddFile
+    mainComponent: AddFile,
+    isProps: true
   },
   {
     id: 2,
