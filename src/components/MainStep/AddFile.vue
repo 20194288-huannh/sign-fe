@@ -13,6 +13,9 @@
   </el-upload>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import MessagePortal from '@/artifacts/solidity/contracts/MessagePortal.sol/MessagePortal.json';
+
+</script>
 
 <style scoped></style>
