@@ -54,12 +54,12 @@
             </div>
           </div>
           <div class="w-full pb-5">
-            <StepCard title="Add file" sub-title="What do you want to upload?">
+            <StepCard title="Add file" sub-title="What do you want to upload?" @some-event="clickAddFile()">
               <template #header-icon>
                 <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
               </template>
               <template #main>
-                <AddFile />
+                <AddFile v-model:files="files"/>
               </template>
             </StepCard>
           </div>
@@ -134,33 +134,51 @@ import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
 import AddRecipients from '@/components/MainStep/AddRecipients.vue'
 import Send from '@/components/MainStep/Send/index.vue'
+import { DocumentService } from '@/services'
+import { ethers } from 'ethers'
+import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json';
+import { useWalletStore } from '@/stores/wallet'
 
 const refElement = ref()
 const indexRef = ref(0)
-const customStep = ref([
-  {
-    id: 1,
-    title: 'Add file',
-    subTitle: 'What do you want to upload?',
-    iconComponent: 'UploadFilled',
-    mainComponent: AddFile,
-    isProps: true
-  },
-  {
-    id: 2,
-    title: 'Add Recipients',
-    subTitle: 'Who can sign / view this document?',
-    iconComponent: 'User',
-    mainComponent: AddRecipients
-  },
-  {
-    id: 3,
-    title: 'Send',
-    subTitle: 'What do you want to convey to the recipients?',
-    iconComponent: 'Message',
-    mainComponent: Send
+const files = ref<File[]>([])
+const walletStore = useWalletStore();
+const clickAddFile = async () => {
+  console.log(1);
+  if (typeof window.ethereum !== 'undefined') {
+    //@ts-expect-error Window.ethers not TS
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // Contract reference
+    const contract = new ethers.Contract(
+      contractAddress,
+      BlockSig.abi,
+      provider
+    );
+    try {
+      // call contract public method
+      console.log(files.value)
+      // const fileContent = await readFile(files.value[0] as File);
+      // const fileBytes = Array.from(new Uint8Array(fileContent as ArrayBuffer));
+      // const fileHash = ethers.utils.keccak256(fileBytes);
+      // const data = await contract.createDoc(fileHash, [], false);
+    } catch (error) {
+      console.error(error);
+    }
   }
-])
+}
+// address of the contract loaded from an environment variable
+const contractAddress = import.meta.env.VITE_BLOCKSIG_CONTRACT || '';
+// stores all messages
+
+const readFile = async (file: File) => {
+  const blob = new Blob([file]);
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+    reader.readAsArrayBuffer(blob);
+  });
+}
 
 watch(
   () => indexRef.value,

@@ -12,7 +12,7 @@
     <slot name="main"></slot>
     <template #footer>
       <div class="flex justify-end">
-        <el-button color="#00B3B3" size="large" circle
+        <el-button @click="$emit('someEvent')" color="#00B3B3" size="large" circle
           ><el-icon size="20"><Right /></el-icon
         ></el-button>
       </div>
@@ -25,6 +25,7 @@ const props = defineProps({
   title: String,
   subTitle: String
 })
+
 </script>
 
 <style scoped></style>

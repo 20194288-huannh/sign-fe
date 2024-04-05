@@ -21,7 +21,7 @@
           >
             Create and account
           </h1>
-          <form class="space-y-4 md:space-y-6" action="#">
+          <form class="space-y-4 md:space-y-6" @submit.prevent="signUp">
             <div>
               <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
                 >Email address</label
@@ -31,6 +31,7 @@
                   id="email"
                   name="email"
                   type="email"
+                  v-model="form.email"
                   autocomplete="email"
                   required=""
                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -46,6 +47,7 @@
                   id="password"
                   name="password"
                   type="password"
+                  v-model="form.password"
                   autocomplete="current-password"
                   required=""
                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -65,6 +67,7 @@
                   type="password"
                   autocomplete="current-password"
                   required=""
+                  v-model="form.password_confirmation"
                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -111,11 +114,25 @@
   </section>
 </template>
 
-<script>
-export default {
-  setup() {
-    return {}
-  }
+<script lang="ts" setup>
+import { ref } from "vue"
+import { AuthService } from '@/services'
+
+interface User {
+  email: string,
+  password: string,
+  password_confirmation: string,
+  wallet_address: string | null
+}
+const form = ref<User>({
+  email: '',
+  password: '',
+  password_confirmation: '',
+  wallet_address: localStorage.getItem('walletAddress'),
+})
+
+const signUp = async () => {
+  const response = await AuthService.signUp(form.value)
 }
 </script>
 
