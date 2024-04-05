@@ -5,7 +5,7 @@ const AuthService  = {
     },
 
     signUp(data) {
-        return ApiService.post('auth/sign-up', data)
+        return ApiService.post('auth/register', data)
     }
 }
 export default AuthService
