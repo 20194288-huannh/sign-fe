@@ -17,6 +17,7 @@
         ></el-button>
       </div>
     </template>
+    <slot name="pdfViewer" />
   </el-card>
 </template>
 
@@ -25,7 +26,6 @@ const props = defineProps({
   title: String,
   subTitle: String
 })
-
 </script>
 
 <style scoped></style>

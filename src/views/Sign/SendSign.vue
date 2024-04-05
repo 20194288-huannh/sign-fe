@@ -54,12 +54,26 @@
             </div>
           </div>
           <div class="w-full pb-5">
-            <StepCard title="Add file" sub-title="What do you want to upload?" @some-event="clickAddFile()">
+            <StepCard
+              title="Add file"
+              sub-title="What do you want to upload?"
+              @some-event="clickAddFile()"
+            >
               <template #header-icon>
                 <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
               </template>
               <template #main>
-                <AddFile v-model:files="files"/>
+                <AddFile v-model:files="files" :files="files" />
+              </template>
+              <template #pdfViewer>
+                <div class="relative h-20">
+                  <div
+                    id="page-container-small"
+                    class="absolute right-0 m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-150px]"
+                  >
+                    <div id="viewer" class="pdfViewer"></div>
+                  </div>
+                </div>
               </template>
             </StepCard>
           </div>
@@ -103,6 +117,29 @@
           </div>
           <div class="w-full pb-5">
             <StepCard title="Send" sub-title="What do you want to convey to the recipients?">
+              <template #pdfViewer>
+                <div id="pageContainer">
+                  <div id="viewer" class="pdfViewer"></div>
+                </div>
+              </template>
+            </StepCard>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ref="refElement" class="mt-6">
+      <div class="hidden-step">
+        <div class="flex gap-5">
+          <div class="w-16 relative flex justify-center custom-step">
+            <div
+              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+              @click="scrollToView(4)"
+            >
+              3
+            </div>
+          </div>
+          <div class="w-full pb-5">
+            <StepCard title="Send" sub-title="What do you want to convey to the recipients?">
               <template #header-icon>
                 <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
               </template>
@@ -129,31 +166,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import pdfjsLib from 'pdfjs-dist/build/pdf'
+import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
+import 'pdfjs-dist/web/pdf_viewer.css'
+import { ref, watch, onMounted } from 'vue'
 import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
 import AddRecipients from '@/components/MainStep/AddRecipients.vue'
 import Send from '@/components/MainStep/Send/index.vue'
 import { DocumentService } from '@/services'
 import { ethers } from 'ethers'
-import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json';
+import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json'
 import { useWalletStore } from '@/stores/wallet'
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 const refElement = ref()
 const indexRef = ref(0)
 const files = ref<File[]>([])
-const walletStore = useWalletStore();
+const walletStore = useWalletStore()
 const clickAddFile = async () => {
-  console.log(1);
+  console.log(1)
   if (typeof window.ethereum !== 'undefined') {
     //@ts-expect-error Window.ethers not TS
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
     // Contract reference
-    const contract = new ethers.Contract(
-      contractAddress,
-      BlockSig.abi,
-      provider
-    );
+    const contract = new ethers.Contract(contractAddress, BlockSig.abi, provider)
     try {
       // call contract public method
       console.log(files.value)
@@ -162,30 +201,42 @@ const clickAddFile = async () => {
       // const fileHash = ethers.utils.keccak256(fileBytes);
       // const data = await contract.createDoc(fileHash, [], false);
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 }
 // address of the contract loaded from an environment variable
-const contractAddress = import.meta.env.VITE_BLOCKSIG_CONTRACT || '';
+const contractAddress = import.meta.env.VITE_BLOCKSIG_CONTRACT || ''
 // stores all messages
 
 const readFile = async (file: File) => {
-  const blob = new Blob([file]);
+  const blob = new Blob([file])
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-    reader.readAsArrayBuffer(blob);
-  });
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = (error) => reject(error)
+    reader.readAsArrayBuffer(blob)
+  })
 }
 
-watch(
-  () => indexRef.value,
-  () => {
-    console.log(123)
-  }
-)
+const getPdf = async () => {
+  let container = document.getElementById('pageContainer')
+  let containerSmall = document.getElementById('page-container-small')
+  let pdfViewer = new PDFViewer({
+    container: container
+  })
+  let pdfViewerSmall = new PDFViewer({
+    container: containerSmall
+  })
+  let loadingTask = pdfjsLib.getDocument('/pdf-sample.pdf')
+  let pdf = await loadingTask.promise
+  pdfViewer.setDocument(pdf)
+  pdfViewerSmall.setDocument(pdf)
+}
+
+onMounted(() => {
+  getPdf()
+})
 
 const scrollToView = (idx: number) => {
   const scrollToElement = refElement.value?.children[idx]
@@ -195,5 +246,38 @@ const scrollToView = (idx: number) => {
 <style lang="css" scoped>
 .main {
   padding: 25px 40px;
+}
+
+#pageContainer {
+  margin: auto;
+  width: 60%;
+  height: 700px;
+  overflow: scroll;
+}
+
+#viewer {
+  display: flex;
+  flex-direction: column;
+  background-color: #eff1f3;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

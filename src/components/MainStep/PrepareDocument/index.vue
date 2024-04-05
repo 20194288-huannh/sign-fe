@@ -10,13 +10,13 @@
 </template>
 
 <script lang="ts" setup>
-import  pdfjsLib from "pdfjs-dist/build/pdf";
-import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
-import "pdfjs-dist/web/pdf_viewer.css";
+import pdfjsLib from 'pdfjs-dist/build/pdf'
+import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
+import 'pdfjs-dist/web/pdf_viewer.css'
 import { onMounted, ref } from 'vue'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js";
+  'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 onMounted(() => {
   getPdf()
@@ -30,20 +30,20 @@ const position = ref({
 })
 
 const resize = (newRect) => {
-  position.width = newRect.width;
-  position.height = newRect.height;
-  position.top = newRect.top;
-  position.left = newRect.left;
+  position.width = newRect.width
+  position.height = newRect.height
+  position.top = newRect.top
+  position.left = newRect.left
 }
 
 const getPdf = async () => {
-  let container = document.getElementById("pageContainer");
+  let container = document.getElementById('pageContainer')
   let pdfViewer = new PDFViewer({
-      container: container
-  });
-  let loadingTask = pdfjsLib.getDocument("./pdf-sample.pdf");
-  let pdf = await loadingTask.promise;
-  pdfViewer.setDocument(pdf);
+    container: container
+  })
+  let loadingTask = pdfjsLib.getDocument('./pdf-sample.pdf')
+  let pdf = await loadingTask.promise
+  pdfViewer.setDocument(pdf)
 }
 </script>
 
