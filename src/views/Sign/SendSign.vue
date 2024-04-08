@@ -106,6 +106,12 @@
                 :step="SEND_SIGN_STEP.SECOND_STEP"
                 title="Add Recipients"
                 sub-title="Who can sign / view this document?"
+                @some-event="
+                  () => {
+                    changeStep(SEND_SIGN_STEP.THIRD_STEP)
+                    scrollToView(SEND_SIGN_STEP.THIRD_STEP)
+                  }
+                "
               >
                 <template #header-icon>
                   <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
@@ -134,6 +140,12 @@
                 :step="SEND_SIGN_STEP.THIRD_STEP"
                 title="Send"
                 sub-title="What do you want to convey to the recipients?"
+                @some-event="
+                  () => {
+                    changeStep(SEND_SIGN_STEP.FOURTH_STEP)
+                    scrollToView(SEND_SIGN_STEP.FOURTH_STEP)
+                  }
+                "
               >
                 <template #pdfViewer>
                   <div id="pageContainer">
@@ -202,6 +214,8 @@ import { ethers } from 'ethers'
 import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json'
 import { useSendSignStore } from '@/stores/send-sign'
 import { SEND_SIGN_STEP } from '@/constants/send-sign'
+import { ElNotification } from 'element-plus'
+import { ENotificationType } from '@/types/notification'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -212,6 +226,14 @@ const { step, changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
 
 const clickAddFile = async () => {
+  if (files.value.length < 1) {
+    ElNotification({
+      type: ENotificationType.ERROR,
+      title: 'Error',
+      message: 'Please upload a file'
+    })
+    return
+  }
   changeStep(SEND_SIGN_STEP.SECOND_STEP)
   scrollToView(SEND_SIGN_STEP.SECOND_STEP)
   if (typeof window.ethereum !== 'undefined') {
