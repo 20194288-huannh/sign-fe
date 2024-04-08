@@ -87,6 +87,12 @@ body {
   background: #dbe0e0;
 }
 
+
+.pdfViewer .page {
+  border: 2px solid gray !important;
+  width: 795px !important;
+}
+
 .hidden-step:last-child > div > .custom-step::before {
   content: none;
 }

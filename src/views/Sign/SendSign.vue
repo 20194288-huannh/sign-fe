@@ -42,111 +42,134 @@
         </nav>
       </div>
     </div>
-    <div ref="refElement" class="mt-6">
-      <div class="hidden-step">
-        <div class="flex gap-5">
-          <div class="w-16 relative flex justify-center custom-step">
-            <div
-              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-              @click="scrollToView(1)"
-            >
-              1
+    <div ref="refElement">
+      <div class="pt-6">
+        <div class="hidden-step">
+          <div class="flex gap-5">
+            <div class="w-16 relative flex justify-center custom-step">
+              <div
+                class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+                @click="scrollToView(SEND_SIGN_STEP.FIRST_STEP)"
+              >
+                {{ SEND_SIGN_STEP.FIRST_STEP }}
+              </div>
+            </div>
+            <div class="w-full pb-5">
+              <StepCard
+                :step="SEND_SIGN_STEP.FIRST_STEP"
+                title="Add file"
+                sub-title="What do you want to upload?"
+                @some-event="clickAddFile()"
+              >
+                <template #header-icon>
+                  <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
+                </template>
+                <template #main>
+                  <AddFile :files="files" @load-file="loadFile" />
+                </template>
+                <template #pdfViewer>
+                  <div class="relative w-full" @mouseleave="checkMouseMove = false">
+                    <div
+                      @mousemove="checkMouseMove = true"
+                      id="page-container-small"
+                      class="absolute right-[-160px] m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-240px]"
+                    >
+                      <div id="viewer" class="pdfViewer" v-show="files.length > 0"></div>
+                    </div>
+                    <div
+                      class="absolute top-[-170px] right-[30px] w-6 h-6 flex items-center justify-center z-50 bg-gray-200"
+                      v-show="files.length > 0 && checkMouseMove"
+                      @click="clearFile"
+                    >
+                      <el-icon><Close /></el-icon>
+                    </div>
+                  </div>
+                </template>
+              </StepCard>
             </div>
           </div>
-          <div class="w-full pb-5">
-            <StepCard
-              title="Add file"
-              sub-title="What do you want to upload?"
-              @some-event="clickAddFile()"
-            >
-              <template #header-icon>
-                <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
-              </template>
-              <template #main>
-                <AddFile v-model:files="files" :files="files" />
-              </template>
-              <template #pdfViewer>
-                <div class="relative h-20">
-                  <div
-                    id="page-container-small"
-                    class="absolute right-0 m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-150px]"
-                  >
+        </div>
+      </div>
+      <div class="pt-6">
+        <div class="hidden-step">
+          <div class="flex gap-5">
+            <div class="w-16 relative flex justify-center custom-step">
+              <div
+                class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+                @click="scrollToView(SEND_SIGN_STEP.SECOND_STEP)"
+              >
+                {{ SEND_SIGN_STEP.SECOND_STEP }}
+              </div>
+            </div>
+            <div class="w-full pb-5">
+              <StepCard
+                :step="SEND_SIGN_STEP.SECOND_STEP"
+                title="Add Recipients"
+                sub-title="Who can sign / view this document?"
+              >
+                <template #header-icon>
+                  <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
+                </template>
+                <template #main>
+                  <AddRecipients />
+                </template>
+              </StepCard>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6">
+        <div class="hidden-step">
+          <div class="flex gap-5">
+            <div class="w-16 relative flex justify-center custom-step">
+              <div
+                class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+                @click="scrollToView(SEND_SIGN_STEP.THIRD_STEP)"
+              >
+                {{ SEND_SIGN_STEP.THIRD_STEP }}
+              </div>
+            </div>
+            <div class="w-full pb-5">
+              <StepCard
+                :step="SEND_SIGN_STEP.THIRD_STEP"
+                title="Send"
+                sub-title="What do you want to convey to the recipients?"
+              >
+                <template #pdfViewer>
+                  <div id="pageContainer">
                     <div id="viewer" class="pdfViewer"></div>
                   </div>
-                </div>
-              </template>
-            </StepCard>
+                </template>
+              </StepCard>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div ref="refElement" class="mt-6">
-      <div class="hidden-step">
-        <div class="flex gap-5">
-          <div class="w-16 relative flex justify-center custom-step">
-            <div
-              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-              @click="scrollToView(2)"
-            >
-              2
+      <div class="pt-6">
+        <div class="hidden-step">
+          <div class="flex gap-5">
+            <div class="w-16 relative flex justify-center custom-step">
+              <div
+                class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
+                @click="scrollToView(SEND_SIGN_STEP.FOURTH_STEP)"
+              >
+                {{ SEND_SIGN_STEP.FOURTH_STEP }}
+              </div>
             </div>
-          </div>
-          <div class="w-full pb-5">
-            <StepCard title="Add Recipients" sub-title="Who can sign / view this document?">
-              <template #header-icon>
-                <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
-              </template>
-              <template #main>
-                <AddRecipients />
-              </template>
-            </StepCard>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div ref="refElement" class="mt-6">
-      <div class="hidden-step">
-        <div class="flex gap-5">
-          <div class="w-16 relative flex justify-center custom-step">
-            <div
-              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-              @click="scrollToView(3)"
-            >
-              3
+            <div class="w-full pb-5">
+              <StepCard
+                :step="SEND_SIGN_STEP.FOURTH_STEP"
+                title="Send"
+                sub-title="What do you want to convey to the recipients?"
+              >
+                <template #header-icon>
+                  <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
+                </template>
+                <template #main>
+                  <Send />
+                </template>
+              </StepCard>
             </div>
-          </div>
-          <div class="w-full pb-5">
-            <StepCard title="Send" sub-title="What do you want to convey to the recipients?">
-              <template #pdfViewer>
-                <div id="pageContainer">
-                  <div id="viewer" class="pdfViewer"></div>
-                </div>
-              </template>
-            </StepCard>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div ref="refElement" class="mt-6">
-      <div class="hidden-step">
-        <div class="flex gap-5">
-          <div class="w-16 relative flex justify-center custom-step">
-            <div
-              class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-              @click="scrollToView(4)"
-            >
-              3
-            </div>
-          </div>
-          <div class="w-full pb-5">
-            <StepCard title="Send" sub-title="What do you want to convey to the recipients?">
-              <template #header-icon>
-                <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
-              </template>
-              <template #main>
-                <Send />
-              </template>
-            </StepCard>
           </div>
         </div>
       </div>
@@ -177,17 +200,20 @@ import Send from '@/components/MainStep/Send/index.vue'
 import { DocumentService } from '@/services'
 import { ethers } from 'ethers'
 import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json'
-import { useWalletStore } from '@/stores/wallet'
+import { useSendSignStore } from '@/stores/send-sign'
+import { SEND_SIGN_STEP } from '@/constants/send-sign'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 const refElement = ref()
-const indexRef = ref(0)
 const files = ref<File[]>([])
-const walletStore = useWalletStore()
+const { step, changeStep } = useSendSignStore()
+const checkMouseMove = ref<boolean>(false)
+
 const clickAddFile = async () => {
-  console.log(1)
+  changeStep(SEND_SIGN_STEP.SECOND_STEP)
+  scrollToView(SEND_SIGN_STEP.SECOND_STEP)
   if (typeof window.ethereum !== 'undefined') {
     //@ts-expect-error Window.ethers not TS
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -219,6 +245,11 @@ const readFile = async (file: File) => {
   })
 }
 
+const clearFile = () => {
+  files.value = []
+  changeStep(SEND_SIGN_STEP.FIRST_STEP)
+}
+
 const getPdf = async () => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')
@@ -234,14 +265,27 @@ const getPdf = async () => {
   pdfViewerSmall.setDocument(pdf)
 }
 
+const loadFile = (file: any) => {
+  files.value = [file]
+}
+
+const scrollToView = (idx: number) => {
+  const scrollToElement = refElement.value?.children[idx - 1]
+  scrollToElement.scrollIntoView({ behavior: 'smooth' })
+}
+
+watch(
+  () => files,
+  () => {
+    if (files.value.length > 0) {
+      getPdf()
+    }
+  }
+)
+
 onMounted(() => {
   getPdf()
 })
-
-const scrollToView = (idx: number) => {
-  const scrollToElement = refElement.value?.children[idx]
-  scrollToElement.scrollIntoView({ behavior: 'smooth' })
-}
 </script>
 <style lang="css" scoped>
 .main {
@@ -250,7 +294,8 @@ const scrollToView = (idx: number) => {
 
 #pageContainer {
   margin: auto;
-  width: 60%;
+  /* width: 60%; */
+  scale: 1;
   height: 700px;
   overflow: scroll;
 }

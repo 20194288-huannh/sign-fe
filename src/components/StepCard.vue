@@ -1,5 +1,9 @@
 <template>
-  <el-card class="box-card">
+  <el-card class="box-card relative">
+    <div
+      class="absolute top-0 h-full w-full bg-white left-0 opacity-95 z-50"
+      v-if="props.step && sendSignStore.step < props.step"
+    />
     <template #header>
       <div class="card-header flex">
         <slot name="header-icon"></slot>
@@ -22,10 +26,18 @@
 </template>
 
 <script setup lang="ts">
+import { useSendSignStore } from '@/stores/send-sign'
+
 const props = defineProps({
   title: String,
-  subTitle: String
+  subTitle: String,
+  step: {
+    type: Number,
+    required: false
+  }
 })
+
+const sendSignStore = useSendSignStore()
 </script>
 
 <style scoped></style>

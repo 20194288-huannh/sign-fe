@@ -1,37 +1,64 @@
 <template>
   <el-upload
-    v-model="files"
+    class="h-40 w-[40vw] border-gray-200 border-2 border-dashed rounded-xl flex justify-center items-center text-gray-500"
+    :show-file-list="false"
     ref="uploadRef"
-    class="upload-demo"
-    action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-    :auto-upload="false"
-    :on-change="beforeUploadFile"
+    :before-upload="beforeUploadFile"
   >
-    <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-    <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
-    <template #tip>
-      <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
-    </template>
+    <div class="text-center text-gray-500" @click.stop v-if="props.files && props.files.length < 1">
+      <el-icon :size="60"><upload-filled /></el-icon>
+      <div class="text-2xl">Drop file here</div>
+    </div>
+    <el-button class="!bg-sky-400 !text-white mt-2" v-if="props.files && props.files.length < 1"
+      >Upload File</el-button
+    >
+    <div v-else class="text-blue-700" @click.stop>
+      <p>IMAGE TYPE: {{ files?.[0]?.type }}</p>
+      <p>IMAGE NAME: {{ files?.[0]?.name }}</p>
+    </div>
   </el-upload>
 </template>
 <script lang="ts" setup>
 import { ref, defineProps } from 'vue'
-import type { UploadInstance } from 'element-plus'
+import { ElNotification, type UploadInstance, type UploadProps } from 'element-plus'
+import { useSendSignStore } from '@/stores/send-sign'
+import { SEND_SIGN_STEP } from '@/constants/send-sign'
+import { ENotificationType } from '@/types/notification'
 
 const props = defineProps({
-  files: Array<{ name: string; url: string }>
+  files: Array<File>
 })
 
-const files = ref(props.files)
-
-console.log(files)
-const beforeUploadFile = (e) => {
-  console.log(e)
-}
-
+const emit = defineEmits(['load-file'])
+const { changeStep } = useSendSignStore()
 const uploadRef = ref<UploadInstance>()
 
-const submitUpload = () => {
-  uploadRef.value!.submit()
+const beforeUploadFile: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'application/pdf') {
+    ElNotification({
+      type: ENotificationType.ERROR,
+      title: 'Error',
+      message: 'can upload jpg or pdf file'
+    })
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 0.5) {
+    ElNotification({
+      type: ENotificationType.ERROR,
+      title: 'Error',
+      message: 'jpg/png files with a size less than 500kb'
+    })
+    return false
+  }
+  // TODO call API upload file with content-type: multipart/form-data, backend return link file {name: string, url: string}
+  emit('load-file', rawFile)
+  changeStep(SEND_SIGN_STEP.SECOND_STEP)
+  return false
 }
 </script>
+
+<style scope>
+.el-upload {
+  display: flex;
+  flex-direction: column;
+}
+</style>
