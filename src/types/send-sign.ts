@@ -4,3 +4,10 @@ export enum ESendSign {
   THIRD_STEP = 3,
   FOURTH_STEP = 4
 }
+
+export interface ISendSignSecondStep {
+  id: string
+  name: string
+  email: string
+  type: string
+}
