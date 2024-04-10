@@ -6,7 +6,7 @@ export enum ESendSign {
 }
 
 export interface ISendSignSecondStep {
-  id: string
+  id: string | number
   name: string
   email: string
   type: string

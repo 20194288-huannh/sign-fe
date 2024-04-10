@@ -1,18 +1,23 @@
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { ISendSignSecondStep } from '@/types/send-sign'
 
 export const useSendSignStore = defineStore('send-sign', () => {
   const step = ref<number>(1)
-  const valueArrSignSecondStep = ref<ISendSignSecondStep[]>([])
+  const arrSignSecondStepValue = reactive<{ main: ISendSignSecondStep[] }>({
+    main: [
+      {
+        id: Math.random(),
+        name: '',
+        email: '',
+        type: '0'
+      }
+    ]
+  })
 
   const changeStep = (nextStep: number) => {
     step.value = nextStep
   }
 
-  const updateValueStep2 = (data: ISendSignSecondStep[]) => {
-    valueArrSignSecondStep.value = data
-  }
-
-  return { step, changeStep, valueArrSignSecondStep, updateValueStep2 }
+  return { step, changeStep, arrSignSecondStepValue }
 })

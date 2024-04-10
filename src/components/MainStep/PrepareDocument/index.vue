@@ -1,7 +1,16 @@
 <template>
   <div class="relative">
     <div class="flex items-center bg-[#f4f4f4] h-[55px]">
-      <div class="h-[55px] min-w-28 mt-4 ml-2 flex"><el-select class="custom-select" /></div>
+      <div class="h-[55px] min-w-28 mt-4 ml-2 flex">
+        <el-select class="custom-select" v-model="signatureValue" clearable>
+          <el-option
+            v-for="item in arrSignSecondStepValue.main"
+            :label="item.name"
+            :value="item.id"
+            :key="item.id"
+          />
+        </el-select>
+      </div>
       <div
         class="relative h-[55px] min-w-28 mt-4 ml-2"
         v-for="(it, index) in arrType"
@@ -23,8 +32,10 @@
             format="YYYY-MM-DD"
             v-if="it.type === 'date' && (item.top !== 0 || item.left !== 0)"
           />
-          <p v-if="it.type === 'input' && (item.top !== 0 || item.left !== 0)">
-            {{ item.text }} add text
+          <p v-if="it.type === 'signature' && (item.top !== 0 || item.left !== 0)">
+            {{
+              arrSignSecondStepValue.main.find((e) => e.id === signatureValue)?.name ?? 'signature'
+            }}
           </p>
           <el-checkbox
             v-if="it.type === 'checkbox' && (item.top !== 0 || item.left !== 0)"
@@ -44,8 +55,9 @@
 import pdfjsLib from 'pdfjs-dist/build/pdf'
 import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
 import 'pdfjs-dist/web/pdf_viewer.css'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import DropDragSign from '@/components/DropDragSign.vue'
+import { useSendSignStore } from '@/stores/send-sign'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -54,22 +66,26 @@ onMounted(() => {
   getPdf()
 })
 
+const { arrSignSecondStepValue } = useSendSignStore()
 const dragger = ref(false)
 const value = ref('2021-10-29')
-const arrResize = ref<any>([
-  {
-    width: 100,
-    height: 40,
-    top: 0,
-    left: 0,
-    value: ''
+const signatureValue = ref()
+
+watch(
+  () => signatureValue.value,
+  () => {
+    const _arrType = [...arrType.value]
+    const findArrTypeSignature = _arrType.find((e) => e.type === 'signature')
+    ;(findArrTypeSignature['text'] =
+      arrSignSecondStepValue.main.find((e) => e.id === signatureValue.value)?.name ?? 'signature'),
+      (arrType.value = _arrType)
   }
-])
+)
 
 const arrType = ref<any>([
   {
-    type: 'input',
-    text: 'hello',
+    type: 'signature',
+    text: 'signature',
     arrSize: [
       {
         width: 100,
@@ -81,7 +97,7 @@ const arrType = ref<any>([
   },
   {
     type: 'radio',
-    text: 'signature',
+    text: 'radio',
     arrSize: [
       {
         width: 100,
@@ -186,7 +202,6 @@ const getPdf = async () => {
 <style>
 #pageContainer {
   margin: auto;
-  width: 60%;
   height: 700px;
   overflow: scroll;
 }

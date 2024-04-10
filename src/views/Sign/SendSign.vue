@@ -106,12 +106,7 @@
                 :step="SEND_SIGN_STEP.SECOND_STEP"
                 title="Add Recipients"
                 sub-title="Who can sign / view this document?"
-                @some-event="
-                  () => {
-                    changeStep(SEND_SIGN_STEP.THIRD_STEP)
-                    scrollToView(SEND_SIGN_STEP.THIRD_STEP)
-                  }
-                "
+                @some-event="scrollToThirdStep"
               >
                 <template #header-icon>
                   <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
@@ -148,9 +143,10 @@
                 "
               >
                 <template #pdfViewer>
-                  <div id="pageContainer">
+                  <PrepareDocument />
+                  <!-- <div id="pageContainer">
                     <div id="viewer" class="pdfViewer"></div>
-                  </div>
+                  </div> -->
                 </template>
               </StepCard>
             </div>
@@ -216,13 +212,14 @@ import { useSendSignStore } from '@/stores/send-sign'
 import { SEND_SIGN_STEP } from '@/constants/send-sign'
 import { ElNotification } from 'element-plus'
 import { ENotificationType } from '@/types/notification'
+import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 const refElement = ref()
 const files = ref<File[]>([])
-const { step, changeStep } = useSendSignStore()
+const { changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
 
 const clickAddFile = async () => {
@@ -289,6 +286,11 @@ const getPdf = async () => {
 
 const loadFile = (file: any) => {
   files.value = [file]
+}
+
+const scrollToThirdStep = () => {
+  changeStep(SEND_SIGN_STEP.THIRD_STEP)
+  scrollToView(SEND_SIGN_STEP.THIRD_STEP)
 }
 
 const scrollToView = (idx: number) => {

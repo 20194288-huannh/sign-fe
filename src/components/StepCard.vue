@@ -1,7 +1,7 @@
 <template>
   <el-card class="box-card relative">
     <div
-      class="absolute top-0 h-full w-full bg-white left-0 opacity-95 z-50"
+      class="absolute top-0 h-full w-full bg-white left-0 opacity-95 z-[999]"
       v-if="props.step && sendSignStore.step < props.step"
     />
     <template #header>

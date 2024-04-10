@@ -1,6 +1,11 @@
 <template>
-  <el-form :inline="true" :model="recipients" class="demo-form-inline ms-3 me-3" ref="formRef">
-    <div v-for="(recipient, idx) in recipients.main" :key="recipient.id">
+  <el-form
+    :inline="true"
+    :model="arrSignSecondStepValue"
+    class="demo-form-inline ms-3 me-3"
+    ref="formRef"
+  >
+    <div v-for="(recipient, idx) in arrSignSecondStepValue.main" :key="recipient.id">
       <el-form-item
         class="w-[30%] min-w-48 2xl:w-[35%]"
         :prop="'main.' + idx + '.name'"
@@ -42,7 +47,6 @@
           placeholder="Signer's Email"
           clearable
           :prefix-icon="Message"
-          @input="console.log(recipients)"
           class="!w-full"
         >
         </el-input>
@@ -58,7 +62,7 @@
           :icon="Close"
           circle
           @click="removeElement(idx)"
-          v-if="recipients.main.length > 1"
+          v-if="arrSignSecondStepValue.main.length > 1"
         />
         <el-button :icon="Plus" circle @click="addRecipients" v-if="buttonIndex === idx" />
       </el-form-item>
@@ -67,29 +71,21 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { User, Message, Plus, Close } from '@element-plus/icons-vue'
 import { ElNotification, type FormInstance } from 'element-plus'
 import { REGEX_EMAIL } from '@/constants/regex'
 import { ENotificationType } from '@/types/notification'
+import { useSendSignStore } from '@/stores/send-sign'
 
 const formRef = ref<FormInstance>()
-const recipients = reactive({
-  main: [
-    {
-      id: Math.random(),
-      name: '',
-      email: '',
-      type: '0'
-    }
-  ]
-})
+const { arrSignSecondStepValue } = useSendSignStore()
 const buttonIndex = ref(0)
 
 const addRecipients = () => {
   if (
-    !REGEX_EMAIL.test(recipients.main[recipients.main.length - 1].email) ||
-    !recipients.main[recipients.main.length - 1].name
+    !REGEX_EMAIL.test(arrSignSecondStepValue.main[arrSignSecondStepValue.main.length - 1].email) ||
+    !arrSignSecondStepValue.main[arrSignSecondStepValue.main.length - 1].name
   ) {
     ElNotification({
       title: 'Error',
@@ -98,7 +94,7 @@ const addRecipients = () => {
     })
     return
   }
-  recipients.main.push({
+  arrSignSecondStepValue.main.push({
     id: Math.random(),
     name: '',
     email: '',
@@ -108,13 +104,16 @@ const addRecipients = () => {
 }
 
 const removeElement = (index: number) => {
-  recipients.main.splice(index, 1)
+  arrSignSecondStepValue.main.splice(index, 1)
   buttonIndex.value--
 }
 
-// const onSubmit = () => {
-//   console.log('submit!')
-// }
+watch(
+  () => arrSignSecondStepValue,
+  () => {
+    console.log(123)
+  }
+)
 </script>
 
 <style>
