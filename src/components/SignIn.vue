@@ -97,8 +97,8 @@ const form = ref({
 
 const signIn = async () => {
   try {
-    const response = await axios.post('http://localhost:8868/api/auth/login', form.value)
-    // const response = await AuthService.signIn(form.value)
+    // const response = await axios.post('http://localhost:8868/api/auth/login', form.value)
+    const response = await AuthService.signIn(form.value)
   } catch (error) {
     console.log(123)
   }

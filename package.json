@@ -21,6 +21,7 @@
     "axios": "^1.6.7",
     "element-plus": "^2.5.4",
     "ethers": "^5.7.2",
+    "pdf-lib": "^1.17.1",
     "pdfjs-dist": "2.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
