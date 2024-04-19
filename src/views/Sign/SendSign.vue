@@ -74,7 +74,7 @@
                       id="page-container-small"
                       class="absolute right-[-160px] m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-240px]"
                     >
-                      <div id="viewer" class="pdfViewer" v-show="files.length > 0"></div>
+                      <div id="viewer" class="pdfViewer"></div>
                     </div>
                     <div
                       class="absolute top-[-170px] right-[30px] w-6 h-6 flex items-center justify-center z-50 bg-gray-200"
@@ -213,13 +213,15 @@ import { SEND_SIGN_STEP } from '@/constants/send-sign'
 import { ElNotification } from 'element-plus'
 import { ENotificationType } from '@/types/notification'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
+import type { Document } from '@/types/document.interface'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 const refElement = ref()
 const files = ref<File[]>([])
-const { changeStep } = useSendSignStore()
+const myDocument = ref<Document>()
+const { step, changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
 
 const clickAddFile = async () => {
@@ -233,22 +235,21 @@ const clickAddFile = async () => {
   }
   changeStep(SEND_SIGN_STEP.SECOND_STEP)
   scrollToView(SEND_SIGN_STEP.SECOND_STEP)
-  if (typeof window.ethereum !== 'undefined') {
-    //@ts-expect-error Window.ethers not TS
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    // Contract reference
-    const contract = new ethers.Contract(contractAddress, BlockSig.abi, provider)
-    try {
-      // call contract public method
-      console.log(files.value)
-      // const fileContent = await readFile(files.value[0] as File);
-      // const fileBytes = Array.from(new Uint8Array(fileContent as ArrayBuffer));
-      // const fileHash = ethers.utils.keccak256(fileBytes);
-      // const data = await contract.createDoc(fileHash, [], false);
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  // if (typeof window.ethereum !== 'undefined') {
+  //   //@ts-expect-error Window.ethers not TS
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum)
+  //   // Contract reference
+  //   const contract = new ethers.Contract(contractAddress, BlockSig.abi, provider)
+  //   try {
+  //     // call contract public method
+  //     const fileContent = await readFile(files.value[0] as File);
+  //     const fileBytes = Array.from(new Uint8Array(fileContent as ArrayBuffer));
+  //     const fileHash = ethers.utils.keccak256(fileBytes);
+  //     const data = await contract.createDoc(fileHash, [], false);
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 }
 // address of the contract loaded from an environment variable
 const contractAddress = import.meta.env.VITE_BLOCKSIG_CONTRACT || ''
@@ -269,7 +270,7 @@ const clearFile = () => {
   changeStep(SEND_SIGN_STEP.FIRST_STEP)
 }
 
-const getPdf = async () => {
+const getPdf = async (id) => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')
   let pdfViewer = new PDFViewer({
@@ -278,8 +279,9 @@ const getPdf = async () => {
   let pdfViewerSmall = new PDFViewer({
     container: containerSmall
   })
-  let loadingTask = pdfjsLib.getDocument('/pdf-sample.pdf')
+  let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
   let pdf = await loadingTask.promise
+
   pdfViewer.setDocument(pdf)
   pdfViewerSmall.setDocument(pdf)
 }
@@ -299,17 +301,16 @@ const scrollToView = (idx: number) => {
 }
 
 watch(
-  () => files,
-  () => {
+  () => files.value,
+  async () => {
+    const response = await DocumentService.save({ file: files.value[0] })
+    const myDocument = response.data.data
+    const myFile = response.data
     if (files.value.length > 0) {
-      getPdf()
+      getPdf(myDocument.file.id)
     }
   }
 )
-
-onMounted(() => {
-  getPdf()
-})
 </script>
 <style lang="css" scoped>
 .main {

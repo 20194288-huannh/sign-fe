@@ -57,6 +57,7 @@
       </thead>
       <tbody>
         <tr
+          v-for="document in documents"
           class="bg-white border-s border-e border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
         >
           <td class="w-4 p-4">
@@ -74,13 +75,13 @@
               scope="row"
               class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-sm font-semibold"
             >
-              <div class="text-sm font-semibold">LỊCH TRỰC NHẬT KIAI.xlsx - February_2024 (1)</div>
+              <div class="text-sm font-semibold">{{ document.file?.name }}</div>
             </div>
           </td>
           <td class="px-6">
             <div class="flex items-center">
-              <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-              Online
+              <div :class="`h-2.5 w-2.5 rounded-full me-2 ${mappingStatus[document.status]}`"></div>
+              {{ capitalizeFirstLetter(mappingStatus[document.status]) }}
             </div>
           </td>
 
@@ -102,14 +103,14 @@
               scope="row"
               class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              <div class="ps-3 text-sm">Feb 07, 2024 01:38:10 PM</div>
+              <div class="ps-3 text-sm">{{ document.requested_on }}</div>
             </div>
           </td>
           <td class="px-6">
             <el-button type="primary" plain>
               <el-icon size="16" class="pt-1"><MoreFilled /></el-icon>
             </el-button>
-            <el-button type="primary" plain>
+            <el-button type="primary" plain @click="downloadFile(document.file)">
               <el-icon size="16"><Download /></el-icon>
             </el-button>
           </td>
@@ -121,17 +122,47 @@
 
 <script setup lang="ts">
 import DocumentFilter from '@/components/Documents/DocumentFilter.vue'
-import { ref } from "vue"
-
-interface Document {
-  id: number,
-  name: string,
-  status: number,
-  request_by: string,
-  request_on: string
-}
+import {DocumentService, FileService} from '@/services'
+import type { Document } from '@/types/document.interface';
+import { ref, onMounted } from "vue"
+import { Status } from '@/types/document.interface'
+import type { FileInfo } from '@/types/document.interface';
 
 const documents = ref<Document[]>([])
+const mappingStatus: { [key: number]: string } = {
+  0 : 'draft',
+  1 : 'needs-review',
+  2 : 'sent',
+  3 : 'completed',
+  4 : 'in-progress',
+  5 : 'expired',
+  6 : 'void',
+}
+
+function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const fetchDocuments = async () => {
+  const response = await DocumentService.getByUserId(1)
+  documents.value = response.data.data.documents
+}
+
+const downloadFile = async (file: FileInfo) => {
+  const response = await FileService.download(file.id)
+
+  const blob = new Blob([response.data])
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement("a")
+  link.href = url
+  link.download = file.name
+  link.click()
+  window.URL.revokeObjectURL(url)
+}
+
+onMounted(() => {
+  fetchDocuments()
+})
 </script>
 
 <style scoped>
@@ -140,5 +171,26 @@ const documents = ref<Document[]>([])
   padding: 7px 10px;
   border-bottom: 2px solid #dee2e6;
   border-top: 2px solid #dee2e6;
+}
+.draft {
+  background-color: #A0A0A0;
+}
+.in-progress {
+  background-color: #FFCD00;
+}
+.expired {
+  background-color: #B74B32;
+}
+.completed {
+  background-color: #32C387;
+}
+.sent {
+  background-color: #0FA9DB;
+}
+.void {
+  background-color: #EA603B;
+}
+.needs-review {
+  background-color: #904FAB;
 }
 </style>
