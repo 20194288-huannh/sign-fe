@@ -63,7 +63,7 @@ const router = createRouter({
     {
       path: '/action-center',
       component: () => import('@/views/ActionCenter.vue'),
-      meta: { layout: 'GuestLayout' }
+      meta: { layout: 'AppLayoutDefault' }
     },
     {
       path: '/my-signature',

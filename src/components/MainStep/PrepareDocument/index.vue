@@ -62,6 +62,8 @@ import { useSendSignStore } from '@/stores/send-sign'
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
+const props = defineProps(['pdf'])
+
 onMounted(() => {
   getPdf()
 })
@@ -186,6 +188,7 @@ const resize = (
       left: 0
     })
   }
+  console.log(arrType.value)
 }
 
 const getPdf = async () => {
@@ -193,9 +196,7 @@ const getPdf = async () => {
   let pdfViewer = new PDFViewer({
     container: container
   })
-  let loadingTask = pdfjsLib.getDocument('./pdf-sample.pdf')
-  let pdf = await loadingTask.promise
-  pdfViewer.setDocument(pdf)
+  pdfViewer.setDocument(props.pdf)
 }
 </script>
 

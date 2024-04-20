@@ -143,7 +143,7 @@
                 "
               >
                 <template #pdfViewer>
-                  <PrepareDocument />
+                  <PrepareDocument :pdf="pdf"/>
                   <!-- <div id="pageContainer">
                     <div id="viewer" class="pdfViewer"></div>
                   </div> -->
@@ -223,6 +223,7 @@ const files = ref<File[]>([])
 const myDocument = ref<Document>()
 const { step, changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
+const pdf = ref()
 
 const clickAddFile = async () => {
   if (files.value.length < 1) {
@@ -270,7 +271,7 @@ const clearFile = () => {
   changeStep(SEND_SIGN_STEP.FIRST_STEP)
 }
 
-const getPdf = async (id) => {
+const getPdf = async (id: number) => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')
   let pdfViewer = new PDFViewer({
@@ -280,10 +281,10 @@ const getPdf = async (id) => {
     container: containerSmall
   })
   let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
-  let pdf = await loadingTask.promise
+  pdf.value = await loadingTask.promise
 
-  pdfViewer.setDocument(pdf)
-  pdfViewerSmall.setDocument(pdf)
+  pdfViewer.setDocument(pdf.value)
+  pdfViewerSmall.setDocument(pdf.value)
 }
 
 const loadFile = (file: any) => {
