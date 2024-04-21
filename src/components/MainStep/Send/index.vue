@@ -1,7 +1,7 @@
 <template>
   <el-form
     ref="ruleFormRef"
-    :model="ruleForm"
+    :model="email"
     :rules="rules"
     label-width="120px"
     class="demo-ruleForm ps-5 pe-5"
@@ -10,7 +10,7 @@
   >
     <el-form-item label="Subject" required>
       <el-col :span="11">
-        <el-input v-model="ruleForm.subject" placeholder="Subject" clearable />
+        <el-input v-model="email.subject" placeholder="Subject" clearable />
       </el-col>
       <el-col class="text-center" :span="2">
         <span class="text-gray-500"><span class="danger">*</span> Expire Date</span>
@@ -18,7 +18,7 @@
       <el-col :span="11">
         <el-form-item prop="date2">
           <el-date-picker
-            v-model="ruleForm.expire_date"
+            v-model="email.expire_date"
             label="Pick a time"
             placeholder="Pick a time"
             style="width: 100%"
@@ -27,7 +27,7 @@
       </el-col>
     </el-form-item>
     <el-form-item label="Message" required>
-      <ckeditor :editor="editor" v-model="editorData" :config="editorConfig"></ckeditor>
+      <ckeditor :editor="editor" v-model="email.content" :config="editorConfig"></ckeditor>
     </el-form-item>
   </el-form>
 </template>
@@ -43,16 +43,14 @@ interface RuleForm {
   content: string
 }
 
+const props = defineModel('email')
+const emit = defineEmits(['sign'])
+
 const editor = ref(ClassicEditor)
 const editorData = ref('<p>Content of the editor.</p>')
 const editorConfig = ref({})
 const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
-const ruleForm = reactive<RuleForm>({
-  subject: 'SENDER_NAME (SENDER_EMAIL_ID) Needs Your Signature for the DOCUMENT_NAME',
-  expire_date: '',
-  content: ''
-})
 
 const rules = reactive<FormRules<RuleForm>>({
   subject: [
@@ -76,6 +74,7 @@ const rules = reactive<FormRules<RuleForm>>({
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {
+  emit('sign')
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {

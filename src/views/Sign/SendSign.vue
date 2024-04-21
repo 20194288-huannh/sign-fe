@@ -112,7 +112,7 @@
                   <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
                 </template>
                 <template #main>
-                  <AddRecipients />
+                  <AddRecipients v-model:users="form.users"/>
                 </template>
               </StepCard>
             </div>
@@ -143,7 +143,7 @@
                 "
               >
                 <template #pdfViewer>
-                  <PrepareDocument :pdf="pdf"/>
+                  <PrepareDocument :pdf="pdf" v-model:signatures="form.signatures"/>
                   <!-- <div id="pageContainer">
                     <div id="viewer" class="pdfViewer"></div>
                   </div> -->
@@ -169,12 +169,13 @@
                 :step="SEND_SIGN_STEP.FOURTH_STEP"
                 title="Send"
                 sub-title="What do you want to convey to the recipients?"
+                @some-event="sign"
               >
                 <template #header-icon>
                   <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
                 </template>
                 <template #main>
-                  <Send />
+                  <Send v-model:email="form.email"/>
                 </template>
               </StepCard>
             </div>
@@ -224,6 +225,29 @@ const myDocument = ref<Document>()
 const { step, changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
 const pdf = ref()
+interface User {
+  name: string,
+  type: number,
+  email: string
+}
+interface Form {
+  users: User[]
+}
+const form = ref<any>({
+  users: [
+    {
+      name: '',
+      email: '',
+      type: ''
+    }
+  ],
+  signatures: [],
+  email: {
+    subject: 'SENDER_NAME (SENDER_EMAIL_ID) Needs Your Signature for the DOCUMENT_NAME',
+    expire_date: '',
+    content: ''
+  }
+})
 
 const clickAddFile = async () => {
   if (files.value.length < 1) {
@@ -299,6 +323,10 @@ const scrollToThirdStep = () => {
 const scrollToView = (idx: number) => {
   const scrollToElement = refElement.value?.children[idx - 1]
   scrollToElement.scrollIntoView({ behavior: 'smooth' })
+}
+
+const sign = () => {
+  console.log(form.value)
 }
 
 watch(

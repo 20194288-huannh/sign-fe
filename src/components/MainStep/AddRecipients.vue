@@ -1,14 +1,14 @@
 <template>
   <el-form
     :inline="true"
-    :model="arrSignSecondStepValue"
+    :model="users"
     class="demo-form-inline ms-3 me-3"
     ref="formRef"
   >
-    <div v-for="(recipient, idx) in arrSignSecondStepValue.main" :key="recipient.id">
+    <div v-for="(recipient, idx) in users" :key="recipient.id">
       <el-form-item
         class="w-[30%] min-w-48 2xl:w-[35%]"
-        :prop="'main.' + idx + '.name'"
+        :prop="idx + '.name'"
         :rules="[
           {
             required: true,
@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item
         class="w-[30%] min-w-48 2xl:w-[35%]"
-        :prop="'main.' + idx + '.email'"
+        :prop="idx + '.email'"
         :rules="[
           {
             required: true,
@@ -81,11 +81,17 @@ import { useSendSignStore } from '@/stores/send-sign'
 const formRef = ref<FormInstance>()
 const { arrSignSecondStepValue } = useSendSignStore()
 const buttonIndex = ref(0)
+const users = defineModel<Array<User>>('users', {required: true})
+interface User {
+  name: string,
+  type: number,
+  email: string
+}
 
 const addRecipients = () => {
   if (
-    !REGEX_EMAIL.test(arrSignSecondStepValue.main[arrSignSecondStepValue.main.length - 1].email) ||
-    !arrSignSecondStepValue.main[arrSignSecondStepValue.main.length - 1].name
+    !REGEX_EMAIL.test(users.value[users.value.length - 1].email) ||
+    !users.value[users.value.length - 1].name
   ) {
     ElNotification({
       title: 'Error',
@@ -94,26 +100,18 @@ const addRecipients = () => {
     })
     return
   }
-  arrSignSecondStepValue.main.push({
-    id: Math.random(),
-    name: '',
+  users.value.push({
     email: '',
-    type: '0'
+    name: '',
+    type: 0,
   })
   buttonIndex.value++
 }
 
 const removeElement = (index: number) => {
-  arrSignSecondStepValue.main.splice(index, 1)
+  users.splice(index, 1)
   buttonIndex.value--
 }
-
-watch(
-  () => arrSignSecondStepValue,
-  () => {
-    console.log(123)
-  }
-)
 </script>
 
 <style>
