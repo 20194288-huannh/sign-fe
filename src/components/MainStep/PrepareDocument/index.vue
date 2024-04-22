@@ -52,6 +52,7 @@
         {{ item.name }}
       </div>
     </div>
+    <ToolBar />
     <div id="pageContainer" class="relative">
       <DropDragSign v-for="(item, idx) in signatures" :key="item.id" :width="item.width" :height="item.height"
         :top="item.top" :left="item.left" @resize="(newRect) => resize(newRect, item.type, idx)" :text="item.text"
@@ -79,6 +80,7 @@ import { onMounted, ref, watch } from 'vue'
 import DropDragSign from '@/components/DropDragSign.vue'
 import { useSendSignStore } from '@/stores/send-sign'
 import Logo from '@/assets/img/signature.png';
+import ToolBar from '@/components/MainStep/PrepareDocument/ToolBar.vue'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
