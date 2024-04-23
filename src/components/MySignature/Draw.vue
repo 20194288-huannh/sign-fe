@@ -5,14 +5,14 @@
         <VueSignaturePad
           id="signature"
           width="100%"
-          height="500px"
+          height="400px"
           ref="signaturePad"
           :options="options"
         />
       </div>
       <div class="buttons">
         <button @click="undo">Undo</button>
-        <button @click="save">Save</button>
+        <button @click="emit('save', signaturePad)">Save</button>
         <button @click="change">Change Color</button>
         <button @click="resume">Resume Color</button>
       </div>
@@ -23,49 +23,23 @@
 <script setup>
 import { ref } from 'vue'
 import { SignatureService } from '@/services'
+const emit = defineEmits(['save'])
 const options = ref({
-  penColor: "#c0f",
+  penColor: '#c0f'
 })
 const signaturePad = ref(null)
 const undo = () => {
-  signaturePad.value.undoSignature();
-}
-const save = () => {
-  const { isEmpty, data } = signaturePad.value.saveSignature();
-
-  alert("Open DevTools see the save data.");
-  console.log(isEmpty);
-  console.log(data);
-  if (!isEmpty) {
-    var form = new FormData();
-    form.append(
-      'signature',
-      dataURLtoFile(data, 'signature.png')
-    );
-    SignatureService.create(form)
-  }
-
+  signaturePad.value.undoSignature()
 }
 const change = () => {
   this.options = {
-    penColor: "#00f",
+    penColor: '#00f'
   }
 }
 const resume = () => {
   this.options = {
-    penColor: "#c0f",
+    penColor: '#c0f'
   }
-}
-const dataURLtoFile = (dataurl, filename) => {
-  var arr = dataurl.split(','),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[arr.length - 1]), 
-      n = bstr.length, 
-      u8arr = new Uint8Array(n);
-  while(n--){
-      u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, {type:mime});
 }
 </script>
 
@@ -80,7 +54,7 @@ const dataURLtoFile = (dataurl, filename) => {
 }
 
 .container {
-  width: "100%";
+  width: '100%';
   padding: 8px 16px;
 }
 

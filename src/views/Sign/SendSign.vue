@@ -112,7 +112,7 @@
                   <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
                 </template>
                 <template #main>
-                  <AddRecipients v-model:users="form.users"/>
+                  <AddRecipients v-model:users="form.users" />
                 </template>
               </StepCard>
             </div>
@@ -143,10 +143,7 @@
                 "
               >
                 <template #pdfViewer>
-                  <PrepareDocument :pdf="pdf" v-model:signatures="form.signatures"/>
-                  <!-- <div id="pageContainer">
-                    <div id="viewer" class="pdfViewer"></div>
-                  </div> -->
+                  <PrepareDocument :pdf="pdf" v-model:signatures="form.signatures" />
                 </template>
               </StepCard>
             </div>
@@ -175,7 +172,7 @@
                   <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
                 </template>
                 <template #main>
-                  <Send v-model:email="form.email"/>
+                  <Send v-model:email="form.email" />
                 </template>
               </StepCard>
             </div>
@@ -226,8 +223,8 @@ const { step, changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
 const pdf = ref()
 interface User {
-  name: string,
-  type: number,
+  name: string
+  type: number
   email: string
 }
 interface Form {
@@ -298,16 +295,12 @@ const clearFile = () => {
 const getPdf = async (id: number) => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')
-  let pdfViewer = new PDFViewer({
-    container: container
-  })
   let pdfViewerSmall = new PDFViewer({
     container: containerSmall
   })
   let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
   pdf.value = await loadingTask.promise
 
-  pdfViewer.setDocument(pdf.value)
   pdfViewerSmall.setDocument(pdf.value)
 }
 
