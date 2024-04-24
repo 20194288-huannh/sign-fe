@@ -29,11 +29,12 @@
         <DropDragSign
           v-for="(item, idx) in signatures"
           :key="item.id"
-          :width="item.width"
-          :height="item.height"
-          :top="item.top"
-          :left="item.left"
+          :width="item.position.width"
+          :height="item.position.height"
+          :top="item.position.top"
+          :left="item.position.left"
           @resize="(newRect) => resize(newRect, item.type, idx)"
+          @drag="(newRect) => resize(newRect, item.type, idx)"
           :text="item.text"
           @drag-stop="dragStop(item.type, idx)"
         >
@@ -48,6 +49,7 @@
             class="w-10"
           />
           <el-radio v-if="item.type === 'radio' && (item.top !== 0 || item.left !== 0)" />
+          <img :src="item.data.path" v-if="item.type === 'image'" />
         </DropDragSign>
         <canvas id="the-canvas" ref="canvas" class=""></canvas>
       </div>
@@ -60,6 +62,7 @@
         <el-tab-pane label="Type" name="type">Type</el-tab-pane>
       </el-tabs>
     </el-dialog>
+    <img src="https://th.bing.com/th/id/OIP.kIKGMBpBJhtRXCMJpfvnjAHaFd?rs=1&pid=ImgDetMain" />
   </div>
 </template>
 
@@ -89,7 +92,6 @@ const pdfContent = ref()
 const totalPage = ref<Number>()
 const scale = ref<Number>(1.5)
 const signModal = ref<Boolean>(false)
-const tempSignatures = ref<Array<any>>([])
 const components = [
   {
     type: 'name',
@@ -290,13 +292,29 @@ const save = async (signaturePad: any) => {
     var form = new FormData()
     form.append('signature', dataURLtoFile(data, 'signature.png'))
     const response = await SignatureService.create(form)
-    tempSignatures.value.push(response.data.data)
+    const drawSign = response.data.data
+    let signature = {
+      type: 'image',
+      position: {
+        width: 100,
+        height: 60,
+        top: 0,
+        left: 0
+      },
+      data: {
+        id: drawSign.file.id,
+        path: drawSign.file.path,
+        name: drawSign.file.name
+      }
+    }
+    signModal.value = false
+    signatures.value.push(signature)
   }
 }
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   var arr = dataurl.split(','),
-    mime = arr[0].match(/:(.*?);/)[1],
+    mime = (arr[0].match(/:(.*?);/) as never)[1],
     bstr = atob(arr[arr.length - 1]),
     n = bstr.length,
     u8arr = new Uint8Array(n)
@@ -345,42 +363,18 @@ function onNextPage() {
  */
 
 const dragStop = (type: string, idx: number) => {
-  // let signature = {
-  //   type: arrType.value[idx].type
-  // }
-  // const _arrResize = [...arrType.value]
-
-  // _arrResize[index].arrSize[idx] = {
-  //   ..._arrResize[index].arrSize[idx],
-  //   width: checkStyleOfDragResize(type)
-  // }
-  // arrType.value = _arrResize
   dragger.value = false
+  console.log('drag stop')
+  console.log(signatures.value)
 }
 
 const handleDrag = (e: any, item: any) => {
-  let signature = {
-    type: item.type,
-    width: checkStyleOfDragResize(item.type),
-    height: 40,
-    top: e.clientY,
-    left: e.clientX
-  }
-  console.log(signatures)
-  signatures.value.push(signature)
+  console.log('drag')
   console.log(signatures.value)
 }
 
 const onDrop = (e: any, item: any) => {
-  console.log(signatures.value)
-  let signature = {
-    type: item.type,
-    width: checkStyleOfDragResize(item.type),
-    height: 40,
-    top: e.clientY,
-    left: e.clientX
-  }
-  signatures.value.push(signature)
+  console.log('on drop')
   console.log(signatures.value)
 }
 
@@ -390,10 +384,8 @@ const resize = (
   idx: number
 ) => {
   dragger.value = true
-
-  // const _arrResize = [...arrType.value]
-  signatures.value[idx] = {
-    ...signatures.value[idx],
+  console.log(newRect)
+  signatures.value[idx].position = {
     ...newRect
   }
   console.log(signatures)
