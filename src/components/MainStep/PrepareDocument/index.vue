@@ -33,23 +33,41 @@
           :height="item.position.height"
           :top="item.position.top"
           :left="item.position.left"
-          @resize="(newRect) => resize(newRect, item.type, idx)"
-          @drag="(newRect) => resize(newRect, item.type, idx)"
+          @resize="(newRect) => resize(newRect, idx)"
+          @drag="(newRect) => resize(newRect, idx)"
           :text="item.text"
-          @drag-stop="dragStop(item.type, idx)"
+          @drag-stop="dragStop(idx)"
         >
-          <el-date-picker v-model="value" format="YYYY-MM-DD" v-if="item.type === 'date'" />
-          <p v-if="item.type === 'signature' && (item.top !== 0 || item.left !== 0)">
+          <el-date-picker
+            v-model="value"
+            format="YYYY-MM-DD"
+            v-if="item.type === SIGNATURE_TYPE.DATE"
+          />
+          <p
+            v-if="
+              item.type === SIGNATURE_TYPE.SIGNATURE &&
+              (item.position.top !== 0 || item.position.left !== 0)
+            "
+          >
             {{
-              arrSignSecondStepValue.main.find((e) => e.id === signatureValue)?.name ?? 'signature'
+              arrSignSecondStepValue.main.find((e) => e.id === signatureValue)?.name ??
+              SIGNATURE_TYPE.SIGNATURE
             }}
           </p>
           <el-checkbox
-            v-if="item.type === 'checkbox' && (item.top !== 0 || item.left !== 0)"
+            v-if="
+              item.type === SIGNATURE_TYPE.CHECKBOX &&
+              (item.position.top !== 0 || item.position.left !== 0)
+            "
             class="w-10"
           />
-          <el-radio v-if="item.type === 'radio' && (item.top !== 0 || item.left !== 0)" />
-          <img :src="item.data.path" v-if="item.type === 'image'" />
+          <el-radio
+            v-if="
+              item.type === SIGNATURE_TYPE.RADIO &&
+              (item.position.top !== 0 || item.position.left !== 0)
+            "
+          />
+          <img :src="item.data.path" v-if="item.type === SIGNATURE_TYPE.IMAGE" />
         </DropDragSign>
         <canvas id="the-canvas" ref="canvas" class=""></canvas>
       </div>
@@ -62,13 +80,11 @@
         <el-tab-pane label="Type" name="type">Type</el-tab-pane>
       </el-tabs>
     </el-dialog>
-    <img src="https://th.bing.com/th/id/OIP.kIKGMBpBJhtRXCMJpfvnjAHaFd?rs=1&pid=ImgDetMain" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import pdfjsLib from 'pdfjs-dist/build/pdf'
-import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import { onMounted, ref, watch } from 'vue'
 import DropDragSign from '@/components/DropDragSign.vue'
@@ -77,6 +93,8 @@ import Logo from '@/assets/img/signature.png'
 import ToolBar from '@/components/MainStep/PrepareDocument/ToolBar.vue'
 import Draw from '@/components/MySignature/Draw.vue'
 import { SignatureService } from '@/services'
+import type { Signature } from '@/types/send-sign'
+import { SIGNATURE_TYPE } from '@/types/send-sign'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -87,7 +105,8 @@ const { arrSignSecondStepValue } = useSendSignStore()
 const dragger = ref(false)
 const value = ref('2021-10-29')
 const signatureValue = ref()
-const signatures = defineModel('signatures')
+const signatures = defineModel('signatures', { required: true })
+const canvasPdf = defineModel('canvas', { required: true })
 const pdfContent = ref()
 const totalPage = ref<Number>()
 const scale = ref<Number>(1.5)
@@ -157,19 +176,6 @@ watch(
       (arrType.value = _arrType)
   }
 )
-
-const formatDate = (d = new Date()) => {
-  const yyyy = d.getFullYear()
-  let mm = d.getMonth() + 1 // Months start at 0!
-  let dd = d.getDate()
-
-  if (dd < 10) dd = '0' + dd
-  if (mm < 10) mm = '0' + mm
-
-  const formattedToday = yyyy + '-' + mm + '-' + dd
-
-  return formattedToday
-}
 
 const arrType = ref<any>([
   {
@@ -254,6 +260,8 @@ const renderPage = (num: number) => {
     var viewport = page.getViewport(scale.value)
     canvas.value.height = viewport.height
     canvas.value.width = viewport.width
+    canvasPdf.value.width = viewport.width
+    canvasPdf.value.height = viewport.height
 
     // Render PDF page into canvas context
     var renderContext = {
@@ -277,12 +285,12 @@ const renderPage = (num: number) => {
 }
 
 const scaleUp = () => {
-  scale.value = scale.value + 0.1
+  scale.value = Number(scale.value) + 0.1
   renderPage(pageNum.value)
 }
 
 const scaleDown = () => {
-  scale.value = scale.value - 0.1
+  scale.value = Number(scale.value) - 0.1
   renderPage(pageNum.value)
 }
 
@@ -294,7 +302,9 @@ const save = async (signaturePad: any) => {
     const response = await SignatureService.create(form)
     const drawSign = response.data.data
     let signature = {
-      type: 'image',
+      type: SIGNATURE_TYPE.IMAGE,
+      scale: Number(scale.value),
+      page: pageNum.value,
       position: {
         width: 100,
         height: 60,
@@ -308,7 +318,7 @@ const save = async (signaturePad: any) => {
       }
     }
     signModal.value = false
-    signatures.value.push(signature)
+    signatures.value.push(signature as never)
   }
 }
 
@@ -362,7 +372,7 @@ function onNextPage() {
  * Asynchronously downloads PDF.
  */
 
-const dragStop = (type: string, idx: number) => {
+const dragStop = (idx: number) => {
   dragger.value = false
   console.log('drag stop')
   console.log(signatures.value)
@@ -380,11 +390,9 @@ const onDrop = (e: any, item: any) => {
 
 const resize = (
   newRect: { width: number; height: number; top: number; left: number },
-  item: string,
   idx: number
 ) => {
   dragger.value = true
-  console.log(newRect)
   signatures.value[idx].position = {
     ...newRect
   }
@@ -412,18 +420,26 @@ const resize = (
 }
 
 const getPdf = async () => {
-  pdfjsLib.getDocument(`http://localhost:8868/api/files/4`).promise.then(function (pdfDoc_: any) {
-    pdfDoc.value = pdfDoc_
+  // pdfjsLib.getDocument(`http://localhost:8868/api/files/2`).promise.then(function (pdfDoc_: any) {
+  if (props.pdf) {
+    pdfDoc.value = props.pdf
     totalPage.value = pdfDoc.value.numPages
 
     // Initial/first page rendering
     renderPage(pageNum.value)
-  })
+  }
 }
 
 onMounted(() => {
   getPdf()
 })
+
+watch(
+  () => props.pdf,
+  () => {
+    getPdf()
+  }
+)
 </script>
 
 <style>

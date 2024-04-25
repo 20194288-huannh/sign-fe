@@ -3,7 +3,7 @@
     <div class="flex">
       <img class="mr-3" width="55px" src="@/assets/img/send_sign.png" />
       <div class="flex flex-col items-start">
-        <div class="font-bold">Send for Signature</div>
+        <div class="font-bold">Sign Your Own</div>
         <nav class="flex" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
@@ -34,7 +34,7 @@
                 <a
                   href="#"
                   class="ms-1 text-xs font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
-                  >Send for Signature</a
+                  >Sign Your Own</a
                 >
               </div>
             </li>
@@ -104,43 +104,9 @@
             <div class="w-full pb-5">
               <StepCard
                 :step="SEND_SIGN_STEP.SECOND_STEP"
-                title="Add Recipients"
-                sub-title="Who can sign / view this document?"
-                @some-event="scrollToThirdStep"
-              >
-                <template #header-icon>
-                  <el-icon color="#00b3b3" size="30" class="mr-5"><User /></el-icon>
-                </template>
-                <template #main>
-                  <AddRecipients v-model:users="form.users" />
-                </template>
-              </StepCard>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="pt-6">
-        <div class="hidden-step">
-          <div class="flex gap-5">
-            <div class="w-16 relative flex justify-center custom-step">
-              <div
-                class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-                @click="scrollToView(SEND_SIGN_STEP.THIRD_STEP)"
-              >
-                {{ SEND_SIGN_STEP.THIRD_STEP }}
-              </div>
-            </div>
-            <div class="w-full pb-5">
-              <StepCard
-                :step="SEND_SIGN_STEP.THIRD_STEP"
                 title="Send"
                 sub-title="What do you want to convey to the recipients?"
-                @some-event="
-                  () => {
-                    changeStep(SEND_SIGN_STEP.FOURTH_STEP)
-                    scrollToView(SEND_SIGN_STEP.FOURTH_STEP)
-                  }
-                "
+                @some-event="signOwn"
               >
                 <template #pdfViewer>
                   <PrepareDocument
@@ -154,47 +120,7 @@
           </div>
         </div>
       </div>
-      <div class="pt-6">
-        <div class="hidden-step">
-          <div class="flex gap-5">
-            <div class="w-16 relative flex justify-center custom-step">
-              <div
-                class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-                @click="scrollToView(SEND_SIGN_STEP.FOURTH_STEP)"
-              >
-                {{ SEND_SIGN_STEP.FOURTH_STEP }}
-              </div>
-            </div>
-            <div class="w-full pb-5">
-              <StepCard
-                :step="SEND_SIGN_STEP.FOURTH_STEP"
-                title="Send"
-                sub-title="What do you want to convey to the recipients?"
-                @some-event="sign"
-              >
-                <template #header-icon>
-                  <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
-                </template>
-                <template #main>
-                  <Send v-model:email="form.email" />
-                </template>
-              </StepCard>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-    <!-- <div style="height: 1500px" class="flex"> -->
-    <!-- <el-steps direction="vertical" :active="2">
-          <el-step></el-step>
-          <el-step></el-step>
-          <el-step></el-step>
-        </el-steps> -->
-    <!-- <div class="flex flex-col flex-1" ref="a">
-          <StepCard title="Add file" sub-title="What do you want to upload?" />
-          <StepCard title="Add file" sub-title="What do you want to upload?" :ref="b" />
-        </div> -->
-    <!-- </div> -->
   </div>
 </template>
 
@@ -205,8 +131,6 @@ import 'pdfjs-dist/web/pdf_viewer.css'
 import { ref, watch, onMounted } from 'vue'
 import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
-import AddRecipients from '@/components/MainStep/AddRecipients.vue'
-import Send from '@/components/MainStep/Send/index.vue'
 import { DocumentService } from '@/services'
 import { ethers } from 'ethers'
 import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json'
@@ -216,38 +140,20 @@ import { ElNotification } from 'element-plus'
 import { ENotificationType } from '@/types/notification'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import type { Document } from '@/types/document.interface'
+import type { SignOwn } from '@/types/send-sign.ts'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 const refElement = ref()
 const files = ref<File[]>([])
-const myDocument = ref<Document>()
 const { step, changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
 const pdf = ref()
-interface User {
-  name: string
-  type: number
-  email: string
-}
-interface Form {
-  users: User[]
-}
-const form = ref<any>({
-  users: [
-    {
-      name: '',
-      email: '',
-      type: ''
-    }
-  ],
+const documentId = ref<Number>()
+const myDocument = ref()
+const form = ref<SignOwn>({
   signatures: [],
-  email: {
-    subject: 'SENDER_NAME (SENDER_EMAIL_ID) Needs Your Signature for the DOCUMENT_NAME',
-    expire_date: '',
-    content: ''
-  },
   canvas: {
     height: 0,
     width: 0
@@ -300,13 +206,19 @@ const clearFile = () => {
   changeStep(SEND_SIGN_STEP.FIRST_STEP)
 }
 
-const getPdf = async (id: number) => {
+const signOwn = async () => {
+  const response = await DocumentService.signOwn(myDocument.value.id, form.value)
+}
+
+const getPdf = async () => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')
   let pdfViewerSmall = new PDFViewer({
     container: containerSmall
   })
-  let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
+  let loadingTask = pdfjsLib.getDocument(
+    `http://localhost:8868/api/files/${myDocument.value.file.id}`
+  )
   pdf.value = await loadingTask.promise
 
   pdfViewerSmall.setDocument(pdf.value)
@@ -316,28 +228,19 @@ const loadFile = (file: any) => {
   files.value = [file]
 }
 
-const scrollToThirdStep = () => {
-  changeStep(SEND_SIGN_STEP.THIRD_STEP)
-  scrollToView(SEND_SIGN_STEP.THIRD_STEP)
-}
-
 const scrollToView = (idx: number) => {
   const scrollToElement = refElement.value?.children[idx - 1]
   scrollToElement.scrollIntoView({ behavior: 'smooth' })
-}
-
-const sign = () => {
-  console.log(form.value)
 }
 
 watch(
   () => files.value,
   async () => {
     const response = await DocumentService.save({ file: files.value[0] })
-    const myDocument = response.data.data
+    myDocument.value = response.data.data
     const myFile = response.data
     if (files.value.length > 0) {
-      getPdf(myDocument.file.id)
+      getPdf()
     }
   }
 )

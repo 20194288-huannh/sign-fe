@@ -31,7 +31,7 @@ const onDragstop = () => {
     :h="props.height"
     :parentLimitation="true"
     :z="100"
-    :isResizable="false"
+    :isResizable="true"
     v-on:resizing="resize"
     v-on:dragging="onDrag"
     @dragstop="onDragstop"

@@ -8,6 +8,9 @@ const DocumentService  = {
     },
     getByUserId(id) {
         return ApiService.get(`users/${id}/documents`)
-    }
+    },
+    signOwn(id, data) {
+        return ApiService.post(`documents/${id}/sign-own`, data)
+    },
 }
 export default DocumentService

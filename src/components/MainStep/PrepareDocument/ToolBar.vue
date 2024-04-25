@@ -681,7 +681,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const totalPage = defineModel('totalPage')
 const pageNum = defineModel('pageNum')
 const signModal = defineModel('signModal')

@@ -37,7 +37,7 @@ const router = createRouter({
     },
     {
       path: '/sign/sign-own',
-      component: () => import('@/views/FirstPage.vue'),
+      component: () => import('@/views/Sign/SignOwn.vue'),
       meta: { layout: 'AppLayoutDefault' }
     },
     {
