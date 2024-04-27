@@ -36,7 +36,7 @@
         </div>
       </el-popover>
     </div>
-    <div class="grid grid-cols-[80px_1fr] h-[calc(100vh-64px)]">
+    <div class="grid grid-cols-[58px_1fr] h-[calc(100vh-64px)]">
       <Navbar />
       <div class="overflow-auto">
         <slot />

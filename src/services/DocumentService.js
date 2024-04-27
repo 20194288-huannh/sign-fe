@@ -12,5 +12,8 @@ const DocumentService  = {
     signOwn(id, data) {
         return ApiService.post(`documents/${id}/sign-own`, data)
     },
+    sendSign(id, data) {
+        return ApiService.post(`documents/${id}/send-sign`, data)
+    }
 }
 export default DocumentService

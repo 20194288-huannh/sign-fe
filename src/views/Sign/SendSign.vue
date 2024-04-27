@@ -170,7 +170,7 @@
                 :step="SEND_SIGN_STEP.FOURTH_STEP"
                 title="Send"
                 sub-title="What do you want to convey to the recipients?"
-                @some-event="sign"
+                @some-event="sendSign"
               >
                 <template #header-icon>
                   <el-icon color="#00b3b3" size="30" class="mr-5"><Message /></el-icon>
@@ -326,18 +326,18 @@ const scrollToView = (idx: number) => {
   scrollToElement.scrollIntoView({ behavior: 'smooth' })
 }
 
-const sign = () => {
-  console.log(form.value)
+const sendSign = async () => {
+  console.log(myDocument.value.id)
+  const response = await DocumentService.sendSign(myDocument.value.id, form.value)
 }
 
 watch(
   () => files.value,
   async () => {
     const response = await DocumentService.save({ file: files.value[0] })
-    const myDocument = response.data.data
-    const myFile = response.data
+    myDocument.value = response.data.data
     if (files.value.length > 0) {
-      getPdf(myDocument.file.id)
+      getPdf(myDocument.value.file.id)
     }
   }
 )

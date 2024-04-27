@@ -5,7 +5,7 @@
     class="demo-form-inline ms-3 me-3"
     ref="formRef"
   >
-    <div v-for="(recipient, idx) in users" :key="recipient.id">
+    <div v-for="(user, idx) in users" :key="user.id">
       <el-form-item
         class="w-[30%] min-w-48 2xl:w-[35%]"
         :prop="idx + '.name'"
@@ -18,7 +18,7 @@
         ]"
       >
         <el-input
-          v-model="recipient.name"
+          v-model="user.name"
           placeholder="Signer's Name"
           clearable
           :prefix-icon="User"
@@ -43,7 +43,7 @@
         ]"
       >
         <el-input
-          v-model="recipient.email"
+          v-model="user.email"
           placeholder="Signer's Email"
           clearable
           :prefix-icon="Message"
@@ -52,7 +52,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="" style="width: 115px">
-        <el-select v-model="recipient.type" clearable>
+        <el-select v-model="user.type" clearable>
           <el-option label="Signer" value="0" />
           <el-option label="CC" value="1" />
         </el-select>
@@ -81,7 +81,7 @@ import { useSendSignStore } from '@/stores/send-sign'
 const formRef = ref<FormInstance>()
 const { arrSignSecondStepValue } = useSendSignStore()
 const buttonIndex = ref(0)
-const users = defineModel<Array<User>>('users', {required: true})
+const users = defineModel('users', {required: true})
 interface User {
   name: string,
   type: number,
