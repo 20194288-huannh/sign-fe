@@ -1,85 +1,55 @@
 <template>
   <div class="relative">
     <div class="flex items-center bg-[#f4f4f4] h-[55px]">
-      <div
-        v-for="(item, index) in components"
-        :key="index"
-        @dragstart="handleDrag($event, item)"
-        @drop="onDrop($event, item)"
-        draggable="true"
-        class="components-item"
-      >
+      <div v-for="(item, index) in components" :key="index" @dragstart="handleDrag($event, item)"
+        @drop="onDrop($event, item)" draggable="true" class="components-item">
         <el-icon :size="20">
           <component :is="item.icon" />
         </el-icon>
         {{ item.name }}
       </div>
     </div>
-    <ToolBar
-      v-model:totalPage="totalPage"
-      v-model:pageNum="pageNum"
-      v-model:signModal="signModal"
-      @on-next-page="onNextPage"
-      @on-prev-page="onPrevPage"
-      @scale-up="scaleUp"
-      @scale-down="scaleDown"
-    />
-    <div id="pageContainer" class="bg-[#3D424E33] relative">
-      <div class="pdfContent">
-        <DropDragSign
-          v-for="(item, idx) in signatures"
-          :key="item.id"
-          :width="item.position.width"
-          :height="item.position.height"
-          :top="item.position.top"
-          :left="item.position.left"
-          @resize="(newRect) => resize(newRect, idx)"
-          @drag="(newRect) => resize(newRect, idx)"
-          :text="item.text"
-          @drag-stop="dragStop(idx)"
-        >
-          <el-date-picker
-            v-model="value"
-            format="YYYY-MM-DD"
-            v-if="item.type === SIGNATURE_TYPE.DATE"
-          />
-          <p
-            v-if="
+    <ToolBar v-model:totalPage="totalPage" v-model:pageNum="pageNum" v-model:signModal="signModal" v-model:users="users"
+      v-model:receiverId="receiverId" @on-next-page="onNextPage" @on-prev-page="onPrevPage" @scale-up="scaleUp"
+      @scale-down="scaleDown" @note="note" />
+    <div class="flex gap-5">
+      <div id="pageContainer" class="bg-[#3D424E33] relative flex-grow">
+        <div class="pdfContent">
+          <DropDragSign v-for="(item, idx) in signatures" :key="item.id" :width="item.position.width"
+            :height="item.position.height" :top="item.position.top" :left="item.position.left" :canSize="item.canResize"
+            @resize="(newRect) => resize(newRect, idx)" @drag="(newRect) => resize(newRect, idx)" :text="item.text"
+            @drag-stop="dragStop(idx)" @click="selectedSignature = item">
+            <el-date-picker v-model="value" format="YYYY-MM-DD" v-if="item.type === SIGNATURE_TYPE.DATE" />
+            <p v-if="
               item.type === SIGNATURE_TYPE.SIGNATURE &&
               (item.position.top !== 0 || item.position.left !== 0)
-            "
-          >
-            {{
-              arrSignSecondStepValue.main.find((e) => e.id === signatureValue)?.name ??
-              SIGNATURE_TYPE.SIGNATURE
-            }}
-          </p>
-          <el-checkbox
-            v-if="
+            ">
+              {{
+                arrSignSecondStepValue.main.find((e) => e.id === signatureValue)?.name ??
+                SIGNATURE_TYPE.SIGNATURE
+              }}
+            </p>
+            <el-checkbox v-if="
               item.type === SIGNATURE_TYPE.CHECKBOX &&
               (item.position.top !== 0 || item.position.left !== 0)
-            "
-            class="w-10"
-          />
-          <el-radio
-            v-if="
+            " class="w-10" />
+            <el-radio v-if="
               item.type === SIGNATURE_TYPE.RADIO &&
               (item.position.top !== 0 || item.position.left !== 0)
-            "
-          />
-          <img :src="item.data.path" v-if="item.type === SIGNATURE_TYPE.IMAGE" />
-        </DropDragSign>
-        <canvas id="the-canvas" ref="canvas" class=""></canvas>
+            " />
+            <img v-if="item.type === SIGNATURE_TYPE.IMAGE" :src="item.data.path"
+              :style="`width: ${item.position.width}px; height: ${item.position.height}px`" />
+            <div v-if="item.receiverId" :style="`background: ${background[item.receiverId]}`">{{ item.receiver.name }}
+            </div>
+            <div v-if="!item.type" class="border-dashed border-2 border-indigo-600"
+              @click="() => { signModal = 2; selectedSignature = item; }">{{ item.position }}</div>
+          </DropDragSign>
+          <canvas id="the-canvas" ref="canvas" class=""></canvas>
+        </div>
       </div>
+      <SigntureInfo class="mt-5 flex-shrink w-1/4" v-model:signature="selectedSignature" @resize="resize" />
     </div>
-    <el-dialog v-model="signModal" title="Add Signature" width="800">
-      <el-tabs v-model="activeName" class="demo-tabs">
-        <el-tab-pane label="Draw" name="draw">
-          <Draw @save="save" />
-        </el-tab-pane>
-        <el-tab-pane label="Type" name="type">Type</el-tab-pane>
-      </el-tabs>
-    </el-dialog>
+    <SignatureModal v-model:signModal="signModal" v-modal:activeName="activeName" @save="save" />
   </div>
 </template>
 
@@ -92,9 +62,12 @@ import { useSendSignStore } from '@/stores/send-sign'
 import Logo from '@/assets/img/signature.png'
 import ToolBar from '@/components/MainStep/PrepareDocument/ToolBar.vue'
 import Draw from '@/components/MySignature/Draw.vue'
-import { SignatureService } from '@/services'
-import type { Signature } from '@/types/send-sign'
+import { SignatureService } from '@/services/index.js'
+import type { Receiver, Signature } from '@/types/send-sign'
 import { SIGNATURE_TYPE } from '@/types/send-sign'
+import SigntureInfo from '@/components/MainStep/PrepareDocument/SignatureInfo.vue'
+import type { ISendSignSecondStep, SendForSignature } from '@/types/send-sign'
+import SignatureModal from '@/components/SignatureModal.vue'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -107,10 +80,22 @@ const value = ref('2021-10-29')
 const signatureValue = ref()
 const signatures = defineModel('signatures', { required: true })
 const canvasPdf = defineModel('canvas', { required: true })
+const users = defineModel('users', { required: true })
 const pdfContent = ref()
 const totalPage = ref<Number>()
-const scale = ref<Number>(1.5)
-const signModal = ref<Boolean>(false)
+const scale = ref<Number>(1.2)
+const signModal = ref<Number>(0)
+const selectedSignature = ref<Signature>()
+const receiverId = ref<Number>(0)
+
+const background = {
+  0: 'rgb(188, 225, 255)',
+  1: 'rgb(239, 114, 97)',
+  2: 'rgb(213, 156, 156)',
+  3: 'rgb(248, 152, 209)',
+  4: 'rgb(127, 171, 202)'
+}
+
 const components = [
   {
     type: 'name',
@@ -171,9 +156,9 @@ watch(
   () => {
     const _arrType = [...arrType.value]
     const findArrTypeSignature = _arrType.find((e) => e.type === 'signature')
-    ;(findArrTypeSignature['text'] =
-      arrSignSecondStepValue.main.find((e) => e.id === signatureValue.value)?.name ?? 'signature'),
-      (arrType.value = _arrType)
+      ; (findArrTypeSignature['text'] =
+        arrSignSecondStepValue.main.find((e) => e.id === signatureValue.value)?.name ?? 'signature'),
+        (arrType.value = _arrType)
   }
 )
 
@@ -301,25 +286,60 @@ const save = async (signaturePad: any) => {
     form.append('signature', dataURLtoFile(data, 'signature.png'))
     const response = await SignatureService.create(form)
     const drawSign = response.data.data
-    let signature = {
-      type: SIGNATURE_TYPE.IMAGE,
-      scale: Number(scale.value),
-      page: pageNum.value,
-      position: {
-        width: 100,
-        height: 60,
-        top: 0,
-        left: 0
-      },
-      data: {
-        id: drawSign.file.id,
-        path: drawSign.file.path,
-        name: drawSign.file.name
+    if (signModal.value === 2) {
+      signatures.value.map(function (item: Signature) {
+        if (selectedSignature.value && item.id === selectedSignature.value.id) {
+          item.type = SIGNATURE_TYPE.IMAGE
+          item.scale = Number(scale.value)
+          item.data = {
+            id: drawSign.file.id,
+            path: drawSign.file.path,
+            name: drawSign.file.name
+          }
+          return item
+        }
+        return item
+      })
+    } else {
+      let signature = {
+        type: SIGNATURE_TYPE.IMAGE,
+        scale: Number(scale.value),
+        page: pageNum.value,
+        position: {
+          width: 100,
+          height: 60,
+          top: 0,
+          left: 0
+        },
+        data: {
+          id: drawSign.file.id,
+          path: drawSign.file.path,
+          name: drawSign.file.name
+        }
       }
+      signatures.value.push(signature as never)
     }
-    signModal.value = false
-    signatures.value.push(signature as never)
+    console.log(signatures.value)
+    signModal.value = 0
   }
+}
+
+const note = async () => {
+  let signature = {
+    type: SIGNATURE_TYPE.REQUIRED,
+    scale: Number(scale.value),
+    page: pageNum.value,
+    position: {
+      width: 200,
+      height: 60,
+      top: 50,
+      left: 50
+    },
+    receiver: (users.value as Array<SendForSignature>)[receiverId.value],
+    receiverId: receiverId.value
+  }
+  signatures.value.push(signature)
+  console.log(signatures.value)
 }
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -332,18 +352,6 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
     u8arr[n] = bstr.charCodeAt(n)
   }
   return new File([u8arr], filename, { type: mime })
-}
-
-/**
- * If another page rendering in progress, waits until the rendering is
- * finised. Otherwise, executes rendering immediately.
- */
-function queueRenderPage(num: number) {
-  if (pageRendering) {
-    pageNumPending.value = num
-  } else {
-    renderPage(num)
-  }
 }
 
 /**
@@ -396,7 +404,6 @@ const resize = (
   signatures.value[idx].position = {
     ...newRect
   }
-  console.log(signatures)
 
   // _arrResize[idx].arrSize[idx1] = {
   //   width: newRect.width,
@@ -487,7 +494,7 @@ div.page {
   height: 40px !important;
 }
 
-.custom-select > .el-select__wrapper {
+.custom-select>.el-select__wrapper {
   height: 40px;
 }
 
@@ -533,6 +540,7 @@ div.page {
 .components-item:hover {
   background: #f5f5f5;
 }
+
 .pdfContent {
   position: absolute;
   left: 50%;

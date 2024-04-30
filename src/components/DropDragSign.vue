@@ -7,7 +7,8 @@ const props = defineProps({
   height: Number,
   top: Number,
   left: Number,
-  text: String
+  text: String,
+  canResize: Boolean
 })
 
 const mouseHover = ref<boolean>(false)
@@ -29,9 +30,12 @@ const onDragstop = () => {
   <VueDragResize
     :w="props.width"
     :h="props.height"
+    :x="props.left"
+    :y="props.top"
+    :isDraggable="props.canResize"
     :parentLimitation="true"
     :z="100"
-    :isResizable="true"
+    :isResizable="props.canResize"
     v-on:resizing="resize"
     v-on:dragging="onDrag"
     @dragstop="onDragstop"

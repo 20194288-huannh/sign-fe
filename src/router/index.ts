@@ -56,6 +56,11 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault' }
     },
     {
+      path: '/signed-document',
+      component: () => import('@/views/ViewSignedDocument/index.vue'),
+      meta: { layout: 'GuestLayout' }
+    },
+    {
       path: '/thanks-for-signing',
       component: () => import('@/views/ThanksForSigning.vue'),
       meta: { layout: 'GuestLayout' }

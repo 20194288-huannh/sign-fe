@@ -20,9 +20,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { SignatureService } from '@/services'
+import { SignatureService } from '@/services/index.js'
 const emit = defineEmits(['save'])
 const options = ref({
   penColor: '#c0f'
@@ -43,7 +43,7 @@ const resume = () => {
 }
 </script>
 
-<style>
+<style scoped>
 #signature {
   border: double 3px transparent;
   border-radius: 5px;

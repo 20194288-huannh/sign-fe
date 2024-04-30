@@ -6,7 +6,7 @@ export enum ESendSign {
 }
 
 export interface ISendSignSecondStep {
-  id: string | number
+  id?: string | number
   name: string
   email: string
   type: string
@@ -31,12 +31,26 @@ export interface SignatureData {
   name: string
 }
 
+export interface RequiredSignature {
+  receiver_email: string
+}
+
 export interface Signature {
+  id?: number
   position: Position
-  data: SignatureData
+  data: SignatureData | RequiredSignature
   type: number
   page: number
   scale: number
+}
+
+export interface SendForSignature {
+  position: Position
+  receiver: Receiver
+  type: number
+  page: number
+  scale: number
+  receiverId: number
 }
 
 export interface Canvas {
@@ -55,4 +69,5 @@ export enum SIGNATURE_TYPE {
   CHECKBOX = 4,
   RADIO = 5,
   SIGNATURE = 6,
+  REQUIRED = 7
 }

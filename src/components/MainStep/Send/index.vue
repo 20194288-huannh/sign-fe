@@ -18,7 +18,7 @@
       <el-col :span="11">
         <el-form-item prop="date2">
           <el-date-picker
-            v-model="email.expire_date"
+            v-model="email.expired_date"
             label="Pick a time"
             placeholder="Pick a time"
             style="width: 100%"
@@ -39,7 +39,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 
 interface RuleForm {
   subject: string
-  expire_date: string
+  expired_date: string
   content: string
 }
 
@@ -57,7 +57,7 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: 'Please input Subject', trigger: 'blur' }
     // { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' }
   ],
-  expire_date: [
+  expired_date: [
     {
       required: true,
       message: 'Please input Expire date',

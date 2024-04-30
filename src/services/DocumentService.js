@@ -14,6 +14,9 @@ const DocumentService  = {
     },
     sendSign(id, data) {
         return ApiService.post(`documents/${id}/send-sign`, data)
+    },
+    sign(id, data) {
+        return ApiService.post(`documents/${id}/sign`, data)
     }
 }
 export default DocumentService

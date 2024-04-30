@@ -147,6 +147,7 @@
                     :pdf="pdf"
                     v-model:signatures="form.signatures"
                     :canvas="form.canvas"
+                    :users="form.users"
                   />
                 </template>
               </StepCard>
@@ -184,17 +185,6 @@
         </div>
       </div>
     </div>
-    <!-- <div style="height: 1500px" class="flex"> -->
-    <!-- <el-steps direction="vertical" :active="2">
-          <el-step></el-step>
-          <el-step></el-step>
-          <el-step></el-step>
-        </el-steps> -->
-    <!-- <div class="flex flex-col flex-1" ref="a">
-          <StepCard title="Add file" sub-title="What do you want to upload?" />
-          <StepCard title="Add file" sub-title="What do you want to upload?" :ref="b" />
-        </div> -->
-    <!-- </div> -->
   </div>
 </template>
 
@@ -207,7 +197,7 @@ import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
 import AddRecipients from '@/components/MainStep/AddRecipients.vue'
 import Send from '@/components/MainStep/Send/index.vue'
-import { DocumentService } from '@/services'
+import { DocumentService } from '@/services/index.js'
 import { ethers } from 'ethers'
 import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json'
 import { useSendSignStore } from '@/stores/send-sign'
@@ -237,15 +227,25 @@ interface Form {
 const form = ref<any>({
   users: [
     {
-      name: '',
-      email: '',
-      type: ''
-    }
+      name: 'Nguyen Huu Huan Signer',
+      email: 'gundamakp01@gmail.com',
+      type: 0
+    },
+    {
+      name: 'Nguyen Huu Huan Signer 2',
+      email: 'gundamakp02@gmail.com',
+      type: 0
+    },
+    // {
+    //   name: '',
+    //   email: '',
+    //   type: ''
+    // },
   ],
   signatures: [],
   email: {
     subject: 'SENDER_NAME (SENDER_EMAIL_ID) Needs Your Signature for the DOCUMENT_NAME',
-    expire_date: '',
+    expired_date: '',
     content: ''
   },
   canvas: {
@@ -327,8 +327,9 @@ const scrollToView = (idx: number) => {
 }
 
 const sendSign = async () => {
-  console.log(myDocument.value.id)
-  const response = await DocumentService.sendSign(myDocument.value.id, form.value)
+  if (myDocument.value) {
+    const response = await DocumentService.sendSign(myDocument.value.id, form.value)
+  }
 }
 
 watch(
@@ -336,7 +337,7 @@ watch(
   async () => {
     const response = await DocumentService.save({ file: files.value[0] })
     myDocument.value = response.data.data
-    if (files.value.length > 0) {
+    if (files.value.length > 0 && myDocument.value) {
       getPdf(myDocument.value.file.id)
     }
   }
