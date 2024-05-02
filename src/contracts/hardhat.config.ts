@@ -8,6 +8,11 @@ const config: HardhatUserConfig = {
     sources: './contracts',
     artifacts: './artifacts',
   },
+  networks: {
+    hardhat: {
+      chainId: 1337,
+    },
+  },
 };
 
 export default config;

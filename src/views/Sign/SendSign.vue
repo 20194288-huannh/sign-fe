@@ -301,7 +301,6 @@ const clearFile = () => {
 }
 
 const getPdf = async (id: number) => {
-  let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')
   let pdfViewerSmall = new PDFViewer({
     container: containerSmall

@@ -43,6 +43,7 @@ const checkNetwork = async () => {
         })
         console.log(currentChainId);
 
+        console.log(currentChainId)
         if (currentChainId == targetNetworkId) network_ok.value = true
     }
 }

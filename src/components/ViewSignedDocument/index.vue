@@ -48,8 +48,9 @@ onMounted(async () => {
 
 <template>
   <div class="relative">
-    <Navbar @finish="onFinish"/>
-    <PrepareDocument v-if="requestData" :pdf="pdf" v-model:signatures="requestData.signatures" v-model:canvas="requestData.canvas" class="document" />
+    <Navbar @finish="onFinish" />
+    <PrepareDocument v-if="requestData" :pdf="pdf" v-model:signatures="requestData.signatures"
+      v-model:canvas="requestData.canvas" v-model:users="requestData.users" class="document" />
   </div>
 </template>
 

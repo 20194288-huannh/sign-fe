@@ -4,16 +4,20 @@
             <el-tab-pane label="Draw" name="draw">
                 <Draw @save="save" />
             </el-tab-pane>
-            <el-tab-pane label="Type" name="type">Type</el-tab-pane>
+            <el-tab-pane label="Type" name="type">
+                <Type @sign="sign"/>
+            </el-tab-pane>
         </el-tabs>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
 import Draw from './MySignature/Draw.vue';
+import Type from './MySignature/Type.vue';
+import { ref } from 'vue'
 
 const signModal = defineModel('signModal')
-const activeName = defineModel('activeName')
+const activeName = ref<String>('draw')
 const emit = defineEmits(['save'])
 
 const save = (signaturePad: any) => {

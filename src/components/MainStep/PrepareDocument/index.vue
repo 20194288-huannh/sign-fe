@@ -1,14 +1,5 @@
 <template>
   <div class="relative">
-    <div class="flex items-center bg-[#f4f4f4] h-[55px]">
-      <div v-for="(item, index) in components" :key="index" @dragstart="handleDrag($event, item)"
-        @drop="onDrop($event, item)" draggable="true" class="components-item">
-        <el-icon :size="20">
-          <component :is="item.icon" />
-        </el-icon>
-        {{ item.name }}
-      </div>
-    </div>
     <ToolBar v-model:totalPage="totalPage" v-model:pageNum="pageNum" v-model:signModal="signModal" v-model:users="users"
       v-model:receiverId="receiverId" @on-next-page="onNextPage" @on-prev-page="onPrevPage" @scale-up="scaleUp"
       @scale-down="scaleDown" @note="note" />
@@ -16,7 +7,7 @@
       <div id="pageContainer" class="bg-[#3D424E33] relative flex-grow">
         <div class="pdfContent">
           <DropDragSign v-for="(item, idx) in signatures" :key="item.id" :width="item.position.width"
-            :height="item.position.height" :top="item.position.top" :left="item.position.left" :canSize="item.canResize"
+            :height="item.position.height" :top="item.position.top" :left="item.position.left" :canResize="item.can_resize"
             @resize="(newRect) => resize(newRect, idx)" @drag="(newRect) => resize(newRect, idx)" :text="item.text"
             @drag-stop="dragStop(idx)" @click="selectedSignature = item">
             <el-date-picker v-model="value" format="YYYY-MM-DD" v-if="item.type === SIGNATURE_TYPE.DATE" />
@@ -39,7 +30,7 @@
             " />
             <img v-if="item.type === SIGNATURE_TYPE.IMAGE" :src="item.data.path"
               :style="`width: ${item.position.width}px; height: ${item.position.height}px`" />
-            <div v-if="item.receiverId" :style="`background: ${background[item.receiverId]}`">{{ item.receiver.name }}
+            <div v-if="isNumber(item.receiverId)" :style="`background-color: ${background[item.receiverId]}`">{{ item.receiver.name }}
             </div>
             <div v-if="!item.type" class="border-dashed border-2 border-indigo-600"
               @click="() => { signModal = 2; selectedSignature = item; }">{{ item.position }}</div>
@@ -47,9 +38,9 @@
           <canvas id="the-canvas" ref="canvas" class=""></canvas>
         </div>
       </div>
-      <SigntureInfo class="mt-5 flex-shrink w-1/4" v-model:signature="selectedSignature" @resize="resize" />
+      <SigntureInfo class="mt-5 flex-shrink w-1/4" v-model:signature="selectedSignature" @resize="resize"/>
     </div>
-    <SignatureModal v-model:signModal="signModal" v-modal:activeName="activeName" @save="save" />
+    <SignatureModal v-model:signModal="signModal" @save="save" />
   </div>
 </template>
 
@@ -68,6 +59,7 @@ import { SIGNATURE_TYPE } from '@/types/send-sign'
 import SigntureInfo from '@/components/MainStep/PrepareDocument/SignatureInfo.vue'
 import type { ISendSignSecondStep, SendForSignature } from '@/types/send-sign'
 import SignatureModal from '@/components/SignatureModal.vue'
+import { isNumber } from 'element-plus/es/utils/types.mjs';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -95,72 +87,6 @@ const background = {
   3: 'rgb(248, 152, 209)',
   4: 'rgb(127, 171, 202)'
 }
-
-const components = [
-  {
-    type: 'name',
-    value: '',
-    name: 'Name',
-    width: 150,
-    height: 30,
-    icon: 'User'
-  },
-  {
-    type: 'text',
-    value: 'Text',
-    inputType: 'input',
-    name: 'Text',
-    width: 150,
-    height: 30,
-    icon: 'Document'
-  },
-  {
-    type: 'signature',
-    name: 'Signature',
-    url: Logo,
-    width: 150,
-    height: 30,
-    icon: 'EditPen'
-  },
-  {
-    type: 'checkbox',
-    inputType: 'checkbox',
-    name: 'Checkbox',
-    label: '',
-    width: 30,
-    height: 30,
-    icon: 'CircleCheckFilled'
-  },
-  {
-    type: 'radio',
-    inputType: 'radio',
-    name: 'Radio',
-    label: '',
-    width: 30,
-    height: 30,
-    icon: 'More'
-  },
-  {
-    type: 'date',
-    inputType: 'date',
-    name: 'Date',
-    // value: formatDate(new Date()),
-    width: 120,
-    height: 30,
-    icon: 'Calendar'
-  }
-]
-
-watch(
-  () => signatureValue.value,
-  () => {
-    const _arrType = [...arrType.value]
-    const findArrTypeSignature = _arrType.find((e) => e.type === 'signature')
-      ; (findArrTypeSignature['text'] =
-        arrSignSecondStepValue.main.find((e) => e.id === signatureValue.value)?.name ?? 'signature'),
-        (arrType.value = _arrType)
-  }
-)
 
 const arrType = ref<any>([
   {
@@ -231,7 +157,6 @@ const pageRendering = ref(false)
 const pageNumPending = ref()
 const canvas = ref<any>()
 const pdfDoc = ref<any>()
-const activeName = ref<String>('draw')
 
 /**
  * Get page info from document, resize canvas accordingly, and render page.
@@ -319,7 +244,7 @@ const save = async (signaturePad: any) => {
       }
       signatures.value.push(signature as never)
     }
-    console.log(signatures.value)
+    signaturePad.clearSignature()
     signModal.value = 0
   }
 }
@@ -329,6 +254,7 @@ const note = async () => {
     type: SIGNATURE_TYPE.REQUIRED,
     scale: Number(scale.value),
     page: pageNum.value,
+    can_resize: true,
     position: {
       width: 200,
       height: 60,
@@ -339,7 +265,6 @@ const note = async () => {
     receiverId: receiverId.value
   }
   signatures.value.push(signature)
-  console.log(signatures.value)
 }
 
 const dataURLtoFile = (dataurl: string, filename: string) => {

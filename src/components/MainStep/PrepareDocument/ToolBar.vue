@@ -92,13 +92,25 @@
         </svg></span>
     </button>
     <div style="flex: 1 1 0%"></div>
-    <div class="flex h-[44px]">
+    <div class="flex h-[44px] items-center">
       <div class="text">
         <span id="downshift-8-label" for="downshift-8-toggle-button">Ink tools, toggle menu</span>
       </div>
-      <el-dropdown trigger="click" class="items-center border" @command="handleCommand" v-if="receiverId">
-        <span class="el-dropdown-link">
-          {{ users[receiverId].name }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+      <el-dropdown trigger="click" class="p-2 border-2 border-indigo-600" @command="handleCommand"
+        v-if="users && isNumber(receiverId)">
+        <span class="el-dropdown-link flex w-36">
+          <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" viewBox="0 0 24 24" fill="#000" width="16" height="16">
+            <path
+              d="M12.7,13A3.3,3.3,0,1,1,16,9.6,3.3,3.3,0,0,1,12.7,13Zm0-5.4a2.1,2.1,0,1,0,2.1,2.1A2.1,2.1,0,0,0,12.7,7.6Z"
+              transform="translate(-1 -0.7)" fill="currentcolor"></path>
+            <path d="M18,18.3a.6.6,0,0,1-.6-.6,4.7,4.7,0,1,0-9.5,0,.6.6,0,0,1-1.2,0,6,6,0,1,1,12,0A.6.6,0,0,1,18,18.3Z"
+              transform="translate(-1 -0.7)" fill="currentcolor"></path>
+            <path
+              d="M12.7,23.9A11.6,11.6,0,1,1,24.3,12.3,11.6,11.6,0,0,1,12.7,23.9Zm0-22A10.4,10.4,0,1,0,23,12.3,10.4,10.4,0,0,0,12.7,1.9Z"
+              transform="translate(-1 -0.7)" fill="currentcolor"></path>
+          </svg>
+          <span class="truncate">{{ users[receiverId].name }}</span><el-icon
+            class="el-icon--right"><arrow-down /></el-icon>
         </span>
         <template #dropdown>
           <el-dropdown-menu>
@@ -226,11 +238,10 @@
           class="dropdown button-icon PSPDFKit-Toolbar-Button-Shape-Annotation PSPDFKit-Toolbar-Button-Line-Annotation border-left"
           title="Line" aria-label="Line" aria-pressed="false" type="button">
           <span class="tool-button-icon PSPDFKit-Icon-Line" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
-              width="24" height="24" fill="currentColor" viewBox="0 0 24 24" focusable="false">
-              <path fill-rule="evenodd"
-                d="M22.53 1.47a.75.75 0 0 1 0 1.06l-20 20a.75.75 0 0 1-1.06-1.06l20-20a.75.75 0 0 1 1.06 0Z"
-                clip-rule="evenodd"></path>
-            </svg></span></button><button id="downshift-12-toggle-button" aria-haspopup="true" aria-expanded="false"
+              viewBox="0 0 24 24" fill="#000" width="20" height="20">&gt;<path
+                d="M9,4.5v1H5v22H27V5.5H23v-1H21v1H11v-1Zm-2,3H9v1h2v-1H21v1h2v-1h2v2H7Zm0,4H25v14H7Zm6,2v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Z"
+                fill="currentcolor" transform="translate(-5 -4.5)"></path></svg></span></button><button
+          id="downshift-12-toggle-button" aria-haspopup="true" aria-expanded="false"
           aria-labelledby="downshift-12-label downshift-12-toggle-button" class="pl-[5px] pr-[5px]" type="button"
           style="min-width: 0px">
           <span class="tool-button-icon PSPDFKit-6511p928m8fcbcd7nb8arydjxe PSPDFKit-Icon-CaretDown" aria-hidden="true"
@@ -304,6 +315,8 @@
 </template>
 
 <script setup lang="ts">
+import { isNumber } from 'element-plus/es/utils/types.mjs';
+
 const totalPage = defineModel('totalPage')
 const pageNum = defineModel('pageNum')
 const signModal = defineModel('signModal')

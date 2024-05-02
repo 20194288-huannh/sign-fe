@@ -133,7 +133,7 @@ import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
 import { DocumentService } from '@/services'
 import { ethers } from 'ethers'
-import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json'
+import DocumentAbi from '@/contracts/artifacts/contracts/Document.sol/Document.json'
 import { useSendSignStore } from '@/stores/send-sign'
 import { SEND_SIGN_STEP } from '@/constants/send-sign'
 import { ElNotification } from 'element-plus'
@@ -171,24 +171,9 @@ const clickAddFile = async () => {
   }
   changeStep(SEND_SIGN_STEP.SECOND_STEP)
   scrollToView(SEND_SIGN_STEP.SECOND_STEP)
-  // if (typeof window.ethereum !== 'undefined') {
-  //   //@ts-expect-error Window.ethers not TS
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum)
-  //   // Contract reference
-  //   const contract = new ethers.Contract(contractAddress, BlockSig.abi, provider)
-  //   try {
-  //     // call contract public method
-  //     const fileContent = await readFile(files.value[0] as File);
-  //     const fileBytes = Array.from(new Uint8Array(fileContent as ArrayBuffer));
-  //     const fileHash = ethers.utils.keccak256(fileBytes);
-  //     const data = await contract.createDoc(fileHash, [], false);
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 }
 // address of the contract loaded from an environment variable
-const contractAddress = import.meta.env.VITE_BLOCKSIG_CONTRACT || ''
+const contractAddress = import.meta.env.VITE_CONTRACT || ''
 // stores all messages
 
 const readFile = async (file: File) => {
@@ -207,7 +192,24 @@ const clearFile = () => {
 }
 
 const signOwn = async () => {
-  const response = await DocumentService.signOwn(myDocument.value.id, form.value)
+  // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
+  if (typeof window.ethereum !== 'undefined') {
+    //@ts-expect-error Window.ethers not TS
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner();
+    // Contract reference
+    const contract = new ethers.Contract(contractAddress, DocumentAbi.abi, signer)
+    try {
+      // call contract public method
+      const fileContent = await readFile(files.value[0] as File);
+      const fileBytes = Array.from(new Uint8Array(fileContent as ArrayBuffer));
+      const fileHash = ethers.utils.keccak256(fileBytes);
+      const data = await contract.createDoc(fileHash, 'gundamakp01@gmail.com', ethers.constants.HashZero);
+      console.log(11111111);
+    } catch (error) {
+      console.error(error)
+    }
+  }
 }
 
 const getPdf = async () => {

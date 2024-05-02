@@ -7,8 +7,8 @@
                     <tr v-for="(value, key) in signature.position">
                         <th width="40%" class="font-weight-normal" style="vertical-align: middle;">{{ key }}</th>
                         <td width="60%" style="padding: 15px;">
-                            <input type="text" @blur="onBlur(signature.position)" placeholder="Attribute title" v-model="signature.position[key]"
-                                class="form-control input-sm ng-untouched ng-pristine ng-valid" autocomplete="off">
+                            <input :readonly="!signature.can_resize" type="text" @blur="onBlur(signature.position)" placeholder="Attribute title" v-model="signature.position[key]"
+                                :class="`form-control input-sm ng-untouched ng-pristine ng-valid ${signature.can_resize ? '' : 'is-readonly'}`" autocomplete="off">
                         </td>
                     </tr>
                     <tr>
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 const signature = defineModel('signature')
-const emit = defineEmits('resize')
+const emit = defineEmits(['resize'])
 
 // watch(
 //     () => signature.position,
@@ -75,5 +75,8 @@ table {
     border: 1px solid #ced4da;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.is-readonly {
+    background-color: #3D424E33;
 }
 </style>
