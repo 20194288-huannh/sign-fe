@@ -59,10 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const password = ref<string>()
-const newPassword = ref<string>()
-const confirmPassword = ref<string>()
 </script>
 
 <style scoped>

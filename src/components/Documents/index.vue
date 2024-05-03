@@ -1,5 +1,5 @@
 <template>
-  <DocumentFilter />
+  <DocumentFilter v-model:status="status" @remove-filter-status="removeFilterStatus" />
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
       class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900"
@@ -122,30 +122,44 @@
 
 <script setup lang="ts">
 import DocumentFilter from '@/components/Documents/DocumentFilter.vue'
-import {DocumentService, FileService} from '@/services'
-import type { Document } from '@/types/document.interface';
-import { ref, onMounted } from "vue"
+import { DocumentService, FileService } from '@/services'
+import type { Document } from '@/types/document.interface'
+import { ref, onMounted, watch } from 'vue'
 import { Status } from '@/types/document.interface'
-import type { FileInfo } from '@/types/document.interface';
+import type { FileInfo } from '@/types/document.interface'
 
 const documents = ref<Document[]>([])
+const status = ref<Array<Number>>([0, 1, 2, 3, 4, 5])
 const mappingStatus: { [key: number]: string } = {
-  0 : 'draft',
-  1 : 'needs-review',
-  2 : 'sent',
-  3 : 'completed',
-  4 : 'in-progress',
-  5 : 'expired',
-  6 : 'void',
+  0: 'draft',
+  1: 'needs-review',
+  2: 'sent',
+  3: 'completed',
+  4: 'in-progress',
+  5: 'expired',
+  6: 'void'
 }
 
 function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
+const removeFilterStatus = (key: number) => {
+  status.value.splice(key, 1)
+  fetchDocuments()
 }
 
 const fetchDocuments = async () => {
-  const response = await DocumentService.getByUserId(1)
-  documents.value = response.data.data.documents
+  if (status.value.length) {
+    const response = await DocumentService.getByUserId(1, { status: status.value.toString() })
+    if (response.data.data) {
+      documents.value = response.data.data.documents
+    } else {
+      documents.value = []
+    }
+  } else {
+    documents.value = []
+  }
 }
 
 const downloadFile = async (file: FileInfo) => {
@@ -153,7 +167,7 @@ const downloadFile = async (file: FileInfo) => {
 
   const blob = new Blob([response.data])
   const url = window.URL.createObjectURL(blob)
-  const link = document.createElement("a")
+  const link = document.createElement('a')
   link.href = url
   link.download = file.name
   link.click()
@@ -163,6 +177,13 @@ const downloadFile = async (file: FileInfo) => {
 onMounted(() => {
   fetchDocuments()
 })
+
+watch(
+  () => status.value,
+  () => {
+    fetchDocuments()
+  }
+)
 </script>
 
 <style scoped>
@@ -173,24 +194,24 @@ onMounted(() => {
   border-top: 2px solid #dee2e6;
 }
 .draft {
-  background-color: #A0A0A0;
+  background-color: #a0a0a0;
 }
 .in-progress {
-  background-color: #FFCD00;
+  background-color: #ffcd00;
 }
 .expired {
-  background-color: #B74B32;
+  background-color: #b74b32;
 }
 .completed {
-  background-color: #32C387;
+  background-color: #32c387;
 }
 .sent {
-  background-color: #0FA9DB;
+  background-color: #0fa9db;
 }
 .void {
-  background-color: #EA603B;
+  background-color: #ea603b;
 }
 .needs-review {
-  background-color: #904FAB;
+  background-color: #904fab;
 }
 </style>

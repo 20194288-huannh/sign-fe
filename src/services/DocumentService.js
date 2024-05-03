@@ -6,8 +6,8 @@ const DocumentService  = {
     save(data) {
         return ApiService.post('documents/save', data, {headers : { 'Content-Type': 'multipart/form-data'}})
     },
-    getByUserId(id) {
-        return ApiService.get(`users/${id}/documents`)
+    getByUserId(id, data) {
+        return ApiService.get(`users/${id}/documents`, data)
     },
     signOwn(id, data) {
         return ApiService.post(`documents/${id}/sign-own`, data)

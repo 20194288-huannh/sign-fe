@@ -8,30 +8,33 @@
       </el-button>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-checkbox-group class="flex flex-col p-3" v-model="checkedTypes">
-            <el-checkbox v-for="item in types" :key="item" :label="item">{{ item }}</el-checkbox>
+          <el-checkbox-group class="flex flex-col p-3" v-model="status">
+            <el-checkbox v-for="(item, index) in types" :key="index" :label="index">{{
+              item
+            }}</el-checkbox>
           </el-checkbox-group>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
     <FilterCard
-      v-for="(checkedType, index) in checkedTypes"
+      v-for="(checkedType, index) in status"
       :key="index"
-      :label="checkedType"
+      :label="types[checkedType]"
       @remove="remove(index)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import FilterCard from '@/components/Documents/FilterCard.vue'
+const status = defineModel('status')
+const emit = defineEmits(['remove-filter-status'])
 
-const checkedTypes = ref(['Need Reviews', 'Draft'])
 const types = ['Need Reviews', 'Draft', 'In-Progress', 'Completed', 'Sent', 'Expired']
 
-const remove = (key: string) => {
-  checkedTypes.value.splice(+key, 1)
+const remove = (index: Number) => {
+  emit('remove-filter-status', index)
 }
 </script>
 

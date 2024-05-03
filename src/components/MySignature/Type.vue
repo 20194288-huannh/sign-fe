@@ -26,7 +26,7 @@ const name = defineModel('name')
 .buttons {
     margin-top: 32px;
     display: flex;
-    justify-content: end
+    justify-content: end;
 }
 
 </style>

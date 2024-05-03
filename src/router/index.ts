@@ -46,6 +46,11 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault' }
     },
     {
+      path: '/dashboard',
+      component: () => import('@/views/Dashboard/index.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
       path: '/second-page',
       component: () => import('@/views/SecondPage.vue'),
       meta: { layout: 'AppLayoutDefault' }
