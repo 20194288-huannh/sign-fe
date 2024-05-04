@@ -12,6 +12,9 @@ const DocumentService  = {
     signOwn(id, data) {
         return ApiService.post(`documents/${id}/sign-own`, data)
     },
+    getStatistics() {
+        return ApiService.get(`documents/statistics`)
+    },
     sendSign(id, data) {
         return ApiService.post(`documents/${id}/send-sign`, data)
     },

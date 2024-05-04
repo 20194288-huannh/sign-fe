@@ -1,12 +1,12 @@
 <template>
   <div class="main">
     <span class="font-semibold text-lg">Dashboard</span>
-    <DocumentStatistic />
+    <Dashboard />
   </div>
 </template>
 
 <script setup lang="ts">
-import DocumentStatistic from '@/components/DocumentStatistic.vue'
+import Dashboard from '@/components/Dashboard/index.vue'
 </script>
 
 <style scoped>

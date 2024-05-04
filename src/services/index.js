@@ -4,6 +4,7 @@ import AuthService from './AuthService'
 import DocumentService from './DocumentService'
 import FileService from './FileService'
 import RequestService from './RequestService'
+import ActionService from './ActionService'
 
 export {
   ApiService,
@@ -11,5 +12,6 @@ export {
   AuthService,
   DocumentService,
   FileService,
-  RequestService
+  RequestService,
+  ActionService
 }
