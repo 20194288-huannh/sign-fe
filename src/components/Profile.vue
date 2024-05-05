@@ -59,6 +59,9 @@
 import { Avatar } from '@element-plus/icons-vue'
 import AvatarComponent from '../components/Profile/Avatar.vue'
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user';
+
+const { user } = useUserStore()
 </script>
 
 <style scoped>

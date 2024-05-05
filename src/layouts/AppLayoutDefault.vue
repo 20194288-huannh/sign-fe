@@ -7,7 +7,7 @@
         v-popover="popoverRef"
         v-click-outside="onClickOutside"
       >
-        Nguyen Huu Huan
+        {{ user.name || '' }}
         <el-icon><CaretBottom class="w-4 h-4 text-sky-700" /></el-icon>
       </el-button>
 
@@ -18,8 +18,8 @@
             src="https://imgs.search.brave.com/x73lYG7wBlQUVQRgRtiWNG2a3a3vcEnlraEHFSkdJ1c/rs:fit:860:0:0/g:ce/aHR0cHM6Ly92Y2Ru/LXNvaG9hLnZuZWNk/bi5uZXQvMjAyMy8w/OC8yMy9uZ29jLWFu/aC05OTY4LTE2OTI3/NzczMjMuanBn"
           />
           <div>
-            <p>Nguyen Huu Huan</p>
-            <p>huan.nh194288</p>
+            <p>{{ user.name || '' }}</p>
+            <p>{{ user.email }}</p>
             <router-link to="/me" class="text-blue-500 cursor-pointer underline"
               >View Profile</router-link
             >
@@ -49,6 +49,9 @@
 import { unref, ref } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import { ClickOutside as vClickOutside } from 'element-plus'
+import { useUserStore } from '@/stores/user';
+
+const { user } = useUserStore()
 
 const actionPopover = [
   { icon: 'Edit', label: 'My Signature', action: '/my-signature' },

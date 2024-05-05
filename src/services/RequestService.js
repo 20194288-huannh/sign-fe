@@ -1,7 +1,7 @@
 import ApiService from './ApiService';
 const RequestService  = {
-    get(id) {
-        return ApiService.get(`requests/${id}`)
+    get(token) {
+        return ApiService.get(`requests`, {token: token})
     }
 }
 export default RequestService

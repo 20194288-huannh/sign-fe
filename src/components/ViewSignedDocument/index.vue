@@ -9,6 +9,7 @@ import { useRoute } from 'vue-router'
 import type { Receiver, Signature, Canvas } from '@/types/send-sign';
 import type { Document } from '@/types/document.interface';
 import { DocumentService } from '@/services/index.js'
+import { info } from 'console';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -30,7 +31,7 @@ const fetchDocument = async (id: Number) => {
 }
 
 const fetchRequest = async () => {
-  const response = await RequestService.get(Number(route.query.request_id))
+  const response = await RequestService.get(route.query.token)
   requestData.value = response.data.data
 }
 

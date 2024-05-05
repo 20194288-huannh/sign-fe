@@ -33,7 +33,7 @@
               type="email"
               autocomplete="email"
               required=""
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full rounded-md border-0 p-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
         </div>
@@ -57,7 +57,7 @@
               type="password"
               autocomplete="current-password"
               required=""
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
         </div>
@@ -97,8 +97,11 @@ const form = ref({
 
 const signIn = async () => {
   try {
-    // const response = await axios.post('http://localhost:8868/api/auth/login', form.value)
     const response = await AuthService.signIn(form.value)
+    const token = response.data.data.access_token
+    const user = response.data.data.user
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify(user))
   } catch (error) {
     console.log(123)
   }

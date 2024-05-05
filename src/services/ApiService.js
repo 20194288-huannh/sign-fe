@@ -1,6 +1,8 @@
 import axios from 'axios'
+import { useUserStore } from '@/stores/user.ts'
 let activeRequests = 0;
 const baseDomain = import.meta.env.VITE_APP_BASE_URL;
+const { user, token } = useUserStore()
 
 const baseURL = `${baseDomain}`;
 const instance = axios.create({
@@ -13,50 +15,43 @@ const instance = axios.create({
         "Accept": "application/json"
     }
 });
-const ApiService = {
-    init() {
-        instance.interceptors.request.use(
-            (request) => {
-                if (activeRequests === 0) {
-                    // userStore().setLoading();
-                }
-                activeRequests++;
-                const accessToken = localStorage.getItem('__TOKEN');
-                if (accessToken) {
-                    request.headers['Authorization'] = `Bearer ${accessToken}`;
-                }
-                return request
-            },
-            (error) => {
-                activeRequests--;
-                const { response } = error;
-                // Do something with request error
-                if (activeRequests === 0) {
-                    // userStore().finishLoading();
-                }
-                return Promise.reject(response)
-            }
-        )
-        instance.interceptors.response.use(
-            (response) => {
-                activeRequests--;
-                // const {config} = response;
-                if (activeRequests === 0) {
-                    // userStore().finishLoading();
-                }
-                return response
-            },
-            (error) => {
-                const { response, config } = error;
-                // check if config errorHandler is on
-                if (config?.globalErrorHandler?.on) {
-                    // service.handleError(response, config.globalErrorHandler.exclude)
-                }
-                // userStore().finishLoading()
-                return Promise.reject(response)
-            }
-        )
+instance.interceptors.request.use(
+    (request) => {
+        if (token) {
+            request.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return request
     },
+    (error) => {
+        activeRequests--;
+        const { response } = error;
+        // Do something with request error
+        if (activeRequests === 0) {
+            // userStore().finishLoading();
+        }
+        return Promise.reject(response)
+    }
+)
+instance.interceptors.response.use(
+    (response) => {
+        activeRequests--;
+        // const {config} = response;
+        if (activeRequests === 0) {
+            // userStore().finishLoading();
+        }
+        return response
+    },
+    (error) => {
+        const { response, config } = error;
+        // check if config errorHandler is on
+        if (config?.globalErrorHandler?.on) {
+            // service.handleError(response, config.globalErrorHandler.exclude)
+        }
+        // userStore().finishLoading()
+        return Promise.reject(response)
+    }
+)
+const ApiService = {
     get(resource, params = {}, config = {}) {
         return instance.get(resource, {
             ...config,
