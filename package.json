@@ -20,6 +20,7 @@
     "@heroicons/vue": "^2.1.1",
     "apexcharts": "^3.49.0",
     "axios": "^1.6.7",
+    "crypto-js": "^4.2.0",
     "element-plus": "^2.5.4",
     "ethers": "^5.7.2",
     "pdf-lib": "^1.17.1",

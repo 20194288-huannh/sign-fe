@@ -29,7 +29,7 @@ import { ref } from 'vue'
 const items = ref<Array<{ label: string; image: string; link: string }>>([
   { label: 'Send for Signature', image: SendSign, link: '/sign/send-sign' },
   { label: 'Sign Your Own', image: SendOwn, link: '/sign/sign-own' },
-  { label: 'In-person Sign', image: InpersonSign, link: '/sign/' }
+  { label: 'In-person Sign', image: InpersonSign, link: '/sign/verify-document' }
 ])
 </script>
 

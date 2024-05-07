@@ -41,6 +41,11 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault' }
     },
     {
+      path: '/sign/verify-document',
+      component: () => import('@/views/Sign/VerifyDocument.vue'),
+      meta: { layout: 'AppLayoutDefault' }
+    },
+    {
       path: '/sign/send-sign',
       component: () => import('@/views/Sign/SendSign.vue'),
       meta: { layout: 'AppLayoutDefault' }

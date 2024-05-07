@@ -73,6 +73,21 @@
               </div>
             </div>
             <div class="flex items-start">
+              <button
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                @click="download"
+              >
+                <svg
+                  class="fill-current w-4 h-4 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
+                </svg>
+                <span>Download</span>
+              </button>
+            </div>
+            <div class="flex items-start">
               <div class="flex items-center h-5">
                 <input
                   id="terms"
@@ -115,24 +130,85 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue"
+import { ref } from 'vue'
 import { AuthService } from '@/services'
+import axios from 'axios'
 
 interface User {
-  email: string,
-  password: string,
-  password_confirmation: string,
+  email: string
+  password: string
+  password_confirmation: string
   wallet_address: string | null
 }
 const form = ref<User>({
   email: '',
   password: '',
   password_confirmation: '',
-  wallet_address: localStorage.getItem('walletAddress'),
+  wallet_address: localStorage.getItem('walletAddress')
 })
 
 const signUp = async () => {
   const response = await AuthService.signUp(form.value)
+}
+
+const download = async () => {
+  // Tạo cặp khóa công khai và khóa riêng tư
+  const { publicKey, privateKey } = await generateKeyPair()
+
+  // Lưu public key vào state của Vue
+  // this.publicKey = publicKey
+
+  // Gửi public key lên blockchain
+  // await this.registerPublicKey(publicKey)
+
+  console.log(publicKey)
+  // const keyPair = await crypto.subtle.generateKey(
+  //   {
+  //     name: 'RSA-OAEP',
+  //     modulusLength: 4096,
+  //     publicExponent: new Uint8Array([1, 0, 1]),
+  //     hash: 'SHA-256'
+  //   },
+  //   true,
+  //   ['encrypt', 'decrypt']
+  // )
+  // const publicKey = await crypto.subtle.exportKey('jwk', keyPair.publicKey)
+
+  // const blob = new Blob([JSON.stringify(publicKey)], { type: 'application/pdf' })
+  // const link = document.createElement('a')
+  // link.href = URL.createObjectURL(blob)
+  // link.download = '123.txt'
+  // link.click()
+  // URL.revokeObjectURL(link.href)
+
+  // const privateKey = await crypto.subtle.exportKey('jwk', keyPair.privateKey)
+}
+
+const generateKeyPair = async () => {
+  // Tạo một cặp khóa mới
+  const { privateKey, publicKey } = await window.crypto.subtle.generateKey(
+    {
+      name: 'RSA-OAEP',
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: { name: 'SHA-256' }
+    },
+    true,
+    ['encrypt', 'decrypt']
+  )
+
+  // Chuyển đổi khóa sang định dạng chuỗi hex
+  const privateKeyHex = JSON.stringify(await crypto.subtle.exportKey('jwk', privateKey))
+  const publicKeyHex = JSON.stringify(await crypto.subtle.exportKey('jwk', publicKey))
+
+  const blob = new Blob([JSON.stringify(privateKeyHex)], { type: 'application/pdf' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = 'private-key.txt'
+  link.click()
+  URL.revokeObjectURL(link.href)
+
+  return { publicKey: publicKeyHex, privateKey: privateKeyHex }
 }
 </script>
 

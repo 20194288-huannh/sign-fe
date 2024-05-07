@@ -83,7 +83,7 @@ const emit = defineEmits(['finish'])
 .navbar-nav {
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .nav-button {
