@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <router-link :to="item.action" v-for="item in actionPopover" :key="item.label">
+          <router-link :to="item.to" v-for="item in actionPopover" :key="item.label" @click="item.action">
             <div
               class="flex items-center gap-2 cursor-pointer hover:bg-purple-400 hover:text-white p-1"
             >
@@ -53,10 +53,14 @@ import { useUserStore } from '@/stores/user'
 
 const { user } = useUserStore()
 
+const logOut = () => {
+  localStorage.removeItem('token')
+}
+
 const actionPopover = [
-  { icon: 'Edit', label: 'My Signature', action: '/my-signature' },
-  { icon: 'Lock', label: 'Change Password', action: '/change-password' },
-  { icon: 'Rank', label: 'Log Out', action: '/log-out' }
+  { icon: 'Edit', label: 'My Signature', to: '/my-signature' },
+  { icon: 'Lock', label: 'Change Password', to: '/change-password' },
+  { icon: 'Rank', label: 'Log Out', to: '/sign-in', action: logOut }
 ]
 const popoverRef = ref()
 const onClickOutside = () => {

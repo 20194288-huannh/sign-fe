@@ -236,7 +236,7 @@
       <div class="flex">
         <button
           class="dropdown button-icon PSPDFKit-Toolbar-Button-Shape-Annotation PSPDFKit-Toolbar-Button-Line-Annotation border-left"
-          title="Line" aria-label="Line" aria-pressed="false" type="button">
+          title="Line" aria-label="Line" aria-pressed="false" type="button" @click="emit('addCalendar')">
           <span class="tool-button-icon PSPDFKit-Icon-Line" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24" fill="#000" width="20" height="20">&gt;<path
                 d="M9,4.5v1H5v22H27V5.5H23v-1H21v1H11v-1Zm-2,3H9v1h2v-1H21v1h2v-1h2v2H7Zm0,4H25v14H7Zm6,2v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Z"
@@ -322,7 +322,7 @@ const pageNum = defineModel('pageNum')
 const signModal = defineModel('signModal')
 const users = defineModel('users')
 const receiverId = defineModel('receiverId')
-const emit = defineEmits(['onNextPage', 'onPrevPage', 'scaleUp', 'scaleDown', 'note'])
+const emit = defineEmits(['onNextPage', 'onPrevPage', 'scaleUp', 'scaleDown', 'note', 'addCalendar'])
 
 const handleCommand = (command: string | number | object) => {
   receiverId.value = command

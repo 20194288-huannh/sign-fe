@@ -165,13 +165,20 @@ const fetchDocuments = async () => {
 const downloadFile = async (file: FileInfo) => {
   const response = await FileService.download(file.id)
 
-  const blob = new Blob([response.data])
-  const url = window.URL.createObjectURL(blob)
+  const blob = new Blob([JSON.stringify(response.data)], { type: 'application/pdf' })
   const link = document.createElement('a')
-  link.href = url
+  link.href = URL.createObjectURL(blob)
   link.download = file.name
   link.click()
-  window.URL.revokeObjectURL(url)
+  URL.revokeObjectURL(link.href)
+
+  // const blob = new Blob([response.data])
+  // const url = window.URL.createObjectURL(blob)
+  // const link = document.createElement('a')
+  // link.href = url
+  // link.download = file.name
+  // link.click()
+  // window.URL.revokeObjectURL(url)
 }
 
 onMounted(() => {

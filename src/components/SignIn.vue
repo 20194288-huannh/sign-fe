@@ -88,12 +88,14 @@
 <script setup>
 import { ref } from 'vue'
 import { AuthService } from '@/services'
-import axios from 'axios'
+import { useRouter } from 'vue-router';
 
 const form = ref({
   email: '',
   password: ''
 })
+
+const router = useRouter()
 
 const signIn = async () => {
   try {
@@ -102,6 +104,7 @@ const signIn = async () => {
     const user = response.data.data.user
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(user))
+    router.push({ name: 'Home' })
   } catch (error) {
     console.log(123)
   }
