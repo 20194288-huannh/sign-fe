@@ -39,6 +39,22 @@
               </div>
             </div>
             <div>
+              <label for="name" class="block text-sm font-medium leading-6 text-gray-900"
+                >Name</label
+              >
+              <div class="mt-2">
+                <input
+                  id="name"
+                  name="name"
+                  type="name"
+                  v-model="form.name"
+                  autocomplete="name"
+                  required=""
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
               <label for="password" class="block text-sm font-medium leading-6 text-gray-900"
                 >Password</label
               >
@@ -130,58 +146,67 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { AuthService } from '@/services'
 import axios from 'axios'
+import { ethers } from 'ethers'
+import UserRegistry from '@/contracts/artifacts/contracts/UserRegistry.sol/UserRegistry.json'
 
 interface User {
   email: string
+  name: string
   password: string
   password_confirmation: string
   wallet_address: string | null
+  publicKey: string
 }
 const form = ref<User>({
   email: '',
+  name: '',
   password: '',
   password_confirmation: '',
-  wallet_address: localStorage.getItem('walletAddress')
+  wallet_address: localStorage.getItem('walletAddress'),
+  publicKey: ''
 })
 
+const privateKeyRef = ref<string>('')
+const userRegistryContractAddress = import.meta.env.VITE_USER_REGISTRY_CONTRACT || ''
+
 const signUp = async () => {
-  const response = await AuthService.signUp(form.value)
+  if (typeof window.ethereum !== 'undefined') {
+    //@ts-expect-error Window.ethers not TS
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    // Contract reference
+    const userRegistryContract = new ethers.Contract(
+      userRegistryContractAddress,
+      UserRegistry.abi,
+      provider
+    )
+    const userRegistryContractWithSigner = userRegistryContract.connect(signer)
+    try {
+      // Chuyển đổi chuỗi publicKey thành mảng bytes
+      const publicKeyBytes = ethers.utils.toUtf8Bytes(form.value.publicKey)
+      // Gọi hàm updateUser
+      const tx = await userRegistryContractWithSigner.updateUser(publicKeyBytes, form.value.email)
+      const response = await AuthService.signUp(form.value)
+      const user = response.data.data
+    } catch (error) {
+      console.error(error)
+    }
+  }
 }
 
 const download = async () => {
   // Tạo cặp khóa công khai và khóa riêng tư
-  const { publicKey, privateKey } = await generateKeyPair()
+  await generateKeyPair()
 
-  // Lưu public key vào state của Vue
-  // this.publicKey = publicKey
-
-  // Gửi public key lên blockchain
-  // await this.registerPublicKey(publicKey)
-
-  console.log(publicKey)
-  // const keyPair = await crypto.subtle.generateKey(
-  //   {
-  //     name: 'RSA-OAEP',
-  //     modulusLength: 4096,
-  //     publicExponent: new Uint8Array([1, 0, 1]),
-  //     hash: 'SHA-256'
-  //   },
-  //   true,
-  //   ['encrypt', 'decrypt']
-  // )
-  // const publicKey = await crypto.subtle.exportKey('jwk', keyPair.publicKey)
-
-  // const blob = new Blob([JSON.stringify(publicKey)], { type: 'application/pdf' })
-  // const link = document.createElement('a')
-  // link.href = URL.createObjectURL(blob)
-  // link.download = '123.txt'
-  // link.click()
-  // URL.revokeObjectURL(link.href)
-
-  // const privateKey = await crypto.subtle.exportKey('jwk', keyPair.privateKey)
+  const blob = new Blob([JSON.stringify(privateKeyRef.value)], { type: 'application/pdf' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = 'private-key.txt'
+  link.click()
+  URL.revokeObjectURL(link.href)
 }
 
 const generateKeyPair = async () => {
@@ -198,17 +223,8 @@ const generateKeyPair = async () => {
   )
 
   // Chuyển đổi khóa sang định dạng chuỗi hex
-  const privateKeyHex = JSON.stringify(await crypto.subtle.exportKey('jwk', privateKey))
-  const publicKeyHex = JSON.stringify(await crypto.subtle.exportKey('jwk', publicKey))
-
-  const blob = new Blob([JSON.stringify(privateKeyHex)], { type: 'application/pdf' })
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-  link.download = 'private-key.txt'
-  link.click()
-  URL.revokeObjectURL(link.href)
-
-  return { publicKey: publicKeyHex, privateKey: privateKeyHex }
+  privateKeyRef.value = JSON.stringify(await crypto.subtle.exportKey('jwk', privateKey))
+  form.value.publicKey = JSON.stringify(await crypto.subtle.exportKey('jwk', publicKey))
 }
 </script>
 

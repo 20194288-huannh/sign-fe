@@ -133,7 +133,7 @@ import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
 import { DocumentService } from '@/services'
 import { ethers } from 'ethers'
-import DocumentAbi from '@/contracts/artifacts/contracts/Document.sol/Document.json'
+import DocumentRegistryAbi from '@/contracts/artifacts/contracts/DocumentRegistry.sol/DocumentRegistry.json'
 import { useSendSignStore } from '@/stores/send-sign'
 import { SEND_SIGN_STEP } from '@/constants/send-sign'
 import { ElNotification } from 'element-plus'
@@ -191,25 +191,51 @@ const clearFile = () => {
   changeStep(SEND_SIGN_STEP.FIRST_STEP)
 }
 
+function iKey() {
+  let privateKey = `{\"alg\":\"RSA-OAEP-256\",\"d\":\"AtIeqjm8IfCoEpgDcpeR4kwQU_073oLAW1jY6w4r_cvo958HTZSdJ82Xn_STPfrxXfe1XYtY1T_usUHI22He-ANlcBHDACr6iPjbkRDEQEPMvPjvYzQu88crawsTW_dhQxWT9jgsRRNzdx3dQsQgfXt4c12jCn4ZrrLmK7E7_ByHtHC4WbhR1mPf3rtS_1kSZX37PO0ioOqLpRk8kThykWnsMSoMVjnc73tfcuUPIxTJZ6M_powMLDXTQawKngBQ4RNIOELrdBGMgPbn7Ts7N4Rs0G4HxU4PHgmDJ8BxMxE1UCAN5a_9ZNMxLpWH4EH8XXpNcmIk0hRB9y7I1KslhQ\",\"dp\":\"QADjuGy6oCoOAo6DaqBefvswj0GsSUmUBaIByouALVMSdliMoGvjaCsQJ_e7fMtTTemg_4D1k_lIYC0R2xd6dFlrQK8UAS4vBZCRvLkFBs6jkV4gGwu299ADUgCES-J7WwFIPUrxMrwd_drgUlMaALvD91J5-HG-CMnY8XtAjLM\",\"dq\":\"SwtbW3bOCsTsFaaRNODp4Rk__H6BaRFQh_Y0XhF4nfYQf5LsDYapr4MQr3JHhAIc4rZ32lgYuZfGaI9FAmaPmMwOwmwZh4PvZI0No4nRyCskjCKqoq_t8nNZR02yLvxmK7Vzm9fACjXgxHOw6U1hP308rREs2qvLKT6uiJ_1JN8\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"decrypt\"],\"kty\":\"RSA\",\"n\":\"wF4qLnVOf4tTLhu3K7FGjsVLZvnV16yVvKhtufawV1lxn5DlQcan767dg-p5nxVnVcwkkAo5Ko9NTaV1QXWSN4GV1bJ_2RoG6bpZfH4WHmHEAHIcRjZijcBinuZEeSM5ZbfSIIkN6yW0fyfK4920Pcq0TUazlK7MRFm9Bwi0cAcDO5DwZWx-hCWtMXAF4gf7j-RYeGSmaBlVbYsF24ZtNZCYFaav7Q0zaE2qOTdvkuPUmBZGEjIJw8snCmB_Mn93ebWmv9GhskQErHglo241lF3r_ib1TviAZ84AqxkSEwUpQVV1g_xu9D068I4QBR3jm3bePnxD6r8lf9WkJDgnyQ\",\"p\":\"3_ZtnPaRv01MbgMrttet3rLqj1wiUkiLMM-laWqjkfwIfnLicq_bwGR_DOpT58NQBPz23wRZBeAoJqy3p3IIAelw-QUUmihTRBPyWVk9OC_taSYPWitpa3ZtS29czUlLZyN8tPYt0BiBDxafv4fiazayov2uKi1w7IVD_gjNk2M\",\"q\":\"2-K6KG1YEVbkXadsEqhNZOeH18lQCHR8raK5No779AkvOy19x2wGQE8c84wF4uDpuaYjDiJwqlBS9dgegn7z5ROOH5lnD8zNs_BSafSjavH8z1Yiva4gavYBShMVydjNGngOBiZ6a36b77T6tk5idqv7ILKpjQbO4GuVpB8m3eM\",\"qi\":\"S_cMUnLqTVNzsHJlgIcl3KnQwU8GOMjp0t1wn2WPE01zBSLsI4QVRwx3jDC5QB_PW1SIt4hAM1Wx97tRF90yf5itGTP_yXWCMzT03SFZDzXduddokKu_zqSmaMNcJ5n1W5SiO3Pqh9b6WEMwFmlYT5qHy2gaaxgHPXc-WYJRJ88\"}`
+  privateKey = JSON.parse(privateKey)
+  console.log(privateKey)
+  return window.crypto.subtle.importKey(
+    'spki',
+    privateKey,
+    {
+      name: 'RSA-OAEP',
+      hash: 'SHA-256'
+    },
+    true,
+    ['encrypt']
+  )
+}
+
 const signOwn = async () => {
-  // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
-  if (typeof window.ethereum !== 'undefined') {
-    //@ts-expect-error Window.ethers not TS
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner();
-    // Contract reference
-    const contract = new ethers.Contract(contractAddress, DocumentAbi.abi, signer)
-    try {
-      // call contract public method
-      const fileContent = await readFile(files.value[0] as File);
-      const fileBytes = Array.from(new Uint8Array(fileContent as ArrayBuffer));
-      const fileHash = ethers.utils.keccak256(fileBytes);
-      const data = await contract.createDoc(fileHash, 'gundamakp01@gmail.com', ethers.constants.HashZero);
-      console.log(11111111);
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  let e_key = await iKey()
+  let signature = await window.crypto.subtle.sign(
+    {
+      name: 'RSA-OAEP',
+      hash: { name: 'SHA-256' }
+    },
+    e_key,
+    pdf.value
+  )
+  console.log(signature)
+  // // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
+  // if (typeof window.ethereum !== 'undefined') {
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum)
+  //   const signer = provider.getSigner()
+  //   // Contract reference
+  //   const documentRegistryContract = new ethers.Contract(
+  //     contractAddress,
+  //     DocumentRegistryAbi.abi,
+  //     provider
+  //   )
+  //   const documentRegistryContractWithSigner = documentRegistryContract.connect(signer)
+  //   try {
+  //     // call contract public method
+  //     // documentRegistryContractWithSigner.uploadDocument('filename')
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 }
 
 const getPdf = async () => {
