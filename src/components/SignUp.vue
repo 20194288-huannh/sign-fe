@@ -34,7 +34,7 @@
                   v-model="form.email"
                   autocomplete="email"
                   required=""
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -66,7 +66,7 @@
                   v-model="form.password"
                   autocomplete="current-password"
                   required=""
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -84,7 +84,7 @@
                   autocomplete="current-password"
                   required=""
                   v-model="form.password_confirmation"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -201,7 +201,9 @@ const download = async () => {
   // Tạo cặp khóa công khai và khóa riêng tư
   await generateKeyPair()
 
-  const blob = new Blob([JSON.stringify(privateKeyRef.value)], { type: 'application/pdf' })
+  const pemExported = `-----BEGIN PRIVATE KEY-----\n${privateKeyRef.value}\n-----END PRIVATE KEY-----`
+  console.log(1)
+  const blob = new Blob([pemExported], { type: 'application/pdf' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
   link.download = 'private-key.txt'
@@ -213,18 +215,32 @@ const generateKeyPair = async () => {
   // Tạo một cặp khóa mới
   const { privateKey, publicKey } = await window.crypto.subtle.generateKey(
     {
-      name: 'RSA-OAEP',
+      name: "RSA-PSS",
+      // Consider using a 4096-bit key for systems that require long-term security
       modulusLength: 2048,
       publicExponent: new Uint8Array([1, 0, 1]),
-      hash: { name: 'SHA-256' }
+      hash: "SHA-256",
     },
     true,
-    ['encrypt', 'decrypt']
+    ["sign", "verify"],
   )
 
   // Chuyển đổi khóa sang định dạng chuỗi hex
-  privateKeyRef.value = JSON.stringify(await crypto.subtle.exportKey('jwk', privateKey))
-  form.value.publicKey = JSON.stringify(await crypto.subtle.exportKey('jwk', publicKey))
+  let exported = await crypto.subtle.exportKey('pkcs8', privateKey)
+  privateKeyRef.value = await keyToString(exported)
+  exported = await crypto.subtle.exportKey('spki', publicKey)
+  form.value.publicKey = await keyToString(exported)
+}
+
+const keyToString = async (exported: any): Promise<string> => {
+  // const exported = await crypto.subtle.exportKey('spki', key)
+  // console.log(exported)
+  const exportedAsString = ab2str(exported);
+  return window.btoa(exportedAsString)
+} 
+
+const ab2str = (buf: any) => {
+  return String.fromCharCode.apply(null, new Uint8Array(buf));
 }
 </script>
 
