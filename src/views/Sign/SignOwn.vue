@@ -7,35 +7,21 @@
         <nav class="flex" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
-              <a
-                href="#"
-                class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
-              >
+              <a href="#"
+                class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
                 Start Sign
               </a>
             </li>
             <li>
               <div class="flex items-center">
-                <svg
-                  class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 6 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 9 4-4-4-4"
-                  />
+                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 9 4-4-4-4" />
                 </svg>
-                <a
-                  href="#"
-                  class="ms-1 text-xs font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
-                  >Sign Your Own</a
-                >
+                <a href="#"
+                  class="ms-1 text-xs font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Sign
+                  Your Own</a>
               </div>
             </li>
           </ol>
@@ -49,39 +35,33 @@
             <div class="w-16 relative flex justify-center custom-step">
               <div
                 class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-                @click="scrollToView(SEND_SIGN_STEP.FIRST_STEP)"
-              >
+                @click="scrollToView(SEND_SIGN_STEP.FIRST_STEP)">
                 {{ SEND_SIGN_STEP.FIRST_STEP }}
               </div>
             </div>
             <div class="w-full pb-5">
-              <StepCard
-                :step="SEND_SIGN_STEP.FIRST_STEP"
-                title="Add file"
-                sub-title="What do you want to upload?"
-                @some-event="clickAddFile()"
-              >
+              <StepCard :step="SEND_SIGN_STEP.FIRST_STEP" title="Add file" sub-title="What do you want to upload?"
+                @some-event="clickAddFile()">
                 <template #header-icon>
-                  <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
+                  <el-icon color="#00b3b3" size="30" class="mr-5">
+                    <UploadFilled />
+                  </el-icon>
                 </template>
                 <template #main>
                   <AddFile :files="files" @load-file="loadFile" />
                 </template>
                 <template #pdfViewer>
                   <div class="relative w-full" @mouseleave="checkMouseMove = false">
-                    <div
-                      @mousemove="checkMouseMove = true"
-                      id="page-container-small"
-                      class="absolute right-[-160px] m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-240px]"
-                    >
+                    <div @mousemove="checkMouseMove = true" id="page-container-small"
+                      class="absolute right-[-160px] m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-240px]">
                       <div id="viewer" class="pdfViewer"></div>
                     </div>
                     <div
                       class="absolute top-[-170px] right-[30px] w-6 h-6 flex items-center justify-center z-50 bg-gray-200"
-                      v-show="files.length > 0 && checkMouseMove"
-                      @click="clearFile"
-                    >
-                      <el-icon><Close /></el-icon>
+                      v-show="files.length > 0 && checkMouseMove" @click="clearFile">
+                      <el-icon>
+                        <Close />
+                      </el-icon>
                     </div>
                   </div>
                 </template>
@@ -96,24 +76,15 @@
             <div class="w-16 relative flex justify-center custom-step">
               <div
                 class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-                @click="scrollToView(SEND_SIGN_STEP.SECOND_STEP)"
-              >
+                @click="scrollToView(SEND_SIGN_STEP.SECOND_STEP)">
                 {{ SEND_SIGN_STEP.SECOND_STEP }}
               </div>
             </div>
             <div class="w-full pb-5">
-              <StepCard
-                :step="SEND_SIGN_STEP.SECOND_STEP"
-                title="Send"
-                sub-title="What do you want to convey to the recipients?"
-                @some-event="signOwn"
-              >
+              <StepCard :step="SEND_SIGN_STEP.SECOND_STEP" title="Send"
+                sub-title="What do you want to convey to the recipients?" @some-event="signOwn">
                 <template #pdfViewer>
-                  <PrepareDocument
-                    :pdf="pdf"
-                    v-model:signatures="form.signatures"
-                    :canvas="form.canvas"
-                  />
+                  <PrepareDocument :pdf="pdf" v-model:signatures="form.signatures" :canvas="form.canvas" />
                 </template>
               </StepCard>
             </div>
@@ -141,9 +112,12 @@ import { ENotificationType } from '@/types/notification'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import type { Document } from '@/types/document.interface'
 import type { SignOwn } from '@/types/send-sign.ts'
+import { useKeyStore } from '@/stores/key.ts'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
+
+const { key, importPrivateKey, importPublicKey, compareArrayBuffers, importVerifyKey, importSignKey } = useKeyStore()
 
 const refElement = ref()
 const files = ref<File[]>([])
@@ -191,33 +165,42 @@ const clearFile = () => {
   changeStep(SEND_SIGN_STEP.FIRST_STEP)
 }
 
-function iKey() {
-  let privateKey = `{\"alg\":\"RSA-OAEP-256\",\"d\":\"AtIeqjm8IfCoEpgDcpeR4kwQU_073oLAW1jY6w4r_cvo958HTZSdJ82Xn_STPfrxXfe1XYtY1T_usUHI22He-ANlcBHDACr6iPjbkRDEQEPMvPjvYzQu88crawsTW_dhQxWT9jgsRRNzdx3dQsQgfXt4c12jCn4ZrrLmK7E7_ByHtHC4WbhR1mPf3rtS_1kSZX37PO0ioOqLpRk8kThykWnsMSoMVjnc73tfcuUPIxTJZ6M_powMLDXTQawKngBQ4RNIOELrdBGMgPbn7Ts7N4Rs0G4HxU4PHgmDJ8BxMxE1UCAN5a_9ZNMxLpWH4EH8XXpNcmIk0hRB9y7I1KslhQ\",\"dp\":\"QADjuGy6oCoOAo6DaqBefvswj0GsSUmUBaIByouALVMSdliMoGvjaCsQJ_e7fMtTTemg_4D1k_lIYC0R2xd6dFlrQK8UAS4vBZCRvLkFBs6jkV4gGwu299ADUgCES-J7WwFIPUrxMrwd_drgUlMaALvD91J5-HG-CMnY8XtAjLM\",\"dq\":\"SwtbW3bOCsTsFaaRNODp4Rk__H6BaRFQh_Y0XhF4nfYQf5LsDYapr4MQr3JHhAIc4rZ32lgYuZfGaI9FAmaPmMwOwmwZh4PvZI0No4nRyCskjCKqoq_t8nNZR02yLvxmK7Vzm9fACjXgxHOw6U1hP308rREs2qvLKT6uiJ_1JN8\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"decrypt\"],\"kty\":\"RSA\",\"n\":\"wF4qLnVOf4tTLhu3K7FGjsVLZvnV16yVvKhtufawV1lxn5DlQcan767dg-p5nxVnVcwkkAo5Ko9NTaV1QXWSN4GV1bJ_2RoG6bpZfH4WHmHEAHIcRjZijcBinuZEeSM5ZbfSIIkN6yW0fyfK4920Pcq0TUazlK7MRFm9Bwi0cAcDO5DwZWx-hCWtMXAF4gf7j-RYeGSmaBlVbYsF24ZtNZCYFaav7Q0zaE2qOTdvkuPUmBZGEjIJw8snCmB_Mn93ebWmv9GhskQErHglo241lF3r_ib1TviAZ84AqxkSEwUpQVV1g_xu9D068I4QBR3jm3bePnxD6r8lf9WkJDgnyQ\",\"p\":\"3_ZtnPaRv01MbgMrttet3rLqj1wiUkiLMM-laWqjkfwIfnLicq_bwGR_DOpT58NQBPz23wRZBeAoJqy3p3IIAelw-QUUmihTRBPyWVk9OC_taSYPWitpa3ZtS29czUlLZyN8tPYt0BiBDxafv4fiazayov2uKi1w7IVD_gjNk2M\",\"q\":\"2-K6KG1YEVbkXadsEqhNZOeH18lQCHR8raK5No779AkvOy19x2wGQE8c84wF4uDpuaYjDiJwqlBS9dgegn7z5ROOH5lnD8zNs_BSafSjavH8z1Yiva4gavYBShMVydjNGngOBiZ6a36b77T6tk5idqv7ILKpjQbO4GuVpB8m3eM\",\"qi\":\"S_cMUnLqTVNzsHJlgIcl3KnQwU8GOMjp0t1wn2WPE01zBSLsI4QVRwx3jDC5QB_PW1SIt4hAM1Wx97tRF90yf5itGTP_yXWCMzT03SFZDzXduddokKu_zqSmaMNcJ5n1W5SiO3Pqh9b6WEMwFmlYT5qHy2gaaxgHPXc-WYJRJ88\"}`
-  privateKey = JSON.parse(privateKey)
-  console.log(privateKey)
-  return window.crypto.subtle.importKey(
-    'spki',
-    privateKey,
-    {
-      name: 'RSA-OAEP',
-      hash: 'SHA-256'
-    },
-    true,
-    ['encrypt']
-  )
-}
+let privateK = `-----BEGIN PRIVATE KEY-----
+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
+-----END PRIVATE KEY-----`
 
+let publicK = `MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnYKMaYl4tUnmKeQG+DVX0TZLKCplKvCpP0NLvYMTBlrPnEmPfOM9mXGH5wBlSxNe4j72B+p4Ugx1ICef9/hVJMTszfqgehJE4VPSoJWmo4PncxKV5v5KZrpMBFJWIGjppdrHMetE1gCAD43t+Tu3xp7IcjnXyQQMIsSI1TAWRuylLEjyYIq82d0LBZu2lOyPOxppNiks5IaqOxP42gvoROcV8gQ0irYVZgEz5b6m9rCpqyw3A5gp/WWY9XmTUa0gyJX+tctceGwd6mxE9ZLchSUhigp2GADz0CNeg4f4HBuP9qDB7PqZ0yiZuoJU9K3neX9yaO4sk/6SqsE+xA22U3/oyBOcWedVygOQNVXfp1VWC3SUCW9ipO5RORDNveqChpwmHtQxF7bbx0lwpTdDCXfE5A2GqrrE5zXc4yiEhZeB5Q4ihY1XJ+IN4ueDc4KajyvsZyYmimCbKGSX5r4oG0tJz3oXUx+XSncBz4lw83vlxhliauue8ZGsGL10u6HbuYQ2uTiPcLhDgnykQdP8cn8Qt8t/Uk31LsZmGwXnV//1Vwx3PPQqRmHzA/wxkMRDJMMDPfF+TdJ+NWSwzZgO7lEYPin3MEGV5bzttURk5+2AJZF13lOST+lUeCUN3IOtJAWycguLBYH1jGaqTBOE5OBGs7NpHH081VoEpMVL2DkCAwEAAQ==`
+let signK = `-----BEGIN PRIVATE KEY-----
+MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDDtM5TgZMvibyzU/m7j8kFD9RtrER2OlWvIyUumVnmDnrSddIHtOXkY4w8yuj+8gU2hZANiAAQZ4DD3S/WS+OGSNhdWhK8d6aE6bkBpmgIF/VMM4PFflTOkVqDnGd71CeqUlMebYi1nHVcqe+OZCUE24bVsFX4QX+re2awMSLva2uKk5rzfv+s/MluPfpTr2zbJRQnVC2U=
+-----END PRIVATE KEY-----`
+let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEGeAw90v1kvjhkjYXVoSvHemhOm5AaZoCBf1TDODxX5UzpFag5xne9QnqlJTHm2ItZx1XKnvjmQlBNuG1bBV+EF/q3tmsDEi72tripOa837/rPzJbj36U69s2yUUJ1Qtl`
+
+function getMessageEncoding(message: string) {
+  let enc = new TextEncoder();
+  return enc.encode(message);
+}
 const signOwn = async () => {
-  let e_key = await iKey()
+  let signKey = await importSignKey(signK)
+  let verifyKey = await importVerifyKey(verifyK)
+  let encoded = getMessageEncoding('123')
   let signature = await window.crypto.subtle.sign(
     {
-      name: 'RSA-OAEP',
-      hash: { name: 'SHA-256' }
+      name: "ECDSA",
+      hash: { name: "SHA-384" },
     },
-    e_key,
-    pdf.value
-  )
-  console.log(signature)
+    signKey,
+    encoded,
+  );
+  let result = await window.crypto.subtle.verify(
+    {
+      name: "ECDSA",
+      hash: { name: "SHA-384" },
+    },
+    verifyKey,
+    signature,
+    encoded,
+  );
+  console.log(result)
   // // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
   // if (typeof window.ethereum !== 'undefined') {
   //   const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -237,7 +220,45 @@ const signOwn = async () => {
   //   }
   // }
 }
-
+// const signOwn = async () => {
+//   let privateKey = await importPrivateKey(privateK)
+//   let publicKey = await importPublicKey(publicK)
+//   let encoded = getMessageEncoding('123')
+//   let encrypt = await window.crypto.subtle.encrypt(
+//     {
+//       name: "RSA-OAEP",
+//     },
+//     privateKey,
+//     encoded,
+//   );
+//   let result = await window.crypto.subtle.decrypt(
+//     {
+//       name: "RSA-OAEP",
+//     },
+//     publicKey,
+//     encrypt,
+//   );
+//   let a = compareArrayBuffers(result, encoded.buffer)
+//   // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
+//   if (typeof window.ethereum !== 'undefined') {
+//     const provider = new ethers.providers.Web3Provider(window.ethereum)
+//     const signer = provider.getSigner()
+//     // Contract reference
+//     const documentRegistryContract = new ethers.Contract(
+//       contractAddress,
+//       DocumentRegistryAbi.abi,
+//       provider
+//     )
+//     const documentRegistryContractWithSigner = documentRegistryContract.connect(signer)
+//     try {
+//       // call contract public method
+//       // documentRegistryContractWithSigner.uploadDocument('filename')
+//     } catch (error) {
+//       console.error(error)
+//     }
+//   }
+// }
+signOwn()
 const getPdf = async () => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')

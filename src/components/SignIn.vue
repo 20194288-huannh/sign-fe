@@ -89,6 +89,8 @@
 import { ref } from 'vue'
 import { AuthService } from '@/services'
 import { useRouter } from 'vue-router';
+import { ElNotification } from 'element-plus'
+import { ENotificationType } from '@/types/notification'
 
 const form = ref({
   email: '',
@@ -106,7 +108,11 @@ const signIn = async () => {
     localStorage.setItem('user', JSON.stringify(user))
     router.push({ name: 'Home' })
   } catch (error) {
-    console.log(123)
+    ElNotification({
+      type: ENotificationType.ERROR,
+      title: 'Error',
+      message: error.data.errors ?? 'Error'
+    })
   }
 }
 </script>
