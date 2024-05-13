@@ -47,7 +47,7 @@
         :step="1"
         title="Add file"
         sub-title="What do you want to upload?"
-        @some-event="clickAddFile()"
+        @some-event="verify()"
       >
         <template #header-icon>
           <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
@@ -89,10 +89,33 @@ import StepCard from '../StepCard.vue'
 import { ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import { ENotificationType } from '@/types/notification'
+import AddFile from '../MainStep/AddFile.vue'
+import pdfjsLib from 'pdfjs-dist/build/pdf'
+import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
+import { useKeyStore } from '@/stores/key'
+import { useFileStore } from '@/stores/file'
+import { Buffer } from 'buffer'
 
 const files = ref<Array<File>>([])
+const checkMouseMove = ref<boolean>(false)
+const pdf = ref()
+const { importVerifyKey } = useKeyStore()
+const { bytesToArrayBuffer } = useFileStore()
+const verifyKey = ref<CryptoKey>()
 
-const clickAddFile = async () => {
+let signature = [
+  47, 168, 131, 171, 39, 29, 232, 116, 2, 255, 230, 138, 228, 65, 91, 249, 40, 175, 110, 155, 204,
+  36, 124, 177, 30, 252, 86, 199, 54, 121, 80, 51, 116, 255, 57, 221, 88, 185, 112, 25, 25, 60, 226,
+  214, 89, 142, 70, 184, 216, 226, 232, 133, 71, 245, 88, 227, 203, 83, 130, 135, 55, 154, 186, 56,
+  129, 195, 55, 137, 43, 144, 146, 169, 227, 45, 134, 237, 223, 239, 206, 33, 170, 111, 3, 253, 39,
+  180, 136, 37, 175, 254, 85, 79, 25, 63, 174, 12
+]
+let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEGeAw90v1kvjhkjYXVoSvHemhOm5AaZoCBf1TDODxX5UzpFag5xne9QnqlJTHm2ItZx1XKnvjmQlBNuG1bBV+EF/q3tmsDEi72tripOa837/rPzJbj36U69s2yUUJ1Qtl`
+const getKey = async () => {
+  verifyKey.value = await importVerifyKey(verifyK)
+}
+
+const verify = async () => {
   if (files.value.length < 1) {
     ElNotification({
       type: ENotificationType.ERROR,
@@ -101,6 +124,47 @@ const clickAddFile = async () => {
     })
     return
   }
+  await getKey()
+  const file = files.value[0]
+  const reader = new FileReader()
+
+  reader.onload = async () => {
+    const buffer = reader.result
+    // Now you have the file content in buffer variable, which you can use as a BufferSource
+    // You can pass this buffer to any function or API that accepts BufferSource
+    const signatureBuff = bytesToArrayBuffer(signature)
+    let result = await window.crypto.subtle.verify(
+      {
+        name: 'ECDSA',
+        hash: { name: 'SHA-384' }
+      },
+      verifyKey.value as CryptoKey,
+      signatureBuff,
+      buffer as BufferSource
+    )
+    console.log(result)
+  }
+
+  reader.readAsArrayBuffer(file)
+}
+
+const clearFile = () => {
+  files.value = []
+}
+
+const loadFile = (file: any) => {
+  files.value = [file]
+}
+
+const getPdf = async (id: number) => {
+  let containerSmall = document.getElementById('page-container-small')
+  let pdfViewerSmall = new PDFViewer({
+    container: containerSmall
+  })
+  let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
+  pdf.value = await loadingTask.promise
+
+  pdfViewerSmall.setDocument(pdf.value)
 }
 </script>
 

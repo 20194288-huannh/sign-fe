@@ -8,30 +8,40 @@ pragma solidity ^0.8.0;
 contract DocumentRegistry {
   struct Document {
     address uploader;
-    string fileName;
-    string hash;
+    bytes32 originalHash;
+    bytes32 hashByPrivateKey;
     uint256 timestamp;
   }
 
-  mapping(string => Document) private documents;
+  mapping(bytes32 => Document) public documents;
 
-  event DocumentUploaded(address indexed uploader, string fileName, string hash, uint256 timestamp);
+  event DocumentUploaded(
+    address indexed uploader,
+    bytes32 originalHash,
+    bytes32 hashByPrivateKey,
+    uint256 timestamp
+  );
 
-  function uploadDocument(string memory _fileName, string memory _hash) public {
-    require(bytes(documents[_hash].hash).length == 0, 'Document already exists');
+  function uploadDocument(bytes32 _originalHash, bytes32 _hashByPrivateKey) public {
+    require(documents[_originalHash].uploader == address(0), 'Document already exists');
 
-    Document memory newDocument = Document(msg.sender, _fileName, _hash, block.timestamp);
-    documents[_hash] = newDocument;
+    Document memory newDocument = Document(
+      msg.sender,
+      _originalHash,
+      _hashByPrivateKey,
+      block.timestamp
+    );
+    documents[_originalHash] = newDocument;
 
-    emit DocumentUploaded(msg.sender, _fileName, _hash, block.timestamp);
+    emit DocumentUploaded(msg.sender, _originalHash, _hashByPrivateKey, block.timestamp);
   }
 
-  function verifyDocument(
-    string memory _hash
-  ) public view returns (address, string memory, uint256) {
-    require(bytes(documents[_hash].hash).length != 0, 'Document does not exist');
+  function getDocument(
+    bytes32 _originalHash
+  ) public view returns (address, bytes32, bytes32, uint256) {
+    require(documents[_originalHash].uploader != address(0), 'Document does not exist');
 
-    Document memory document = documents[_hash];
-    return (document.uploader, document.fileName, document.timestamp);
+    Document memory doc = documents[_originalHash];
+    return (doc.uploader, doc.originalHash, doc.hashByPrivateKey, doc.timestamp);
   }
 }

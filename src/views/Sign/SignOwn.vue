@@ -7,21 +7,35 @@
         <nav class="flex" aria-label="Breadcrumb">
           <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">
-              <a href="#"
-                class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+              <a
+                href="#"
+                class="inline-flex items-center text-xs font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+              >
                 Start Sign
               </a>
             </li>
             <li>
               <div class="flex items-center">
-                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 9 4-4-4-4" />
+                <svg
+                  class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 6 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 9 4-4-4-4"
+                  />
                 </svg>
-                <a href="#"
-                  class="ms-1 text-xs font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">Sign
-                  Your Own</a>
+                <a
+                  href="#"
+                  class="ms-1 text-xs font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
+                  >Sign Your Own</a
+                >
               </div>
             </li>
           </ol>
@@ -35,13 +49,18 @@
             <div class="w-16 relative flex justify-center custom-step">
               <div
                 class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-                @click="scrollToView(SEND_SIGN_STEP.FIRST_STEP)">
+                @click="scrollToView(SEND_SIGN_STEP.FIRST_STEP)"
+              >
                 {{ SEND_SIGN_STEP.FIRST_STEP }}
               </div>
             </div>
             <div class="w-full pb-5">
-              <StepCard :step="SEND_SIGN_STEP.FIRST_STEP" title="Add file" sub-title="What do you want to upload?"
-                @some-event="clickAddFile()">
+              <StepCard
+                :step="SEND_SIGN_STEP.FIRST_STEP"
+                title="Add file"
+                sub-title="What do you want to upload?"
+                @some-event="clickAddFile()"
+              >
                 <template #header-icon>
                   <el-icon color="#00b3b3" size="30" class="mr-5">
                     <UploadFilled />
@@ -52,13 +71,18 @@
                 </template>
                 <template #pdfViewer>
                   <div class="relative w-full" @mouseleave="checkMouseMove = false">
-                    <div @mousemove="checkMouseMove = true" id="page-container-small"
-                      class="absolute right-[-160px] m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-240px]">
+                    <div
+                      @mousemove="checkMouseMove = true"
+                      id="page-container-small"
+                      class="absolute right-[-160px] m-auto overflow-auto scale-[0.5] h-80 z-50 top-[-240px]"
+                    >
                       <div id="viewer" class="pdfViewer"></div>
                     </div>
                     <div
                       class="absolute top-[-170px] right-[30px] w-6 h-6 flex items-center justify-center z-50 bg-gray-200"
-                      v-show="files.length > 0 && checkMouseMove" @click="clearFile">
+                      v-show="files.length > 0 && checkMouseMove"
+                      @click="clearFile"
+                    >
                       <el-icon>
                         <Close />
                       </el-icon>
@@ -76,15 +100,24 @@
             <div class="w-16 relative flex justify-center custom-step">
               <div
                 class="flex justify-center rounded-full items-center h-12 w-12 border-sky-600 border-2 cursor-pointer text-sky-600"
-                @click="scrollToView(SEND_SIGN_STEP.SECOND_STEP)">
+                @click="scrollToView(SEND_SIGN_STEP.SECOND_STEP)"
+              >
                 {{ SEND_SIGN_STEP.SECOND_STEP }}
               </div>
             </div>
             <div class="w-full pb-5">
-              <StepCard :step="SEND_SIGN_STEP.SECOND_STEP" title="Send"
-                sub-title="What do you want to convey to the recipients?" @some-event="signOwn">
+              <StepCard
+                :step="SEND_SIGN_STEP.SECOND_STEP"
+                title="Send"
+                sub-title="What do you want to convey to the recipients?"
+                @some-event="signOwn"
+              >
                 <template #pdfViewer>
-                  <PrepareDocument :pdf="pdf" v-model:signatures="form.signatures" :canvas="form.canvas" />
+                  <PrepareDocument
+                    :pdf="pdf"
+                    v-model:signatures="form.signatures"
+                    :canvas="form.canvas"
+                  />
                 </template>
               </StepCard>
             </div>
@@ -103,7 +136,7 @@ import { ref, watch, onMounted } from 'vue'
 import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
 import { DocumentService } from '@/services'
-import { ethers } from 'ethers'
+import { Contract, ethers } from 'ethers'
 import DocumentRegistryAbi from '@/contracts/artifacts/contracts/DocumentRegistry.sol/DocumentRegistry.json'
 import { useSendSignStore } from '@/stores/send-sign'
 import { SEND_SIGN_STEP } from '@/constants/send-sign'
@@ -113,11 +146,22 @@ import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import type { Document } from '@/types/document.interface'
 import type { SignOwn } from '@/types/send-sign.ts'
 import { useKeyStore } from '@/stores/key.ts'
+import { useFileStore } from '@/stores/file.ts'
+import CryptoJS from 'crypto-js'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
-const { key, importPrivateKey, importPublicKey, compareArrayBuffers, importVerifyKey, importSignKey } = useKeyStore()
+const {
+  key,
+  importPrivateKey,
+  importPublicKey,
+  compareArrayBuffers,
+  importVerifyKey,
+  importSignKey
+} = useKeyStore()
+
+const { readFileAsArrayBuffer, arrayBufferToBytes } = useFileStore()
 
 const refElement = ref()
 const files = ref<File[]>([])
@@ -171,36 +215,67 @@ MIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQCdgoxpiXi1SeYp5Ab4NVfRNksoKmUq
 
 let publicK = `MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnYKMaYl4tUnmKeQG+DVX0TZLKCplKvCpP0NLvYMTBlrPnEmPfOM9mXGH5wBlSxNe4j72B+p4Ugx1ICef9/hVJMTszfqgehJE4VPSoJWmo4PncxKV5v5KZrpMBFJWIGjppdrHMetE1gCAD43t+Tu3xp7IcjnXyQQMIsSI1TAWRuylLEjyYIq82d0LBZu2lOyPOxppNiks5IaqOxP42gvoROcV8gQ0irYVZgEz5b6m9rCpqyw3A5gp/WWY9XmTUa0gyJX+tctceGwd6mxE9ZLchSUhigp2GADz0CNeg4f4HBuP9qDB7PqZ0yiZuoJU9K3neX9yaO4sk/6SqsE+xA22U3/oyBOcWedVygOQNVXfp1VWC3SUCW9ipO5RORDNveqChpwmHtQxF7bbx0lwpTdDCXfE5A2GqrrE5zXc4yiEhZeB5Q4ihY1XJ+IN4ueDc4KajyvsZyYmimCbKGSX5r4oG0tJz3oXUx+XSncBz4lw83vlxhliauue8ZGsGL10u6HbuYQ2uTiPcLhDgnykQdP8cn8Qt8t/Uk31LsZmGwXnV//1Vwx3PPQqRmHzA/wxkMRDJMMDPfF+TdJ+NWSwzZgO7lEYPin3MEGV5bzttURk5+2AJZF13lOST+lUeCUN3IOtJAWycguLBYH1jGaqTBOE5OBGs7NpHH081VoEpMVL2DkCAwEAAQ==`
 let signK = `-----BEGIN PRIVATE KEY-----
-MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDDtM5TgZMvibyzU/m7j8kFD9RtrER2OlWvIyUumVnmDnrSddIHtOXkY4w8yuj+8gU2hZANiAAQZ4DD3S/WS+OGSNhdWhK8d6aE6bkBpmgIF/VMM4PFflTOkVqDnGd71CeqUlMebYi1nHVcqe+OZCUE24bVsFX4QX+re2awMSLva2uKk5rzfv+s/MluPfpTr2zbJRQnVC2U=
+MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDBEvCoBrcG7F34C+Q0slLdsW+tngtfGFQ5E2ILsA3gRZ0feQxOb+KxHirbbEHHns7OhZANiAASnBOL7Is+rhfDSmUkT37jS/9K5lRyYt6L+6bih4g9eU4HGVycLhvXrSriQNBKsBB6W1ZQPzYV7FNhYh+DEOWLUVuGIvIQgQWzmq4OVBmyCP3zVw8jBQHDkpb6p9J2jda4=
 -----END PRIVATE KEY-----`
 let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEGeAw90v1kvjhkjYXVoSvHemhOm5AaZoCBf1TDODxX5UzpFag5xne9QnqlJTHm2ItZx1XKnvjmQlBNuG1bBV+EF/q3tmsDEi72tripOa837/rPzJbj36U69s2yUUJ1Qtl`
 
-function getMessageEncoding(message: string) {
-  let enc = new TextEncoder();
-  return enc.encode(message);
+const documentRegistryContractAddress = import.meta.env.VITE_DOCUMENT_REGISTRY_CONTRACT || ''
+const signer = ref()
+const documentRegistryContract = ref<Contract>()
+const documentRegistryContractWithSigner = ref<Contract>()
+
+const initContract = () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
+  // Contract reference
+  documentRegistryContract.value = new ethers.Contract(
+    documentRegistryContractAddress,
+    DocumentRegistryAbi.abi,
+    provider
+  )
+  // documentRegistryContractWithSigner.value = documentRegistryContract.value.connect(signer)
+  // documentRegistryContract.value.on(
+  //   'DocumentUploaded',
+  //   async (uploader, originalHash, hashByPrivateKey, timestamp) => {
+  //     // Handle the event data here
+  //     console.log('New document uploaded:')
+  //     console.log('Uploader:', uploader)
+  //     console.log('Original Hash:', originalHash)
+  //     console.log('Hash by Private Key:', hashByPrivateKey)
+  //     console.log('Timestamp:', timestamp)
+  //     // Add the document to your documents array or perform other actions
+  //     documents.push({
+  //       uploader,
+  //       originalHash,
+  //       hashByPrivateKey,
+  //       timestamp
+  //     });
+  //   }
+  // )
 }
+
+initContract()
 const signOwn = async () => {
-  let signKey = await importSignKey(signK)
-  let verifyKey = await importVerifyKey(verifyK)
-  let encoded = getMessageEncoding('123')
-  let signature = await window.crypto.subtle.sign(
-    {
-      name: "ECDSA",
-      hash: { name: "SHA-384" },
-    },
-    signKey,
-    encoded,
-  );
-  let result = await window.crypto.subtle.verify(
-    {
-      name: "ECDSA",
-      hash: { name: "SHA-384" },
-    },
-    verifyKey,
-    signature,
-    encoded,
-  );
-  console.log(result)
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      const file = files.value[0]
+      const buffer = await readFileAsArrayBuffer(file)
+      if (buffer) {
+        const signKey = await importSignKey(signK) // Assuming you have a method to get the sign key
+        const signature = await window.crypto.subtle.sign(
+          {
+            name: 'ECDSA',
+            hash: { name: 'SHA-384' }
+          },
+          signKey,
+          buffer as BufferSource
+        )
+        const originalHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
+        // documentRegistryContract.value.uploadDocument(originalHash, signature)
+      }
+      // const data = response.data.data
+    } catch (error) {}
+  }
   // // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
   // if (typeof window.ethereum !== 'undefined') {
   //   const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -258,7 +333,6 @@ const signOwn = async () => {
 //     }
 //   }
 // }
-signOwn()
 const getPdf = async () => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')

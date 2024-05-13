@@ -1,53 +1,103 @@
 <template>
   <section class="bg-gray-50 dark:bg-gray-900">
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-        <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo" />
+      <a
+        href="#"
+        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+      >
+        <img
+          class="w-8 h-8 mr-2"
+          src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+          alt="logo"
+        />
         Flowbite
       </a>
       <div
-        class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+      >
         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-          <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          <h1
+            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+          >
             Create and account
           </h1>
           <form class="space-y-4 md:space-y-6" @submit.prevent="signUp">
             <div>
-              <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
+              <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
+                >Email address</label
+              >
               <div class="mt-2">
-                <input id="email" name="email" type="email" v-model="form.email" autocomplete="email" required=""
-                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  v-model="form.email"
+                  autocomplete="email"
+                  required=""
+                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
               </div>
             </div>
             <div>
-              <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
+              <label for="name" class="block text-sm font-medium leading-6 text-gray-900"
+                >Name</label
+              >
               <div class="mt-2">
-                <input id="name" name="name" type="name" v-model="form.name" autocomplete="name" required=""
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <input
+                  id="name"
+                  name="name"
+                  type="name"
+                  v-model="form.name"
+                  autocomplete="name"
+                  required=""
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
               </div>
             </div>
             <div>
-              <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+              <label for="password" class="block text-sm font-medium leading-6 text-gray-900"
+                >Password</label
+              >
               <div class="mt-2">
-                <input id="password" name="password" type="password" v-model="form.password"
-                  autocomplete="current-password" required=""
-                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  v-model="form.password"
+                  autocomplete="current-password"
+                  required=""
+                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
               </div>
             </div>
             <div>
-              <label for="confirm-password" class="block text-sm font-medium leading-6 text-gray-900">Confirm
-                Password</label>
+              <label
+                for="confirm-password"
+                class="block text-sm font-medium leading-6 text-gray-900"
+                >Confirm Password</label
+              >
               <div class="mt-2">
-                <input id="confirm-password" name="confirm-password" type="password" autocomplete="current-password"
-                  required="" v-model="form.password_confirmation"
-                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <input
+                  id="confirm-password"
+                  name="confirm-password"
+                  type="password"
+                  autocomplete="current-password"
+                  required=""
+                  v-model="form.password_confirmation"
+                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
               </div>
             </div>
             <div class="flex items-start">
               <button
                 class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
-                @click="download">
-                <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                @click.prevent="download"
+              >
+                <svg
+                  class="fill-current w-4 h-4 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
                   <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
                 </svg>
                 <span>Download</span>
@@ -55,24 +105,38 @@
             </div>
             <div class="flex items-start">
               <div class="flex items-center h-5">
-                <input id="terms" aria-describedby="terms" type="checkbox"
+                <input
+                  id="terms"
+                  aria-describedby="terms"
+                  type="checkbox"
                   class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                  required="" />
+                  required=""
+                />
               </div>
               <div class="ml-3 text-sm">
-                <label for="terms" class="font-light text-gray-500 dark:text-gray-300">I accept the
-                  <a class="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">Terms and
-                    Conditions</a></label>
+                <label for="terms" class="font-light text-gray-500 dark:text-gray-300"
+                  >I accept the
+                  <a
+                    class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    href="#"
+                    >Terms and Conditions</a
+                  ></label
+                >
               </div>
             </div>
-            <button type="submit"
-              class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <button
+              type="submit"
+              class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
               Create an account
             </button>
             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
               Already have an account?
-              <router-link to="/sign-in"
-                class="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</router-link>
+              <router-link
+                to="/sign-in"
+                class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                >Login here</router-link
+              >
             </p>
           </form>
         </div>
@@ -87,6 +151,7 @@ import { AuthService } from '@/services'
 import axios from 'axios'
 import { ethers } from 'ethers'
 import UserRegistry from '@/contracts/artifacts/contracts/UserRegistry.sol/UserRegistry.json'
+import { useRouter } from 'vue-router'
 
 interface User {
   email: string
@@ -94,7 +159,7 @@ interface User {
   password: string
   password_confirmation: string
   wallet_address: string | null
-  encryptKey: string,
+  encryptKey: string
   verifyKey: string
 }
 const form = ref<User>({
@@ -109,6 +174,7 @@ const form = ref<User>({
 
 const ecryptKeyRef = ref<string>('')
 const signKeyRef = ref<string>('')
+const router = useRouter()
 const userRegistryContractAddress = import.meta.env.VITE_USER_REGISTRY_CONTRACT || ''
 
 const signUp = async () => {
@@ -123,16 +189,29 @@ const signUp = async () => {
       provider
     )
     const userRegistryContractWithSigner = userRegistryContract.connect(signer)
+
+    userRegistryContractWithSigner.on(
+      'UserUpdated',
+      async (user, verifyKey, encryptKey, email, event) => {
+        console.log('UserUpdated event:', user, verifyKey, encryptKey, email)
+        // Update your Vue.js app with the new user data here
+      }
+    )
     try {
       // Chuyển đổi chuỗi publicKey thành mảng bytes
-      const publicKeyBytes = ethers.utils.toUtf8Bytes(form.value.encryptKey)
+      const encryptKeyBytes = ethers.utils.toUtf8Bytes(form.value.encryptKey)
+      const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.verifyKey)
       // Gọi hàm updateUser
-      const tx = await userRegistryContractWithSigner.updateUser(publicKeyBytes, form.value.email)
       const response = await AuthService.signUp(form.value)
-      const user = response.data.data
-    } catch (error) {
-      console.error(error)
-    }
+      const tx = await userRegistryContractWithSigner.createUser(
+        encryptKeyBytes,
+        verifyKeyBytes,
+        form.value.email
+      )
+
+      router.push({ name: 'signIn' })
+      // const data = response.data.data
+    } catch (error) {}
   }
 }
 
@@ -140,11 +219,11 @@ const download = async () => {
   // Tạo cặp khóa công khai và khóa riêng tư
   await generateKeyPair()
 
-  const pemExported = `-----BEGIN PRIVATE KEY-----\n${ecryptKeyRef.value}\n-----END PRIVATE KEY-----`
+  const pemExported = `-----BEGIN PRIVATE KEY-----\n${signKeyRef.value}\n-----END PRIVATE KEY-----`
   const blob = new Blob([pemExported], { type: 'application/pdf' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
-  link.download = 'private-key.txt'
+  link.download = 'sign-key.txt'
   link.click()
   URL.revokeObjectURL(link.href)
 }
@@ -153,13 +232,13 @@ const generateKeyPair = async () => {
   // Tạo một cặp khóa mới
   let keyPair = await window.crypto.subtle.generateKey(
     {
-      name: "RSA-OAEP",
+      name: 'RSA-OAEP',
       modulusLength: 4096,
       publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256",
+      hash: 'SHA-256'
     },
     true,
-    ["encrypt", "decrypt"],
+    ['encrypt', 'decrypt']
   )
   // Chuyển đổi khóa sang định dạng chuỗi hex
   let exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
@@ -169,16 +248,15 @@ const generateKeyPair = async () => {
 
   keyPair = await window.crypto.subtle.generateKey(
     {
-      name: "ECDSA",
-      namedCurve: "P-384",
+      name: 'ECDSA',
+      namedCurve: 'P-384'
     },
     true,
-    ["sign", "verify"],
-  );
+    ['sign', 'verify']
+  )
   // Chuyển đổi khóa sang định dạng chuỗi hex\
   exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
   signKeyRef.value = await keyToString(exported)
-  console.log(signKeyRef.value)
   exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
   form.value.verifyKey = await keyToString(exported)
   console.log(form.value.verifyKey)
@@ -187,12 +265,12 @@ const generateKeyPair = async () => {
 const keyToString = async (exported: any): Promise<string> => {
   // const exported = await crypto.subtle.exportKey('spki', key)
   // console.log(exported)
-  const exportedAsString = ab2str(exported);
+  const exportedAsString = ab2str(exported)
   return window.btoa(exportedAsString)
 }
 
 const ab2str = (buf: any) => {
-  return String.fromCharCode.apply(null, new Uint8Array(buf));
+  return String.fromCharCode.apply(null, new Uint8Array(buf))
 }
 </script>
 
