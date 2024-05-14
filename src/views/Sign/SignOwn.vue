@@ -228,10 +228,10 @@ const initContract = () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   // Contract reference
-  documentRegistryContract.value = new ethers.Contract(
+  documentRegistryContractWithSigner.value = new ethers.Contract(
     documentRegistryContractAddress,
     DocumentRegistryAbi.abi,
-    provider
+    signer
   )
   // documentRegistryContractWithSigner.value = documentRegistryContract.value.connect(signer)
   // documentRegistryContract.value.on(
@@ -271,7 +271,10 @@ const signOwn = async () => {
           buffer as BufferSource
         )
         const originalHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
-        // documentRegistryContract.value.uploadDocument(originalHash, signature)
+        documentRegistryContractWithSigner.value.uploadDocument(
+          originalHash,
+          ethers.utils.arrayify(new Uint8Array(signature))
+        )
       }
       // const data = response.data.data
     } catch (error) {}
