@@ -75,15 +75,8 @@
         </template>
       </StepCard>
     </div>
-    <el-card class="box-card relative">
-      <div class="bg-[#08b130] h-[100px] flex items-center justify-center">
-        <Verified class=""/>
-      </div>
-      <div>Document name : sample.pdf</div>
-      <div>Status : Sent</div>
-      <div>Created By : Thank</div>
-      <div>Created On : 16-05-2022 22:27:21</div>
-    </el-card>
+    <Success v-if="isVerified" />
+    <Error v-if="!isVerified && isVerified !== undefined" />
   </div>
 </template>
 
@@ -97,14 +90,27 @@ import pdfjsLib from 'pdfjs-dist/build/pdf'
 import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
 import { useKeyStore } from '@/stores/key'
 import { useFileStore } from '@/stores/file'
+import { useDocumentContractStore } from '@/stores/document-contract.ts'
+import Success from '@/components/VerifyDocument/Success.vue'
+import Error from '@/components/VerifyDocument/Error.vue'
 import { Buffer } from 'buffer'
-import {Verified } from '@/components/Icon/index.ts'
+import { ethers } from 'ethers'
+import CryptoJS from 'crypto-js'
+import { storeToRefs } from 'pinia'
+
 const files = ref<Array<File>>([])
 const checkMouseMove = ref<boolean>(false)
 const pdf = ref()
 const { importVerifyKey } = useKeyStore()
-const { bytesToArrayBuffer } = useFileStore()
+const { readFileAsArrayBuffer, bytesToArrayBuffer } = useFileStore()
 const verifyKey = ref<CryptoKey>()
+const isShowDetail = ref<Boolean>(false)
+const isVerified = ref<Boolean>()
+
+const documentContractStore = useDocumentContractStore()
+const { documentRegistryContractWithSigner } = storeToRefs(documentContractStore)
+// const { documentRegistryContractWithSigner, documentRegistryContract, initContract } =
+//   useDocumentContractStore()
 
 let signature = [
   47, 168, 131, 171, 39, 29, 232, 116, 2, 255, 230, 138, 228, 65, 91, 249, 40, 175, 110, 155, 204,
@@ -119,6 +125,12 @@ const getKey = async () => {
 }
 
 const verify = async () => {
+  const file = files.value[0]
+  const buffer = await readFileAsArrayBuffer(file)
+  const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
+  const tx = await documentRegistryContractWithSigner.value.getDocument(signedHash)
+  console.log(tx)
+
   if (files.value.length < 1) {
     ElNotification({
       type: ENotificationType.ERROR,
@@ -128,7 +140,6 @@ const verify = async () => {
     return
   }
   await getKey()
-  const file = files.value[0]
   const reader = new FileReader()
 
   reader.onload = async () => {
@@ -136,7 +147,7 @@ const verify = async () => {
     // Now you have the file content in buffer variable, which you can use as a BufferSource
     // You can pass this buffer to any function or API that accepts BufferSource
     const signatureBuff = bytesToArrayBuffer(signature)
-    let result = await window.crypto.subtle.verify(
+    isVerified.value = await window.crypto.subtle.verify(
       {
         name: 'ECDSA',
         hash: { name: 'SHA-384' }
@@ -145,7 +156,6 @@ const verify = async () => {
       signatureBuff,
       buffer as BufferSource
     )
-    console.log(result)
   }
 
   reader.readAsArrayBuffer(file)
@@ -169,6 +179,7 @@ const getPdf = async (id: number) => {
 
   pdfViewerSmall.setDocument(pdf.value)
 }
+documentContractStore.initContract()
 </script>
 
 <style scoped>

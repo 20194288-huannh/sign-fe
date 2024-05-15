@@ -147,6 +147,7 @@ import type { Document } from '@/types/document.interface'
 import type { SignOwn } from '@/types/send-sign.ts'
 import { useKeyStore } from '@/stores/key.ts'
 import { useFileStore } from '@/stores/file.ts'
+import { useDocumentContractStore } from '@/stores/document-contract.ts'
 import CryptoJS from 'crypto-js'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -160,6 +161,9 @@ const {
   importVerifyKey,
   importSignKey
 } = useKeyStore()
+
+const { documentRegistryContractWithSigner, documentRegistryContract, initContract } =
+  useDocumentContractStore()
 
 const { readFileAsArrayBuffer, arrayBufferToBytes } = useFileStore()
 
@@ -190,9 +194,6 @@ const clickAddFile = async () => {
   changeStep(SEND_SIGN_STEP.SECOND_STEP)
   scrollToView(SEND_SIGN_STEP.SECOND_STEP)
 }
-// address of the contract loaded from an environment variable
-const contractAddress = import.meta.env.VITE_CONTRACT || ''
-// stores all messages
 
 const readFile = async (file: File) => {
   const blob = new Blob([file])
@@ -219,39 +220,20 @@ MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDBEvCoBrcG7F34C+Q0slLdsW+tngtfGFQ5E
 -----END PRIVATE KEY-----`
 let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEGeAw90v1kvjhkjYXVoSvHemhOm5AaZoCBf1TDODxX5UzpFag5xne9QnqlJTHm2ItZx1XKnvjmQlBNuG1bBV+EF/q3tmsDEi72tripOa837/rPzJbj36U69s2yUUJ1Qtl`
 
-const documentRegistryContractAddress = import.meta.env.VITE_DOCUMENT_REGISTRY_CONTRACT || ''
-const signer = ref()
-const documentRegistryContract = ref<Contract>()
-const documentRegistryContractWithSigner = ref<Contract>()
+const createFileFromPDF = (pdfData: any, filename: string) => {
+  const blob = new Blob([pdfData], { type: 'application/pdf' })
 
-const initContract = () => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum)
-  const signer = provider.getSigner()
-  // Contract reference
-  documentRegistryContractWithSigner.value = new ethers.Contract(
-    documentRegistryContractAddress,
-    DocumentRegistryAbi.abi,
-    signer
-  )
-  // documentRegistryContractWithSigner.value = documentRegistryContract.value.connect(signer)
-  // documentRegistryContract.value.on(
-  //   'DocumentUploaded',
-  //   async (uploader, originalHash, hashByPrivateKey, timestamp) => {
-  //     // Handle the event data here
-  //     console.log('New document uploaded:')
-  //     console.log('Uploader:', uploader)
-  //     console.log('Original Hash:', originalHash)
-  //     console.log('Hash by Private Key:', hashByPrivateKey)
-  //     console.log('Timestamp:', timestamp)
-  //     // Add the document to your documents array or perform other actions
-  //     documents.push({
-  //       uploader,
-  //       originalHash,
-  //       hashByPrivateKey,
-  //       timestamp
-  //     });
-  //   }
-  // )
+  const file = new File([blob], filename, { lastModified: Date.now() })
+  return file
+}
+
+const download = async (pdfData: any, filename: string) => {
+  const blob = new Blob([pdfData], { type: 'application/pdf' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(link.href)
 }
 
 initContract()
@@ -259,8 +241,13 @@ const signOwn = async () => {
   if (typeof window.ethereum !== 'undefined') {
     try {
       const file = files.value[0]
-      const buffer = await readFileAsArrayBuffer(file)
+      const response = await DocumentService.signOwn(myDocument.value.id, form.value)
+      let signedPdf = createFileFromPDF(response.data, 'signed-' + file.name)
+      download(response.data, 'signed-' + file.name)
+
+      const buffer = await readFileAsArrayBuffer(signedPdf)
       if (buffer) {
+        const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
         const signKey = await importSignKey(signK) // Assuming you have a method to get the sign key
         const signature = await window.crypto.subtle.sign(
           {
@@ -270,11 +257,17 @@ const signOwn = async () => {
           signKey,
           buffer as BufferSource
         )
-        const originalHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
-        documentRegistryContractWithSigner.value.uploadDocument(
-          originalHash,
+
+        await documentRegistryContractWithSigner.value.uploadDocument(
+          signedHash,
           ethers.utils.arrayify(new Uint8Array(signature))
         )
+
+        var signedHashString = new TextDecoder().decode(signedHash)
+        const response = await DocumentService.saveSignOwn({
+          file: signedPdf,
+          sha: signedHashString
+        })
       }
       // const data = response.data.data
     } catch (error) {}

@@ -138,13 +138,12 @@ import type { FileInfo } from '@/types/document.interface'
 const documents = ref<Document[]>([])
 const status = ref<Array<Number>>([0, 1, 2, 3, 4, 5])
 const mappingStatus: { [key: number]: string } = {
-  0: 'draft',
-  1: 'needs-review',
-  2: 'sent',
-  3: 'completed',
-  4: 'in-progress',
-  5: 'expired',
-  6: 'void'
+  0: 'completed',
+  1: 'draft',
+  2: 'expired',
+  3: 'in-progress',
+  4: 'needs-review',
+  5: 'sent'
 }
 const pagination = ref<Pagination>()
 
@@ -174,20 +173,12 @@ const fetchDocuments = async () => {
 const downloadFile = async (file: FileInfo) => {
   const response = await FileService.download(file.id)
 
-  const blob = new Blob([JSON.stringify(response.data)], { type: 'application/pdf' })
+  const blob = new Blob([response.data], { type: 'application/pdf' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
   link.download = file.name
   link.click()
   URL.revokeObjectURL(link.href)
-
-  // const blob = new Blob([response.data])
-  // const url = window.URL.createObjectURL(blob)
-  // const link = document.createElement('a')
-  // link.href = url
-  // link.download = file.name
-  // link.click()
-  // window.URL.revokeObjectURL(url)
 }
 
 onMounted(() => {
