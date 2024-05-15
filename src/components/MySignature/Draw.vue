@@ -7,7 +7,7 @@
           width="100%"
           height="400px"
           ref="signaturePad"
-          :options="options"
+          :options="{onBegin: () => {signaturePad.resizeCanvas()}}"
         />
       </div>
       <div class="buttons">

@@ -6,5 +6,6 @@ import NeedsReview from '@/components/Icon/NeedsReview.vue'
 import Sent from '@/components/Icon/Sent.vue'
 import Signature from './Signature.vue'
 import Statistic from './Statistic.vue'
+import Verified from './Verified.vue'
 
-export { Completed, Draft, Expired, InProgress, NeedsReview, Sent, Signature, Statistic }
+export { Completed, Draft, Expired, InProgress, NeedsReview, Sent, Signature, Statistic, Verified }

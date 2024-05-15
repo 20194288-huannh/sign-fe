@@ -117,13 +117,20 @@
         </tr>
       </tbody>
     </table>
+    <el-pagination
+      class="m-3"
+      :page-size="pagination?.per_page"
+      :pager-count="pagination?.last_page"
+      layout="prev, pager, next"
+      :total="pagination?.total"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import DocumentFilter from '@/components/Documents/DocumentFilter.vue'
 import { DocumentService, FileService } from '@/services'
-import type { Document } from '@/types/document.interface'
+import type { Document, Pagination } from '@/types/document.interface'
 import { ref, onMounted, watch } from 'vue'
 import { Status } from '@/types/document.interface'
 import type { FileInfo } from '@/types/document.interface'
@@ -139,6 +146,7 @@ const mappingStatus: { [key: number]: string } = {
   5: 'expired',
   6: 'void'
 }
+const pagination = ref<Pagination>()
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
@@ -157,6 +165,7 @@ const fetchDocuments = async () => {
     } else {
       documents.value = []
     }
+    pagination.value = response.data.data.pagination
   } else {
     documents.value = []
   }

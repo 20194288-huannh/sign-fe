@@ -76,6 +76,9 @@
       </StepCard>
     </div>
     <el-card class="box-card relative">
+      <div class="bg-[#08b130] h-[100px] flex items-center justify-center">
+        <Verified class=""/>
+      </div>
       <div>Document name : sample.pdf</div>
       <div>Status : Sent</div>
       <div>Created By : Thank</div>
@@ -95,7 +98,7 @@ import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
 import { useKeyStore } from '@/stores/key'
 import { useFileStore } from '@/stores/file'
 import { Buffer } from 'buffer'
-
+import {Verified } from '@/components/Icon/index.ts'
 const files = ref<Array<File>>([])
 const checkMouseMove = ref<boolean>(false)
 const pdf = ref()
