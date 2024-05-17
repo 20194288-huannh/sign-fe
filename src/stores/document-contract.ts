@@ -9,17 +9,17 @@ export const useDocumentContractStore = defineStore('document-contract', () => {
   const documentRegistryContract = ref<Contract>()
   const documentRegistryContractWithSigner = ref<Contract>()
 
-  const initContract = () => {
+  const initContract = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
-    // Contract reference
-    documentRegistryContractWithSigner.value = new ethers.Contract(
+    const contract = new ethers.Contract(
       documentRegistryContractAddress,
       DocumentRegistryAbi.abi,
-      signer
+      provider
     )
-    console.log('1', documentRegistryContractWithSigner.value)
-    // documentRegistryContractWithSigner.value = documentRegistryContract.value.connect(signer)
+    // Contract reference
+    documentRegistryContract.value = contract
+    documentRegistryContractWithSigner.value = contract.connect(signer)
     // documentRegistryContract.value.on(
     //   'DocumentUploaded',
     //   async (uploader, originalHash, hashByPrivateKey, timestamp) => {

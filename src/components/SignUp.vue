@@ -203,15 +203,21 @@ const signUp = async () => {
       const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.verifyKey)
       // Gọi hàm updateUser
       const response = await AuthService.signUp(form.value)
-      const tx = await userRegistryContractWithSigner.createUser(
+      await userRegistryContractWithSigner.createUser(
         encryptKeyBytes,
         verifyKeyBytes,
         form.value.email
       )
+      // const tx = await userRegistryContractWithSigner.getUser(
+      //   '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+      // )
+      // console.log(tx)
 
       router.push({ name: 'signIn' })
       // const data = response.data.data
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

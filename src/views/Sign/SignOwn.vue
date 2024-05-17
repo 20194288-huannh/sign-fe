@@ -149,6 +149,7 @@ import { useKeyStore } from '@/stores/key.ts'
 import { useFileStore } from '@/stores/file.ts'
 import { useDocumentContractStore } from '@/stores/document-contract.ts'
 import CryptoJS from 'crypto-js'
+import { storeToRefs } from 'pinia'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -162,8 +163,9 @@ const {
   importSignKey
 } = useKeyStore()
 
-const { documentRegistryContractWithSigner, documentRegistryContract, initContract } =
-  useDocumentContractStore()
+const documentContractStore = useDocumentContractStore()
+const { documentRegistryContractWithSigner, documentRegistryContract } =
+  storeToRefs(documentContractStore)
 
 const { readFileAsArrayBuffer, arrayBufferToBytes } = useFileStore()
 
@@ -236,7 +238,7 @@ const download = async (pdfData: any, filename: string) => {
   URL.revokeObjectURL(link.href)
 }
 
-initContract()
+documentContractStore.initContract()
 const signOwn = async () => {
   if (typeof window.ethereum !== 'undefined') {
     try {
@@ -262,12 +264,18 @@ const signOwn = async () => {
           signedHash,
           ethers.utils.arrayify(new Uint8Array(signature))
         )
+        // try {
+        //   const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
+        //   console.log(tx)
+        // } catch (err) {
+        //   console.log(err)
+        // }
 
-        var signedHashString = new TextDecoder().decode(signedHash)
-        const response = await DocumentService.saveSignOwn({
-          file: signedPdf,
-          sha: signedHashString
-        })
+        // var signedHashString = new TextDecoder().decode(signedHash)
+        // const response = await DocumentService.saveSignOwn({
+        //   file: signedPdf,
+        //   sha: signedHashString
+        // })
       }
       // const data = response.data.data
     } catch (error) {}

@@ -108,7 +108,8 @@ const isShowDetail = ref<Boolean>(false)
 const isVerified = ref<Boolean>()
 
 const documentContractStore = useDocumentContractStore()
-const { documentRegistryContractWithSigner } = storeToRefs(documentContractStore)
+const { documentRegistryContractWithSigner, documentRegistryContract } =
+  storeToRefs(documentContractStore)
 // const { documentRegistryContractWithSigner, documentRegistryContract, initContract } =
 //   useDocumentContractStore()
 
@@ -125,12 +126,6 @@ const getKey = async () => {
 }
 
 const verify = async () => {
-  const file = files.value[0]
-  const buffer = await readFileAsArrayBuffer(file)
-  const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
-  const tx = await documentRegistryContractWithSigner.value.getDocument(signedHash)
-  console.log(tx)
-
   if (files.value.length < 1) {
     ElNotification({
       type: ENotificationType.ERROR,
@@ -139,7 +134,18 @@ const verify = async () => {
     })
     return
   }
+
+  if (!documentRegistryContractWithSigner.value) return
   await getKey()
+  const file = files.value[0]
+  const buffer = await readFileAsArrayBuffer(file)
+  const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
+  try {
+    const [uploader, originalHash, hashByPrivateKey, timestamp] =
+      await documentRegistryContractWithSigner.value.getDocument(signedHash)
+  } catch (e) {
+    console.log(e)
+  }
   const reader = new FileReader()
 
   reader.onload = async () => {
@@ -157,8 +163,6 @@ const verify = async () => {
       buffer as BufferSource
     )
   }
-
-  reader.readAsArrayBuffer(file)
 }
 
 const clearFile = () => {
