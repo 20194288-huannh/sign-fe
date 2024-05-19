@@ -31,7 +31,7 @@ const router = createRouter({
     {
       path: '/home',
       component: () => import('@/views/Home.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
       path: '/sign',
@@ -45,22 +45,22 @@ const router = createRouter({
     {
       path: '/sign/sign-own',
       component: () => import('@/views/Sign/SignOwn.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
       path: '/sign/verify-document',
       component: () => import('@/views/Sign/VerifyDocument.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
       path: '/sign/send-sign',
       component: () => import('@/views/Sign/SendSign.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
       path: '/dashboard',
       component: () => import('@/views/Dashboard/index.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
       path: '/second-page',
@@ -70,12 +70,12 @@ const router = createRouter({
     {
       path: '/documents',
       component: () => import('@/views/Documents.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
       path: '/signed-document',
       component: () => import('@/views/ViewSignedDocument/index.vue'),
-      meta: { layout: 'GuestLayout' }
+      meta: { layout: 'GuestLayout', middleware: [auth] }
     },
     {
       path: '/thanks-for-signing',
@@ -85,12 +85,12 @@ const router = createRouter({
     {
       path: '/action-center',
       component: () => import('@/views/ActionCenter.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', }
     },
     {
       path: '/my-signature',
       component: () => import('@/views/MySignature.vue'),
-      meta: { layout: 'AppLayoutDefault' }
+      meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
       path: '/change-password',

@@ -120,7 +120,7 @@
       </el-dropdown>
       <div class="flex items-center">
         <button class="dropdown button-icon border-left" title="Drawing" aria-label="Drawing" aria-pressed="false"
-          type="button">
+          type="button" @click="emit('note')">
           <span class="tool-button-icon PSPDFKit-Icon-Ink" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
               width="24" height="24" fill="currentColor" viewBox="0 0 24 24" focusable="false">
               <path
@@ -195,7 +195,7 @@
       </div>
     </div>
     <button class="dropdown button-icon PSPDFKit-Toolbar-Button-Note-Annotation border-left" title="Note"
-      aria-label="Note" aria-pressed="false" type="button" @click="emit('note')">
+      aria-label="Note" aria-pressed="false" type="button" @click="createText">
       <span class="tool-button-icon PSPDFKit-Icon-Note" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
           width="24" height="24" viewBox="0 0 24 24" focusable="false">
           <path fill="currentColor"
@@ -236,7 +236,7 @@
       <div class="flex">
         <button
           class="dropdown button-icon PSPDFKit-Toolbar-Button-Shape-Annotation PSPDFKit-Toolbar-Button-Line-Annotation border-left"
-          title="Line" aria-label="Line" aria-pressed="false" type="button" @click="emit('addCalendar')">
+          title="Line" aria-label="Line" aria-pressed="false" type="button" @click="createCalendar">
           <span class="tool-button-icon PSPDFKit-Icon-Line" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24" fill="#000" width="20" height="20">&gt;<path
                 d="M9,4.5v1H5v22H27V5.5H23v-1H21v1H11v-1Zm-2,3H9v1h2v-1H21v1h2v-1h2v2H7Zm0,4H25v14H7Zm6,2v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Z"
@@ -315,17 +315,88 @@
 </template>
 
 <script setup lang="ts">
+import { SIGNATURE_TYPE } from '@/types/send-sign';
 import { isNumber } from 'element-plus/es/utils/types.mjs';
 
 const totalPage = defineModel('totalPage')
 const pageNum = defineModel('pageNum')
 const signModal = defineModel('signModal')
 const users = defineModel('users')
+const scale = defineModel('scale')
+const signatures = defineModel('signatures')
 const receiverId = defineModel('receiverId')
 const emit = defineEmits(['onNextPage', 'onPrevPage', 'scaleUp', 'scaleDown', 'note', 'addCalendar'])
 
 const handleCommand = (command: string | number | object) => {
   receiverId.value = command
+}
+
+const createCalendar = () => {
+  let signature = {
+    type: SIGNATURE_TYPE.DATE,
+    scale: Number(scale.value),
+    page: pageNum.value,
+    can_resize: true,
+    position: {
+      width: 200,
+      height: 60,
+      top: 50,
+      left: 50
+    },
+    data: Date.now()
+  }
+  signatures.value.push(signature)
+}
+
+const createText = () => {
+  let signature = {
+    type: SIGNATURE_TYPE.TEXT,
+    scale: Number(scale.value),
+    page: pageNum.value,
+    can_resize: true,
+    position: {
+      width: 200,
+      height: 60,
+      top: 50,
+      left: 50
+    },
+    data: 'Some text ...'
+  }
+  signatures.value.push(signature)
+}
+
+const createCheckbox = () => {
+  let signature = {
+    type: SIGNATURE_TYPE.CHECKBOX,
+    scale: Number(scale.value),
+    page: pageNum.value,
+    can_resize: true,
+    position: {
+      width: 200,
+      height: 60,
+      top: 50,
+      left: 50
+    },
+    data: false
+  }
+  signatures.value.push(signature)
+}
+
+const createRadio = () => {
+  let signature = {
+    type: SIGNATURE_TYPE.RADIO,
+    scale: Number(scale.value),
+    page: pageNum.value,
+    can_resize: true,
+    position: {
+      width: 200,
+      height: 60,
+      top: 50,
+      left: 50
+    },
+    data: false
+  }
+  signatures.value.push(signature)
 }
 </script>
 

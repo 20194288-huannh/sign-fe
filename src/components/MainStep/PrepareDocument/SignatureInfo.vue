@@ -12,6 +12,13 @@
                         </td>
                     </tr>
                     <tr>
+                        <th width="40%" class="font-weight-normal" style="vertical-align: middle;">Data</th>
+                        <td width="60%" style="padding: 15px;">
+                            <input type="text" placeholder="Attribute title" v-model="signature.data"
+                                :class="`form-control input-sm ng-untouched ng-pristine ng-valid ${signature.can_resize ? '' : 'is-readonly'}`" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
                         <th width="40%" class="font-weight-normal">Required</th>
                         <td><label class="switch top-3"><input type="checkbox" name="toggle" autocomplete="off"><span
                                     class="slider round"></span></label></td>
@@ -22,6 +29,7 @@
                         <td><label class="switch top-3"><input type="checkbox" autocomplete="off"><span
                                     class="slider round"></span></label></td>
                     </tr><!----><!---->
+                    
                 </tbody>
             </table><!---->
         </div><!---->

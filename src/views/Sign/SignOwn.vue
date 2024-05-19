@@ -238,6 +238,20 @@ const download = async (pdfData: any, filename: string) => {
   URL.revokeObjectURL(link.href)
 }
 
+function arrayBufferToWordArray(arrayBuffer) {
+  var i8a = new Uint8Array(arrayBuffer);
+  var a = [];
+  for (var i = 0; i < i8a.length; i += 4) {
+    a.push(
+      (i8a[i] << 24) |
+      (i8a[i + 1] << 16) |
+      (i8a[i + 2] << 8) |
+      (i8a[i + 3])
+    );
+  }
+  return CryptoJS.lib.WordArray.create(a, i8a.length);
+}
+
 documentContractStore.initContract()
 const signOwn = async () => {
   if (typeof window.ethereum !== 'undefined') {
@@ -247,9 +261,10 @@ const signOwn = async () => {
       let signedPdf = createFileFromPDF(response.data, 'signed-' + file.name)
       download(response.data, 'signed-' + file.name)
 
-      const buffer = await readFileAsArrayBuffer(signedPdf)
+      const buffer = await response.data.arrayBuffer()
       if (buffer) {
-        const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
+        const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString())
+        console.log(signedHash)
         const signKey = await importSignKey(signK) // Assuming you have a method to get the sign key
         const signature = await window.crypto.subtle.sign(
           {
@@ -264,18 +279,18 @@ const signOwn = async () => {
           signedHash,
           ethers.utils.arrayify(new Uint8Array(signature))
         )
-        // try {
-        //   const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
-        //   console.log(tx)
-        // } catch (err) {
-        //   console.log(err)
-        // }
+        try {
+          const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
+          console.log(tx)
+        } catch (err) {
+          console.log(err)
+        }
 
-        // var signedHashString = new TextDecoder().decode(signedHash)
-        // const response = await DocumentService.saveSignOwn({
-        //   file: signedPdf,
-        //   sha: signedHashString
-        // })
+        var signedHashString = new TextDecoder().decode(signedHash)
+        const response = await DocumentService.saveSignOwn({
+          file: signedPdf,
+          sha: signedHashString
+        })
       }
       // const data = response.data.data
     } catch (error) {}

@@ -1,20 +1,22 @@
 <template>
   <div class="relative">
     <ToolBar v-model:totalPage="totalPage" v-model:pageNum="pageNum" v-model:signModal="signModal" v-model:users="users"
-      v-model:receiverId="receiverId" @on-next-page="onNextPage" @on-prev-page="onPrevPage" @scale-up="scaleUp"
-      @scale-down="scaleDown" @note="note" />
+      v-model:receiverId="receiverId" v-model="scale" v-model:signatures="signatures" @on-next-page="onNextPage"
+      @on-prev-page="onPrevPage" @scale-up="scaleUp" @scale-down="scaleDown" @note="note" />
     <div class="flex gap-5">
       <div id="pageContainer" class="bg-[#3D424E33] relative flex-grow">
         <div class="pdfContent">
           <DropDragSign v-for="(item, idx) in signatures" :key="item.id" :width="item.position.width"
-            :height="item.position.height" :top="item.position.top" :left="item.position.left" :canResize="item.can_resize"
-            @resize="(newRect) => resize(newRect, idx)" @drag="(newRect) => resize(newRect, idx)" :text="item.text"
-            @drag-stop="dragStop(idx)" @click="selectedSignature = item">
-            <el-date-picker v-model="value" format="YYYY-MM-DD" v-if="item.type === SIGNATURE_TYPE.DATE" />
-            <p v-if="
-              item.type === SIGNATURE_TYPE.SIGNATURE &&
-              (item.position.top !== 0 || item.position.left !== 0)
-            ">
+            :height="item.position.height" :top="item.position.top" :left="item.position.left"
+            :canResize="item.can_resize" @resize="(newRect) => resize(newRect, idx)"
+            @drag="(newRect) => resize(newRect, idx)" :text="item.text" @drag-stop="dragStop(idx)"
+            @click="selectedSignature = item">
+            <el-date-picker v-model="item.data" format="YYYY-MM-DD" v-if="item.type === SIGNATURE_TYPE.DATE"
+              @click="() => { signModal = 2; selectedSignature = item; }" />
+            <input v-model="item.data" v-if="item.type === SIGNATURE_TYPE.TEXT" />
+            <p v-if="item.type === SIGNATURE_TYPE.SIGNATURE &&
+              (item.position.top !== 0 || item.position.left !== 0)"
+              @click="() => { signModal = 2; selectedSignature = item; }">
               {{
                 arrSignSecondStepValue.main.find((e) => e.id === signatureValue)?.name ??
                 SIGNATURE_TYPE.SIGNATURE
@@ -22,15 +24,16 @@
             </p>
             <el-checkbox v-if="
               item.type === SIGNATURE_TYPE.CHECKBOX &&
-              (item.position.top !== 0 || item.position.left !== 0)
-            " class="w-10" />
+              (item.position.top !== 0 || item.position.left !== 0)"
+              @click="() => { signModal = 2; selectedSignature = item; }" class="w-10" />
             <el-radio v-if="
               item.type === SIGNATURE_TYPE.RADIO &&
               (item.position.top !== 0 || item.position.left !== 0)
             " />
             <img v-if="item.type === SIGNATURE_TYPE.IMAGE" :src="item.data.path"
               :style="`width: ${item.position.width}px; height: ${item.position.height}px`" />
-            <div v-if="isNumber(item.receiverId)" :style="`background-color: ${background[item.receiverId]}`">{{ item.receiver.name }}
+            <div v-if="isNumber(item.receiverId)" :style="`background-color: ${background[item.receiverId]}`">{{
+              item.receiver.name }}
             </div>
             <div v-if="!item.type" class="border-dashed border-2 border-indigo-600"
               @click="() => { signModal = 2; selectedSignature = item; }">{{ item.position }}</div>
@@ -38,7 +41,7 @@
           <canvas id="the-canvas" ref="canvas" class=""></canvas>
         </div>
       </div>
-      <SigntureInfo class="mt-5 flex-shrink w-1/4" v-model:signature="selectedSignature" @resize="resize"/>
+      <SigntureInfo class="mt-5 flex-shrink w-1/4" v-model:signature="selectedSignature" @resize="resize" />
     </div>
     <SignatureModal v-model:signModal="signModal" @save="save" />
   </div>

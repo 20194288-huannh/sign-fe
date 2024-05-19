@@ -2,7 +2,7 @@ export interface Document {
     id: string
     sha256: string
     status: number
-    user_id: number
+    user: User
     receiver: number
     parent_id: number
     file: FileInfo
@@ -15,6 +15,13 @@ export interface FileInfo {
     path: string
     size: number
     type: string
+}
+
+export interface User {
+    name: string,
+    id: number,
+    email: string,
+    wallet_address: string
 }
 
 export enum Status {
