@@ -10,7 +10,7 @@ const DocumentService  = {
         return ApiService.get(`users/documents`, data)
     },
     signOwn(id, data) {
-        return ApiService.post(`documents/${id}/sign-own`, data, { responseType: 'blob' })
+        return ApiService.post(`documents/${id}/view-own`, data, { responseType: 'blob' })
     },
     getStatistics() {
         return ApiService.get(`documents/statistics`)
@@ -21,8 +21,11 @@ const DocumentService  = {
     sign(id, data) {
         return ApiService.post(`documents/${id}/sign`, data)
     },
-    saveSignOwn(data) {
-        return ApiService.post(`documents/sign-own`, data, {headers : { 'Content-Type': 'multipart/form-data'}})
+    saveSignOwn(id, data) {
+        return ApiService.post(`documents/${id}/sign-own`, data, {headers : { 'Content-Type': 'multipart/form-data'}})
+    },
+    fetchHistory(sha) {
+        return ApiService.post(`documents/${sha}/history`)
     }
 }
 export default DocumentService

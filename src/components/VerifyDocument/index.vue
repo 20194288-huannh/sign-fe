@@ -75,7 +75,7 @@
         </template>
       </StepCard>
     </div>
-    <Success v-if="isVerified" />
+    <Success v-if="isVerified" :documents="documents" />
     <Error v-if="!isVerified && isVerified !== undefined" />
   </div>
 </template>
@@ -97,15 +97,23 @@ import { Buffer } from 'buffer'
 import { ethers } from 'ethers'
 import CryptoJS from 'crypto-js'
 import { storeToRefs } from 'pinia'
+import { DocumentService, ActionService } from '@/services'
 
 const files = ref<Array<File>>([])
 const checkMouseMove = ref<boolean>(false)
 const pdf = ref()
 const { importVerifyKey } = useKeyStore()
-const { readFileAsArrayBuffer, bytesToArrayBuffer } = useFileStore()
+const {
+  readFileAsArrayBuffer,
+  bytesToArrayBuffer,
+  convertBytesStringToBufferSource,
+  arrayBufferToWordArray
+} = useFileStore()
 const verifyKey = ref<CryptoKey>()
 const isShowDetail = ref<Boolean>(false)
 const isVerified = ref<Boolean>()
+const fileBuffer = ref<Array<any>>([])
+const documents = ref<Array<any>>()
 
 const documentContractStore = useDocumentContractStore()
 const { documentRegistryContractWithSigner, documentRegistryContract } =
@@ -120,7 +128,7 @@ let signature = [
   129, 195, 55, 137, 43, 144, 146, 169, 227, 45, 134, 237, 223, 239, 206, 33, 170, 111, 3, 253, 39,
   180, 136, 37, 175, 254, 85, 79, 25, 63, 174, 12
 ]
-let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEGeAw90v1kvjhkjYXVoSvHemhOm5AaZoCBf1TDODxX5UzpFag5xne9QnqlJTHm2ItZx1XKnvjmQlBNuG1bBV+EF/q3tmsDEi72tripOa837/rPzJbj36U69s2yUUJ1Qtl`
+let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE+0vkr/der5sGbVb3ytGncU14RFxl7t/6G2gpeVb/1WC8WAtDPWfgBANw+Be3cJgq4ZR2OKoxnLnOvjNoxfQOq8O/sJZdebyAQaLCfmEz3A7LodMpD9C8GwkSs+4EeaaV`
 const getKey = async () => {
   verifyKey.value = await importVerifyKey(verifyK)
 }
@@ -139,30 +147,50 @@ const verify = async () => {
   await getKey()
   const file = files.value[0]
   const buffer = await readFileAsArrayBuffer(file)
-  const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(buffer).toString())
+  const signedHex = CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
+  const signedHash = ethers.utils.toUtf8Bytes(signedHex)
   try {
     const [uploader, originalHash, hashByPrivateKey, timestamp] =
       await documentRegistryContractWithSigner.value.getDocument(signedHash)
-  } catch (e) {
-    console.log(e)
-  }
-  const reader = new FileReader()
-
-  reader.onload = async () => {
-    const buffer = reader.result
     // Now you have the file content in buffer variable, which you can use as a BufferSource
     // You can pass this buffer to any function or API that accepts BufferSource
-    const signatureBuff = bytesToArrayBuffer(signature)
     isVerified.value = await window.crypto.subtle.verify(
       {
         name: 'ECDSA',
         hash: { name: 'SHA-384' }
       },
       verifyKey.value as CryptoKey,
-      signatureBuff,
-      buffer as BufferSource
+      hexStringToUint8Array(hashByPrivateKey),
+      buffer
     )
+    if (isVerified.value) {
+      fetchHistory(signedHex)
+    }
+  } catch (e) {
+    console.log(e)
   }
+}
+
+const fetchHistory = async (sha: string) => {
+  const response = await DocumentService.fetchHistory(sha)
+  documents.value = response.data.data
+}
+
+const hexStringToUint8Array = (hexString) => {
+  // Loại bỏ tiền tố "0x" nếu có
+  if (hexString.startsWith('0x')) {
+    hexString = hexString.slice(2)
+  }
+
+  // Tạo Uint8Array với kích thước bằng một nửa độ dài của chuỗi hex
+  let arrayBuffer = new Uint8Array(hexString.length / 2)
+
+  // Chuyển đổi từng cặp ký tự hex thành giá trị số
+  for (let i = 0; i < hexString.length; i += 2) {
+    arrayBuffer[i / 2] = parseInt(hexString.substr(i, 2), 16)
+  }
+
+  return arrayBuffer
 }
 
 const clearFile = () => {
@@ -171,6 +199,13 @@ const clearFile = () => {
 
 const loadFile = (file: any) => {
   files.value = [file]
+  const reader = new FileReader()
+
+  reader.onload = () => {
+    fileBuffer.value = reader.result
+  }
+
+  reader.readAsArrayBuffer(file)
 }
 
 const getPdf = async (id: number) => {

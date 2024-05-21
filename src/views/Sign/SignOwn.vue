@@ -167,7 +167,7 @@ const documentContractStore = useDocumentContractStore()
 const { documentRegistryContractWithSigner, documentRegistryContract } =
   storeToRefs(documentContractStore)
 
-const { readFileAsArrayBuffer, arrayBufferToBytes } = useFileStore()
+const { readFileAsArrayBuffer, arrayBufferToBytes, arrayBufferToWordArray } = useFileStore()
 
 const refElement = ref()
 const files = ref<File[]>([])
@@ -218,9 +218,9 @@ MIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQCdgoxpiXi1SeYp5Ab4NVfRNksoKmUq
 
 let publicK = `MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnYKMaYl4tUnmKeQG+DVX0TZLKCplKvCpP0NLvYMTBlrPnEmPfOM9mXGH5wBlSxNe4j72B+p4Ugx1ICef9/hVJMTszfqgehJE4VPSoJWmo4PncxKV5v5KZrpMBFJWIGjppdrHMetE1gCAD43t+Tu3xp7IcjnXyQQMIsSI1TAWRuylLEjyYIq82d0LBZu2lOyPOxppNiks5IaqOxP42gvoROcV8gQ0irYVZgEz5b6m9rCpqyw3A5gp/WWY9XmTUa0gyJX+tctceGwd6mxE9ZLchSUhigp2GADz0CNeg4f4HBuP9qDB7PqZ0yiZuoJU9K3neX9yaO4sk/6SqsE+xA22U3/oyBOcWedVygOQNVXfp1VWC3SUCW9ipO5RORDNveqChpwmHtQxF7bbx0lwpTdDCXfE5A2GqrrE5zXc4yiEhZeB5Q4ihY1XJ+IN4ueDc4KajyvsZyYmimCbKGSX5r4oG0tJz3oXUx+XSncBz4lw83vlxhliauue8ZGsGL10u6HbuYQ2uTiPcLhDgnykQdP8cn8Qt8t/Uk31LsZmGwXnV//1Vwx3PPQqRmHzA/wxkMRDJMMDPfF+TdJ+NWSwzZgO7lEYPin3MEGV5bzttURk5+2AJZF13lOST+lUeCUN3IOtJAWycguLBYH1jGaqTBOE5OBGs7NpHH081VoEpMVL2DkCAwEAAQ==`
 let signK = `-----BEGIN PRIVATE KEY-----
-MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDBEvCoBrcG7F34C+Q0slLdsW+tngtfGFQ5E2ILsA3gRZ0feQxOb+KxHirbbEHHns7OhZANiAASnBOL7Is+rhfDSmUkT37jS/9K5lRyYt6L+6bih4g9eU4HGVycLhvXrSriQNBKsBB6W1ZQPzYV7FNhYh+DEOWLUVuGIvIQgQWzmq4OVBmyCP3zVw8jBQHDkpb6p9J2jda4=
+MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU=
 -----END PRIVATE KEY-----`
-let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEGeAw90v1kvjhkjYXVoSvHemhOm5AaZoCBf1TDODxX5UzpFag5xne9QnqlJTHm2ItZx1XKnvjmQlBNuG1bBV+EF/q3tmsDEi72tripOa837/rPzJbj36U69s2yUUJ1Qtl`
+let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE+0vkr/der5sGbVb3ytGncU14RFxl7t/6G2gpeVb/1WC8WAtDPWfgBANw+Be3cJgq4ZR2OKoxnLnOvjNoxfQOq8O/sJZdebyAQaLCfmEz3A7LodMpD9C8GwkSs+4EeaaV`
 
 const createFileFromPDF = (pdfData: any, filename: string) => {
   const blob = new Blob([pdfData], { type: 'application/pdf' })
@@ -236,20 +236,7 @@ const download = async (pdfData: any, filename: string) => {
   link.download = filename
   link.click()
   URL.revokeObjectURL(link.href)
-}
-
-function arrayBufferToWordArray(arrayBuffer) {
-  var i8a = new Uint8Array(arrayBuffer);
-  var a = [];
-  for (var i = 0; i < i8a.length; i += 4) {
-    a.push(
-      (i8a[i] << 24) |
-      (i8a[i + 1] << 16) |
-      (i8a[i + 2] << 8) |
-      (i8a[i + 3])
-    );
-  }
-  return CryptoJS.lib.WordArray.create(a, i8a.length);
+  return blob
 }
 
 documentContractStore.initContract()
@@ -263,31 +250,32 @@ const signOwn = async () => {
 
       const buffer = await response.data.arrayBuffer()
       if (buffer) {
-        const signedHash = ethers.utils.toUtf8Bytes(CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString())
-        console.log(signedHash)
+        const signedHash = ethers.utils.toUtf8Bytes(
+          CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
+        )
         const signKey = await importSignKey(signK) // Assuming you have a method to get the sign key
+
         const signature = await window.crypto.subtle.sign(
           {
             name: 'ECDSA',
             hash: { name: 'SHA-384' }
           },
           signKey,
-          buffer as BufferSource
+          buffer
         )
 
         await documentRegistryContractWithSigner.value.uploadDocument(
           signedHash,
-          ethers.utils.arrayify(new Uint8Array(signature))
+          new Uint8Array(signature)
         )
-        try {
-          const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
-          console.log(tx)
-        } catch (err) {
-          console.log(err)
-        }
+        // try {
+        //   const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
+        // } catch (err) {
+        //   console.log(err)
+        // }
 
         var signedHashString = new TextDecoder().decode(signedHash)
-        const response = await DocumentService.saveSignOwn({
+        const response = await DocumentService.saveSignOwn(myDocument.value.id, {
           file: signedPdf,
           sha: signedHashString
         })

@@ -12,7 +12,7 @@
     <div class="ml-2">
       <div class="content">
         <span class="user">{{ props.action.name }}</span>
-        <span class="action"> uploaded the document</span>
+        <span class="action">{{ props.action.content }}</span>
       </div>
       <div class="timestamp">{{ props.action.created_at }}</div>
     </div>

@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import CryptoJS from 'crypto-js'
 
 export const useFileStore = defineStore('file', () => {
   function readFileAsArrayBuffer(file: File) {
@@ -28,5 +29,27 @@ export const useFileStore = defineStore('file', () => {
     return uint8Array.buffer
   }
 
-  return { readFileAsArrayBuffer, arrayBufferToBytes, bytesToArrayBuffer }
+  function convertBytesStringToBufferSource(bytesString: string) {
+    const encoder = new TextEncoder()
+    const uint8Array = encoder.encode(bytesString)
+    return uint8Array.buffer // ArrayBuffer, which is a BufferSource
+  }
+
+  
+function arrayBufferToWordArray(arrayBuffer) {
+  var i8a = new Uint8Array(arrayBuffer)
+  var a = []
+  for (var i = 0; i < i8a.length; i += 4) {
+    a.push((i8a[i] << 24) | (i8a[i + 1] << 16) | (i8a[i + 2] << 8) | i8a[i + 3])
+  }
+  return CryptoJS.lib.WordArray.create(a, i8a.length)
+}
+
+  return {
+    readFileAsArrayBuffer,
+    arrayBufferToBytes,
+    bytesToArrayBuffer,
+    convertBytesStringToBufferSource,
+    arrayBufferToWordArray
+  }
 })
