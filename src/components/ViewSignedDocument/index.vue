@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import Navbar from './Navbar.vue';
+import Navbar from './Navbar.vue'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import pdfjsLib from 'pdfjs-dist/build/pdf'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import { RequestService } from '@/services/index.js'
 import { useRoute } from 'vue-router'
-import type { Receiver, Signature, Canvas } from '@/types/send-sign';
-import type { Document } from '@/types/document.interface';
+import type { Receiver, Signature, Canvas } from '@/types/send-sign'
+import type { Document } from '@/types/document.interface'
 import { DocumentService } from '@/services/index.js'
-import { info } from 'console';
+import { info } from 'console'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -19,6 +19,7 @@ interface RequestData {
   users: Receiver
   document: Document
   canvas: Canvas
+  token: string
 }
 
 const route = useRoute()
@@ -36,7 +37,10 @@ const fetchRequest = async () => {
 }
 
 const onFinish = async () => {
-  const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
+  if (requestData.value) {
+    requestData.value.token = route.query.token as string
+    const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
+  }
 }
 
 onMounted(async () => {
@@ -50,8 +54,14 @@ onMounted(async () => {
 <template>
   <div class="relative">
     <Navbar @finish="onFinish" />
-    <PrepareDocument v-if="requestData" :pdf="pdf" v-model:signatures="requestData.signatures"
-      v-model:canvas="requestData.canvas" v-model:users="requestData.users" class="document" />
+    <PrepareDocument
+      v-if="requestData"
+      :pdf="pdf"
+      v-model:signatures="requestData.signatures"
+      v-model:canvas="requestData.canvas"
+      v-model:users="requestData.users"
+      class="document"
+    />
   </div>
 </template>
 
