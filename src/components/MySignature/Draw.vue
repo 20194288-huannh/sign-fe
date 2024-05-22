@@ -2,13 +2,8 @@
   <div id="app">
     <div class="container">
       <div class="container">
-        <VueSignaturePad
-          id="signature"
-          width="100%"
-          height="400px"
-          ref="signaturePad"
-          :options="{onBegin: () => {signaturePad.resizeCanvas()}}"
-        />
+        <VueSignaturePad id="signature" :width="`700px`" :height="`${700 / width * height}px`" ref="signaturePad"
+          :options="{ onBegin: () => { signaturePad.resizeCanvas() } }" />
       </div>
       <div class="buttons">
         <button @click="undo">Undo</button>
@@ -23,6 +18,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { SignatureService } from '@/services/index.js'
+defineProps({
+  height: {
+    type: Number,
+    default: 350
+  },
+  width: {
+    type: Number,
+    default: 700
+  }
+})
 const emit = defineEmits(['save'])
 const options = ref({
   penColor: '#c0f'

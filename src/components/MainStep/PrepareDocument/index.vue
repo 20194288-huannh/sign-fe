@@ -11,9 +11,10 @@
             :canResize="item.can_resize" @resize="(newRect) => resize(newRect, idx)"
             @drag="(newRect) => resize(newRect, idx)" :text="item.text" @drag-stop="dragStop(idx)"
             @click="selectedSignature = item">
-            <el-date-picker v-model="item.data" format="YYYY-MM-DD" v-if="item.type === SIGNATURE_TYPE.DATE"
+            <el-date-picker v-model="item.data" format="YYYY-MM-DD"
+              v-if="item.type === SIGNATURE_TYPE.DATE && item.page === pageNum"
               @click="() => { signModal = 2; selectedSignature = item; }" />
-            <input v-model="item.data" v-if="item.type === SIGNATURE_TYPE.TEXT" />
+            <input v-model="item.data" v-if="item.type === SIGNATURE_TYPE.TEXT && item.page === pageNum" />
             <p v-if="item.type === SIGNATURE_TYPE.SIGNATURE &&
               (item.position.top !== 0 || item.position.left !== 0)"
               @click="() => { signModal = 2; selectedSignature = item; }">
@@ -22,15 +23,15 @@
                 SIGNATURE_TYPE.SIGNATURE
               }}
             </p>
-            <el-checkbox v-if="
+            <!-- <el-checkbox v-if="
               item.type === SIGNATURE_TYPE.CHECKBOX &&
               (item.position.top !== 0 || item.position.left !== 0)"
               @click="() => { signModal = 2; selectedSignature = item; }" class="w-10" />
             <el-radio v-if="
               item.type === SIGNATURE_TYPE.RADIO &&
               (item.position.top !== 0 || item.position.left !== 0)
-            " />
-            <img v-if="item.type === SIGNATURE_TYPE.IMAGE" :src="item.data.path"
+            " /> -->
+            <img v-if="item.type === SIGNATURE_TYPE.IMAGE && item.page === pageNum" :src="item.data.path"
               :style="`width: ${item.position.width}px; height: ${item.position.height}px`" />
             <div v-if="isNumber(item.receiverId)" :style="`background-color: ${background[item.receiverId]}`">{{
               item.receiver.name }}
@@ -43,7 +44,8 @@
       </div>
       <SigntureInfo class="mt-5 flex-shrink w-1/4" v-model:signature="selectedSignature" @resize="resize" />
     </div>
-    <SignatureModal v-model:signModal="signModal" @save="save" />
+    <SignatureModal v-model:signModal="signModal" @save="save" v-if="selectedSignature"
+      :height="selectedSignature.position.height" :width="selectedSignature.position.width" />
   </div>
 </template>
 
@@ -73,7 +75,7 @@ const { arrSignSecondStepValue } = useSendSignStore()
 const dragger = ref(false)
 const value = ref('2021-10-29')
 const signatureValue = ref()
-const signatures = defineModel('signatures', { required: true })
+const signatures = defineModel('signatures', { required: true, type: Array<Signature> })
 const canvasPdf = defineModel('canvas', { required: true })
 const users = defineModel('users', { required: true })
 const pdfContent = ref()
@@ -89,70 +91,6 @@ const background = {
   2: 'rgb(213, 156, 156)',
   3: 'rgb(248, 152, 209)',
   4: 'rgb(127, 171, 202)'
-}
-
-const arrType = ref<any>([
-  {
-    type: 'signature',
-    text: 'signature',
-    arrSize: [
-      {
-        width: 100,
-        height: 100,
-        top: 0,
-        left: 0
-      }
-    ]
-  },
-  {
-    type: 'radio',
-    text: 'radio',
-    arrSize: [
-      {
-        width: 100,
-        height: 100,
-        top: 0,
-        left: 0
-      }
-    ]
-  },
-  {
-    type: 'date',
-    text: 'date',
-    arrSize: [
-      {
-        width: 100,
-        height: 100,
-        top: 0,
-        left: 0
-      }
-    ]
-  },
-  {
-    type: 'checkbox',
-    text: 'checkbox',
-    arrSize: [
-      {
-        width: 100,
-        height: 100,
-        top: 0,
-        left: 0
-      }
-    ]
-  }
-])
-
-const checkStyleOfDragResize = (type: string) => {
-  switch (type) {
-    case 'date':
-    case 'input':
-      return 200
-    case 'checkbox':
-    case 'radio':
-      return 50
-    default:
-      return 100
-  }
 }
 
 const pageNum = ref(1)

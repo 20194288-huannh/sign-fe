@@ -2,10 +2,10 @@
     <el-dialog v-model="signModal" title="Add Signature" width="800">
         <el-tabs v-model="activeName" class="demo-tabs">
             <el-tab-pane label="Draw" name="draw">
-                <Draw @save="save" />
+                <Draw @save="save" :height="height" :width="width"/>
             </el-tab-pane>
             <el-tab-pane label="Type" name="type">
-                <Type @sign="sign"/>
+                <Type @sign="sign" />
             </el-tab-pane>
         </el-tabs>
     </el-dialog>
@@ -19,6 +19,16 @@ import { ref } from 'vue'
 const signModal = defineModel('signModal')
 const activeName = ref<String>('draw')
 const emit = defineEmits(['save'])
+defineProps({
+    height: {
+        type: Number,
+        default: 100
+    },
+    width: {
+        type: Number,
+        default: 100 
+    }
+})
 
 const save = (signaturePad: any) => {
     emit('save', signaturePad)
