@@ -5,11 +5,10 @@ import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import pdfjsLib from 'pdfjs-dist/build/pdf'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import { RequestService } from '@/services/index.js'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import type { Receiver, Signature, Canvas } from '@/types/send-sign'
 import type { Document } from '@/types/document.interface'
 import { DocumentService } from '@/services/index.js'
-import { info } from 'console'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -23,6 +22,7 @@ interface RequestData {
 }
 
 const route = useRoute()
+const router = useRouter()
 const pdf = ref<any>()
 const requestData = ref<RequestData>()
 
@@ -40,6 +40,7 @@ const onFinish = async () => {
   if (requestData.value) {
     requestData.value.token = route.query.token as string
     const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
+    router.push({ name: 'ThanksForSigning' })
   }
 }
 

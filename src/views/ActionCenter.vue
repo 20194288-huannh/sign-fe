@@ -1,5 +1,24 @@
 <script setup lang="ts">
-import SignUp from '../components/SignUp.vue'
+import { NotificationService } from '@/services'
+import { ref } from 'vue'
+
+const notifications = ref()
+
+const items = ref<Array<any>>([
+  { bgColor: 'rgb(50, 195, 135)', title: 'Completed', count: 0 },
+  { bgColor: 'rgb(160, 160, 160)', title: 'Draft', count: 0 },
+  { bgColor: 'rgb(183, 75, 50)', title: 'Expired', count: 0 },
+  { bgColor: 'rgb(255, 205, 0)', title: 'In-progress', count: 0 },
+  { bgColor: 'rgb(144, 79, 171)', title: 'Needs-Review', count: 0 },
+  { bgColor: 'rgb(15, 169, 219)', title: 'Sent', count: 0 }
+])
+
+const getAllNotification = async () => {
+  const response = await NotificationService.getAll()
+  notifications.value = response.data.data
+}
+
+getAllNotification()
 </script>
 
 <template>
@@ -12,75 +31,69 @@ import SignUp from '../components/SignUp.vue'
         <div class="">
           <div class="feed">
             <ul class="list-group list-group-flush mt-2 mb-2">
-              <li class="list-group-item border-0 p-0 cardbox mt-1 mb-1 lg:block hidden">
-                <div class="typeindicate bg-yellow-400"></div>
-                <div class="flex justify-between items-top">
-                  <div class="flex justify-between p-3 w-64">
+              <li
+                class="list-group-item border-0 p-0 cardbox mt-1 mb-1 lg:block hidden"
+                v-for="notification in notifications"
+              >
+                <div
+                  class="flex justify-between items-top border-l-400 border-l-8 rounded"
+                  :style="`border-color: ${items[notification.status].bgColor};`"
+                >
+                  <div class="flex justify-between p-3 w-80">
                     <div class="mr-2 flex flex-col justify-center">
-                      <div class="userletter-32 float-left text-white bg-blue-500"> H </div>
+                      <div class="userletter-32 float-left text-white bg-blue-500">H</div>
                     </div>
                     <div class="w-100 flex flex-col justify-center">
-                      <div class="font-semibold text-truncate" title="Huan">Huan</div>
-                      <div class="text-[#6c757d] text-xs float-left">Feb 07, 2024 07:36:06 PM</div>
+                      <div class="font-semibold text-truncate" title="Huan">
+                        {{ notification.receiver.name }}
+                      </div>
+                      <div class="text-[#6c757d] text-xs float-left">
+                        {{ notification.created_at }}
+                      </div>
                     </div>
                   </div>
                   <div class="flex justify-between items-center p-3 pl-5 pr-5 w-full">
                     <div class="text-[#6c757d] text-xs mb-0">
-                      <p class="text-[#6c757d] text-xs mb-0"> Viewed a document </p>
+                      <p class="text-[#6c757d] text-xs mb-0">{{ notification.content }}</p>
                       <div>
-                        <a class="font-semibold text-sm text-[#0e72ce]"
-                          title="LỊCH TRỰC NHẬT KIAI.xlsx - February_2024 (1)"> LỊCH TRỰC NHẬT KIAI.xlsx - February_2024
-                          (1)</a>
-                      </div>
-                    </div>
-                    <div class="actionbtns flex">
-                      <div class="w-110 text-right">
-                        <a title="Close" class="action-button text-[#dc3545]">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-1 h-6 w-6">
-                            <path d="M18.2 4 20 5.8 5.8 20 4 18.2Z" />
-                            <path d="M20 18.2 18.2 20 4 5.8 5.8 4Z" />
-                          </svg>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <li class="list-group-item border-0 p-0 cardbox mt-1 mb-1 lg:block hidden">
-                <div class="typeindicate bg-purple-600"></div>
-                <div class="flex justify-between items-top">
-                  <div class="flex justify-between p-3 w-64">
-                    <div class="mr-2 flex flex-col justify-center">
-                      <div class="userletter-32 float-left text-white bg-cyan-400"> HN </div>
-                    </div>
-                    <div class="w-100 flex flex-col justify-center">
-                      <div class="font-semibold text-truncate" title="Huấn Nguyễn Hữu">Huấn Nguyễn Hữu</div>
-                      <div class="text-[#6c757d] text-xs float-left">Feb 06, 2024 09:25:47 PM</div>
-                    </div>
-                  </div>
-                  <div class="flex justify-between items-center p-3 pl-5 pr-5 w-full">
-                    <div class="text-[#6c757d] text-xs mb-0">
-                      <p class="text-[#6c757d] text-xs mb-0"> Need your signature </p>
-                      <div>
-                        <a class="font-semibold text-sm" title="LỊCH TRỰC NHẬT KIAI.xlsx - February_2024 (1)"> LỊCH TRỰC
-                          NHẬT KIAI.xlsx - February_2024
-                          (1)</a>
+                        <a
+                          class="font-semibold text-sm text-[#0e72ce]"
+                          title="LỊCH TRỰC NHẬT KIAI.xlsx - February_2024 (1)"
+                        >
+                          {{ notification.document.file.name }}</a
+                        >
                       </div>
                     </div>
                     <div class="actionbtns flex">
                       <div class="w-110 text-right flex">
                         <a title="view" class="action-button text-[#00b3b3]">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-1 h-6 w-6">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="mt-1 h-6 w-6"
+                          >
                             <path
-                              d="M16.7 20.6a.7.7 0 0 1-.8.8H3.4a.7.7 0 0 1-.8-.8V3.4a.7.7 0 0 1 .8-.8h7.8V5.7a2.4 2.4 0 0 0 2.4 2.4l1.5-1.6H13.6a.8.8 0 0 1-.8-.8v-2l2.6 2.6.7-.7.4-.4L13.2 1.9A2.8 2.8 0 0 0 11 1H3.4A2.4 2.4 0 0 0 1 3.4V20.6A2.4 2.4 0 0 0 3.4 23H15.9a2.4 2.4 0 0 0 2.4-2.4V14.7l-1.6 1.6ZM12.5 15.9l-.2.2-2.2 1.1L11.2 15l.3-.5.5.5.7.8Zm1.4-1.3-.7-.6-.6-.6 5.1-5.1L19 9.5Zm7.2-7.2-1 1.1L18.8 7.2l1.1-1a.6.6 0 0 1 .6-.3l.6.3a.9.9 0 0 1 .3.6.9.9 0 0 1-.3.7Z" />
+                              d="M16.7 20.6a.7.7 0 0 1-.8.8H3.4a.7.7 0 0 1-.8-.8V3.4a.7.7 0 0 1 .8-.8h7.8V5.7a2.4 2.4 0 0 0 2.4 2.4l1.5-1.6H13.6a.8.8 0 0 1-.8-.8v-2l2.6 2.6.7-.7.4-.4L13.2 1.9A2.8 2.8 0 0 0 11 1H3.4A2.4 2.4 0 0 0 1 3.4V20.6A2.4 2.4 0 0 0 3.4 23H15.9a2.4 2.4 0 0 0 2.4-2.4V14.7l-1.6 1.6ZM12.5 15.9l-.2.2-2.2 1.1L11.2 15l.3-.5.5.5.7.8Zm1.4-1.3-.7-.6-.6-.6 5.1-5.1L19 9.5Zm7.2-7.2-1 1.1L18.8 7.2l1.1-1a.6.6 0 0 1 .6-.3l.6.3a.9.9 0 0 1 .3.6.9.9 0 0 1-.3.7Z"
+                            />
                           </svg>
                         </a>
                         <a title="Close" class="action-button text-[#dc3545]">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-1 h-6 w-6"
-                            style="height:24px;">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="mt-1 h-6 w-6"
+                            style="height: 24px"
+                          >
                             <path d="M18.2 4 20 5.8 5.8 20 4 18.2Z" />
                             <path d="M20 18.2 18.2 20 4 5.8 5.8 4Z" />
                           </svg>
@@ -90,15 +103,12 @@ import SignUp from '../components/SignUp.vue'
                   </div>
                 </div>
               </li>
-              <!-- more list items -->
             </ul>
           </div>
         </div>
       </div>
     </div>
-
   </div>
-
 </template>
 
 <style lang="css" scoped>
@@ -121,8 +131,8 @@ import SignUp from '../components/SignUp.vue'
 
 .cardbox,
 .listbox {
-  box-shadow: 0 0 13px 0 rgba(82, 63, 105, .05);
-  border: 1px solid rgba(0, 0, 0, .02) !important;
+  box-shadow: 0 0 13px 0 rgba(82, 63, 105, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.02) !important;
   border-radius: 10px !important;
   background-color: #fff;
 }

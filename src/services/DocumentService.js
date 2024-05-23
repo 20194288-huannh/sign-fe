@@ -6,6 +6,9 @@ const DocumentService  = {
     save(data) {
         return ApiService.post('documents/save', data, {headers : { 'Content-Type': 'multipart/form-data'}})
     },
+    find(id) {
+        return ApiService.get(`documents/${id}`)
+    },
     getByUserId(data) {
         return ApiService.get(`users/documents`, data)
     },
@@ -26,6 +29,9 @@ const DocumentService  = {
     },
     fetchHistory(sha) {
         return ApiService.post(`documents/${sha}/history`)
+    },
+    getActionsOfDocument(sha) {
+        return ApiService.get(`documents/${sha}/actions`)
     }
 }
 export default DocumentService

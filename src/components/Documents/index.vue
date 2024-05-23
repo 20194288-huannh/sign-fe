@@ -2,28 +2,50 @@
   <DocumentFilter v-model:status="status" @remove-filter-status="removeFilterStatus" />
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
-      class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
+      class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900"
+    >
       <label for="table-search" class="sr-only">Search</label>
       <div class="relative">
-        <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-            fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+        <div
+          class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
+        >
+          <svg
+            class="w-4 h-4 text-gray-500 dark:text-gray-400"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+            />
           </svg>
         </div>
-        <input type="text" v-model="filter" id="table-search-users"
+        <input
+          type="text"
+          v-model="filter"
+          id="table-search-users"
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Search" />
+          placeholder="Search"
+        />
       </div>
     </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase header bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <thead
+        class="text-xs text-gray-700 uppercase header bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
         <tr>
           <th scope="col" class="p-4">
             <div class="flex items-center">
-              <input id="checkbox-all-search" type="checkbox"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+              <input
+                id="checkbox-all-search"
+                type="checkbox"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
               <label for="checkbox-all-search" class="sr-only">checkbox</label>
             </div>
           </th>
@@ -35,18 +57,25 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="document in documents"
-          class="bg-white border-s border-e border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <tr
+          v-for="document in documents"
+          class="bg-white border-s border-e border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+        >
           <td class="w-4 p-4">
             <div class="flex items-center">
-              <input id="checkbox-table-search-1" type="checkbox"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+              <input
+                id="checkbox-table-search-1"
+                type="checkbox"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
               <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
             </div>
           </td>
           <td class="px-6">
-            <div scope="row"
-              class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-sm font-semibold">
+            <div
+              scope="row"
+              class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-sm font-semibold"
+            >
               <div class="text-sm font-semibold">{{ document.file?.name }}</div>
             </div>
           </td>
@@ -58,20 +87,28 @@
           </td>
 
           <td class="px-6">
-            <div scope="row"
-              class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-              <img class="w-10 h-10 rounded-full" src="@/assets/img/profilebg128x128px.png" alt="Jese image" />
+            <div
+              scope="row"
+              class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              <img
+                class="w-10 h-10 rounded-full"
+                src="@/assets/img/profilebg128x128px.png"
+                alt="Jese image"
+              />
               <div class="ps-3 text-sm font-semibold">{{ document.user.name }}</div>
             </div>
           </td>
           <td class="px-6">
-            <div scope="row"
-              class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <div
+              scope="row"
+              class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
               <div class="ps-3 text-sm">{{ document.requested_on }}</div>
             </div>
           </td>
           <td class="px-6">
-            <el-button type="primary" plain>
+            <el-button type="primary" plain @click="getDetail(Number(document.id))">
               <el-icon size="16" class="pt-1">
                 <MoreFilled />
               </el-icon>
@@ -85,8 +122,14 @@
         </tr>
       </tbody>
     </table>
-    <el-pagination class="m-3" v-model:current-page="currentPage" :page-size="pagination?.per_page" :pager-count="pagination?.last_page"
-      layout="prev, pager, next" :total="pagination?.total" />
+    <el-pagination
+      class="m-3"
+      v-model:current-page="currentPage"
+      :page-size="pagination?.per_page"
+      :pager-count="pagination?.last_page"
+      layout="prev, pager, next"
+      :total="pagination?.total"
+    />
   </div>
 </template>
 
@@ -97,6 +140,7 @@ import type { Document, Pagination } from '@/types/document.interface'
 import { ref, onMounted, watch } from 'vue'
 import { Status } from '@/types/document.interface'
 import type { FileInfo } from '@/types/document.interface'
+import { useRouter } from 'vue-router'
 
 const documents = ref<Document[]>([])
 const status = ref<Array<Number>>([0, 1, 2, 3, 4, 5])
@@ -112,6 +156,7 @@ const mappingStatus: { [key: number]: string } = {
 }
 const loading = ref<boolean>(false)
 const pagination = ref<Pagination>()
+const router = useRouter()
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
@@ -122,25 +167,30 @@ const removeFilterStatus = (key: number) => {
   fetchDocuments()
 }
 
+const getDetail = (id: number) => {
+  router.push({ name: 'DocumentDetail', params: { id: id } })
+}
+
 const fetchDocuments = async () => {
   if (loading.value) return
   loading.value = true
   try {
     if (status.value.length) {
-    const response = await DocumentService.getByUserId({
-      page: currentPage.value, status: status.value.toString(), filter: filter.value
-    })
-    if (response.data.data) {
-      documents.value = response.data.data.documents
+      const response = await DocumentService.getByUserId({
+        page: currentPage.value,
+        status: status.value.toString(),
+        filter: filter.value
+      })
+      if (response.data.data) {
+        documents.value = response.data.data.documents
+      } else {
+        documents.value = []
+      }
+      pagination.value = response.data.data.pagination
     } else {
       documents.value = []
     }
-    pagination.value = response.data.data.pagination
-  } else {
-    documents.value = []
-  }
   } catch (e) {
-
   } finally {
     loading.value = false
   }

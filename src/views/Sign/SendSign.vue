@@ -235,12 +235,7 @@ const form = ref<any>({
       name: 'Nguyen Huu Huan Signer 2',
       email: 'gundamakp02@gmail.com',
       type: 0
-    },
-    // {
-    //   name: '',
-    //   email: '',
-    //   type: ''
-    // },
+    }
   ],
   signatures: [],
   email: {

@@ -5,6 +5,7 @@ import DocumentService from './DocumentService'
 import FileService from './FileService'
 import RequestService from './RequestService'
 import ActionService from './ActionService'
+import NotificationService from './NotificationService'
 
 export {
   ApiService,
@@ -13,5 +14,6 @@ export {
   DocumentService,
   FileService,
   RequestService,
-  ActionService
+  ActionService,
+  NotificationService,
 }

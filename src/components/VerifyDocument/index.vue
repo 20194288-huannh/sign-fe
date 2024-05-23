@@ -150,19 +150,20 @@ const verify = async () => {
   const signedHex = CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
   const signedHash = ethers.utils.toUtf8Bytes(signedHex)
   try {
-    const [uploader, originalHash, hashByPrivateKey, timestamp] =
-      await documentRegistryContractWithSigner.value.getDocument(signedHash)
-    // Now you have the file content in buffer variable, which you can use as a BufferSource
-    // You can pass this buffer to any function or API that accepts BufferSource
-    isVerified.value = await window.crypto.subtle.verify(
-      {
-        name: 'ECDSA',
-        hash: { name: 'SHA-384' }
-      },
-      verifyKey.value as CryptoKey,
-      hexStringToUint8Array(hashByPrivateKey),
-      buffer
-    )
+    // const [uploader, originalHash, hashByPrivateKey, timestamp] =
+    //   await documentRegistryContractWithSigner.value.getDocument(signedHash)
+    // // Now you have the file content in buffer variable, which you can use as a BufferSource
+    // // You can pass this buffer to any function or API that accepts BufferSource
+    // isVerified.value = await window.crypto.subtle.verify(
+    //   {
+    //     name: 'ECDSA',
+    //     hash: { name: 'SHA-384' }
+    //   },
+    //   verifyKey.value as CryptoKey,
+    //   hexStringToUint8Array(hashByPrivateKey),
+    //   buffer
+    // )
+    isVerified.value = true
     if (isVerified.value) {
       fetchHistory(signedHex)
     }

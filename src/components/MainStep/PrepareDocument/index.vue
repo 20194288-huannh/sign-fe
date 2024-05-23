@@ -1,23 +1,63 @@
 <template>
   <div class="relative">
-    <ToolBar v-model:totalPage="totalPage" v-model:pageNum="pageNum" v-model:signModal="signModal" v-model:users="users"
-      v-model:receiverId="receiverId" v-model="scale" v-model:signatures="signatures" @on-next-page="onNextPage"
-      @on-prev-page="onPrevPage" @scale-up="scaleUp" @scale-down="scaleDown" @note="note" />
+    <ToolBar
+      v-model:totalPage="totalPage"
+      v-model:pageNum="pageNum"
+      v-model:signModal="signModal"
+      v-model:users="users"
+      v-model:receiverId="receiverId"
+      v-model="scale"
+      v-model:signatures="signatures"
+      @on-next-page="onNextPage"
+      @on-prev-page="onPrevPage"
+      @scale-up="scaleUp"
+      @scale-down="scaleDown"
+      @note="note"
+    />
     <div class="flex gap-5">
       <div id="pageContainer" class="bg-[#3D424E33] relative flex-grow">
         <div class="pdfContent">
-          <DropDragSign v-for="(item, idx) in signatures" :key="item.id" :width="item.position.width"
-            :height="item.position.height" :top="item.position.top" :left="item.position.left"
-            :canResize="item.can_resize" @resize="(newRect) => resize(newRect, idx)"
-            @drag="(newRect) => resize(newRect, idx)" :text="item.text" @drag-stop="dragStop(idx)"
-            @click="selectedSignature = item">
-            <el-date-picker v-model="item.data" format="YYYY-MM-DD"
+          <DropDragSign
+            v-for="(item, idx) in signatures"
+            :key="item.id"
+            :width="item.position.width"
+            :height="item.position.height"
+            :top="item.position.top"
+            :left="item.position.left"
+            :canResize="item.can_resize"
+            @resize="(newRect) => resize(newRect, idx)"
+            @drag="(newRect) => resize(newRect, idx)"
+            :text="item.text"
+            @drag-stop="dragStop(idx)"
+            @click="selectedSignature = item"
+          >
+            <el-date-picker
+              v-model="item.data"
+              format="YYYY-MM-DD"
               v-if="item.type === SIGNATURE_TYPE.DATE && item.page === pageNum"
-              @click="() => { signModal = 2; selectedSignature = item; }" />
-            <input v-model="item.data" v-if="item.type === SIGNATURE_TYPE.TEXT && item.page === pageNum" />
-            <p v-if="item.type === SIGNATURE_TYPE.SIGNATURE &&
-              (item.position.top !== 0 || item.position.left !== 0)"
-              @click="() => { signModal = 2; selectedSignature = item; }">
+              @click="
+                () => {
+                  signModal = 2
+                  selectedSignature = item
+                }
+              "
+            />
+            <input
+              v-model="item.data"
+              v-if="item.type === SIGNATURE_TYPE.TEXT && item.page === pageNum"
+            />
+            <p
+              v-if="
+                item.type === SIGNATURE_TYPE.SIGNATURE &&
+                (item.position.top !== 0 || item.position.left !== 0)
+              "
+              @click="
+                () => {
+                  signModal = 2
+                  selectedSignature = item
+                }
+              "
+            >
               {{
                 arrSignSecondStepValue.main.find((e) => e.id === signatureValue)?.name ??
                 SIGNATURE_TYPE.SIGNATURE
@@ -31,21 +71,46 @@
               item.type === SIGNATURE_TYPE.RADIO &&
               (item.position.top !== 0 || item.position.left !== 0)
             " /> -->
-            <img v-if="item.type === SIGNATURE_TYPE.IMAGE && item.page === pageNum" :src="item.data.path"
-              :style="`width: ${item.position.width}px; height: ${item.position.height}px`" />
-            <div v-if="isNumber(item.receiverId)" :style="`background-color: ${background[item.receiverId]}`">{{
-              item.receiver.name }}
+            <img
+              v-if="item.type === SIGNATURE_TYPE.IMAGE && item.page === pageNum"
+              :src="item.data.path"
+              :style="`width: ${item.position.width}px; height: ${item.position.height}px`"
+            />
+            <div
+              v-if="isNumber(item.receiverId)"
+              :style="`background-color: ${background[item.receiverId]}`"
+            >
+              {{ item.receiver.name }}
             </div>
-            <div v-if="!item.type" class="border-dashed border-2 border-indigo-600"
-              @click="() => { signModal = 2; selectedSignature = item; }">{{ item.position }}</div>
+            <div
+              v-if="!item.type"
+              class="border-dashed border-2 border-indigo-600"
+              @click="
+                () => {
+                  signModal = 2
+                  selectedSignature = item
+                }
+              "
+            >
+              {{ item.position }}
+            </div>
           </DropDragSign>
           <canvas id="the-canvas" ref="canvas" class=""></canvas>
         </div>
       </div>
-      <SigntureInfo class="mt-5 flex-shrink w-1/4" v-model:signature="selectedSignature" @resize="resize" />
+      <SigntureInfo
+        class="mt-5 flex-shrink w-1/4"
+        v-model:signature="selectedSignature"
+        @resize="resize"
+      />
     </div>
-    <SignatureModal v-model:signModal="signModal" @save="save" v-if="selectedSignature"
-      :height="selectedSignature.position.height" :width="selectedSignature.position.width" />
+    <SignatureModal
+      v-model:signModal="signModal"
+      @save="save"
+      v-if="selectedSignature"
+      :height="selectedSignature.position.height"
+      :width="selectedSignature.position.width"
+    />
   </div>
 </template>
 
@@ -64,7 +129,7 @@ import { SIGNATURE_TYPE } from '@/types/send-sign'
 import SigntureInfo from '@/components/MainStep/PrepareDocument/SignatureInfo.vue'
 import type { ISendSignSecondStep, SendForSignature } from '@/types/send-sign'
 import SignatureModal from '@/components/SignatureModal.vue'
-import { isNumber } from 'element-plus/es/utils/types.mjs';
+import { isNumber } from 'element-plus/es/utils/types.mjs'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -315,7 +380,7 @@ watch(
 )
 </script>
 
-<style>
+<style scope>
 #pageContainer {
   margin: auto;
   height: 700px;
@@ -360,7 +425,7 @@ div.page {
   height: 40px !important;
 }
 
-.custom-select>.el-select__wrapper {
+.custom-select > .el-select__wrapper {
   height: 40px;
 }
 
