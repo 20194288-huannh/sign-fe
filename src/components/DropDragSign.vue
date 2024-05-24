@@ -8,7 +8,9 @@ const props = defineProps({
   top: Number,
   left: Number,
   text: String,
-  canResize: Boolean
+  canResize: Boolean,
+  color: String,
+  isShow: Boolean
 })
 
 const mouseHover = ref<boolean>(false)
@@ -26,12 +28,41 @@ const onDragstop = () => {
 }
 </script>
 
+<style lang="css" scope>
+.vdr.active::before {
+  outline: 1.5px dashed #00afb5 !important;
+}
+.vdr-stick-tl,
+.vdr-stick-tr,
+.vdr-stick-bl,
+.vdr-stick-br {
+  border: 1.5px solid #00afb5;
+  border-radius: 50px;
+  background-color: #fff;
+}
+
+.vdr-stick-tm,
+.vdr-stick-mr,
+.vdr-stick-bm,
+.vdr-stick-ml {
+  visibility: hidden;
+}
+
+.signature-border {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+</style>
+
 <template>
   <VueDragResize
+    v-if="isShow"
     :w="props.width"
     :h="props.height"
     :x="props.left"
     :y="props.top"
+    :minh="25"
+    :minw="55"
     :isDraggable="props.canResize"
     :parentLimitation="true"
     :z="100"
@@ -41,7 +72,7 @@ const onDragstop = () => {
     @dragstop="onDragstop"
   >
     <div
-      class="min-h-[40px] rounded-sm border-neutral-400 bg-white flex items-center justify-center cursor-pointer relative"
+      class="rounded-sm border-neutral-400 flex items-center justify-center cursor-pointer relative w-full h-full signature-border rounded"
       @mousemove="mouseHover = true"
       @mouseleave="mouseHover = false"
     >

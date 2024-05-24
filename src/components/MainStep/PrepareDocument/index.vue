@@ -19,17 +19,19 @@
         <div class="pdfContent">
           <DropDragSign
             v-for="(item, idx) in signatures"
+            :isShow="item.page === pageNum"
             :key="item.id"
             :width="item.position.width"
             :height="item.position.height"
             :top="item.position.top"
             :left="item.position.left"
             :canResize="item.can_resize"
+            :text="item.text"
             @resize="(newRect) => resize(newRect, idx)"
             @drag="(newRect) => resize(newRect, idx)"
-            :text="item.text"
             @drag-stop="dragStop(idx)"
             @click="selectedSignature = item"
+            :style="`background-color: ${background[item.receiverId]}`"
           >
             <el-date-picker
               v-model="item.data"
@@ -79,6 +81,7 @@
             <div
               v-if="isNumber(item.receiverId)"
               :style="`background-color: ${background[item.receiverId]}`"
+              class="truncate"
             >
               {{ item.receiver.name }}
             </div>
@@ -107,9 +110,9 @@
     <SignatureModal
       v-model:signModal="signModal"
       @save="save"
-      v-if="selectedSignature"
-      :height="selectedSignature.position.height"
-      :width="selectedSignature.position.width"
+      @sign="sign"
+      :height="selectedSignature?.position.height || 175"
+      :width="selectedSignature?.position.width || 350"
     />
   </div>
 </template>
@@ -130,6 +133,7 @@ import SigntureInfo from '@/components/MainStep/PrepareDocument/SignatureInfo.vu
 import type { ISendSignSecondStep, SendForSignature } from '@/types/send-sign'
 import SignatureModal from '@/components/SignatureModal.vue'
 import { isNumber } from 'element-plus/es/utils/types.mjs'
+import type { NumberTypes } from 'web3'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -236,6 +240,7 @@ const save = async (signaturePad: any) => {
         type: SIGNATURE_TYPE.IMAGE,
         scale: Number(scale.value),
         page: pageNum.value,
+        can_resize: true,
         position: {
           width: 100,
           height: 60,
@@ -253,6 +258,10 @@ const save = async (signaturePad: any) => {
     signaturePad.clearSignature()
     signModal.value = 0
   }
+}
+
+const sign = (selected: number) => {
+  console.log(selected)
 }
 
 const note = async () => {
@@ -313,8 +322,6 @@ function onNextPage() {
 
 const dragStop = (idx: number) => {
   dragger.value = false
-  console.log('drag stop')
-  console.log(signatures.value)
 }
 
 const handleDrag = (e: any, item: any) => {
@@ -387,9 +394,9 @@ watch(
   overflow: scroll;
 }
 
-.border {
+/* .border {
   border: 1px solid red;
-}
+} */
 
 #viewer {
   display: flex;
@@ -419,10 +426,6 @@ watch(
 
 div.page {
   display: inline-block;
-}
-
-.content-container {
-  height: 40px !important;
 }
 
 .custom-select > .el-select__wrapper {

@@ -147,7 +147,7 @@
       <div class="flex">
         <button
           class="dropdown button-icon PSPDFKit-Toolbar-Button-InkSignature-Annotation PSPDFKit-Toolbar-Button-Signature border-left"
-          title="Sign" aria-label="Sign" aria-pressed="false" type="button" @click="signModal = true">
+          title="Sign" aria-label="Sign" aria-pressed="false" type="button" @click="openSignModal">
           <span class="tool-button-icon PSPDFKit-Icon-Signature" aria-hidden="true"><svg
               xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"
               focusable="false">
@@ -329,6 +329,10 @@ const emit = defineEmits(['onNextPage', 'onPrevPage', 'scaleUp', 'scaleDown', 'n
 
 const handleCommand = (command: string | number | object) => {
   receiverId.value = command
+}
+
+const openSignModal = () => {
+  signModal.value = true
 }
 
 const createCalendar = () => {
