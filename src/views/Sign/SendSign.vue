@@ -199,13 +199,13 @@ import AddRecipients from '@/components/MainStep/AddRecipients.vue'
 import Send from '@/components/MainStep/Send/index.vue'
 import { DocumentService } from '@/services/index.js'
 import { ethers } from 'ethers'
-import BlockSig from '@/contracts/artifacts/contracts/BlockSig.sol/BlockSig.json'
 import { useSendSignStore } from '@/stores/send-sign'
 import { SEND_SIGN_STEP } from '@/constants/send-sign'
 import { ElNotification } from 'element-plus'
 import { ENotificationType } from '@/types/notification'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import type { Document } from '@/types/document.interface'
+import { useRouter } from 'vue-router'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -215,6 +215,7 @@ const files = ref<File[]>([])
 const myDocument = ref<Document>()
 const { step, changeStep } = useSendSignStore()
 const checkMouseMove = ref<boolean>(false)
+const router = useRouter()
 const pdf = ref()
 interface User {
   name: string
@@ -323,6 +324,7 @@ const scrollToView = (idx: number) => {
 const sendSign = async () => {
   if (myDocument.value) {
     const response = await DocumentService.sendSign(myDocument.value.id, form.value)
+    router.push({ name: 'Documents' })
   }
 }
 

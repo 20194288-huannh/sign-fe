@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import AppLayoutDefault from './AppLayoutDefault.vue'
+import GuestLayout from './GuestLayout.vue'
 import { markRaw, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { defineAsyncComponent } from 'vue'
 
-const layout = ref()
 const route = useRoute()
+const router = useRouter()
+const layout = ref()
 
-watch(
-  () => route.meta?.layout as string | undefined,
-  async (metaLayout) => {
-    try {
-      const component = metaLayout && (await import(/* @vite-ignore */ `./${metaLayout}.vue`))
-      layout.value = markRaw(component?.default || AppLayoutDefault)
-    } catch (e) {
-      layout.value = markRaw(AppLayoutDefault)
-    }
-  },
-  { immediate: true }
-)
+router.beforeEach(async (to, from) => {
+  const layoutString = to.meta.layout
+  layout.value = defineAsyncComponent(() => import(`./${layoutString}.vue`))
+})
 </script>
 
 <template>

@@ -14,7 +14,7 @@
       @scale-down="scaleDown"
       @note="note"
     />
-    <div class="flex gap-5">
+    <div class="flex gap-5 content">
       <div id="pageContainer" class="bg-[#3D424E33] relative flex-grow">
         <div class="pdfContent">
           <DropDragSign
@@ -390,7 +390,7 @@ watch(
 <style scope>
 #pageContainer {
   margin: auto;
-  height: 700px;
+  height: 850px;
   overflow: scroll;
 }
 

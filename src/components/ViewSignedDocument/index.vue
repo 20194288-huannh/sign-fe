@@ -54,7 +54,7 @@ onMounted(async () => {
 
 <template>
   <div class="relative">
-    <Navbar @finish="onFinish" />
+    <Navbar @finish="onFinish" v-if="requestData" :document="requestData.document" />
     <PrepareDocument
       v-if="requestData"
       :pdf="pdf"

@@ -69,6 +69,7 @@ const router = createRouter({
     },
     {
       path: '/documents',
+      name: 'Documents',
       component: () => import('@/views/Documents.vue'),
       meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
