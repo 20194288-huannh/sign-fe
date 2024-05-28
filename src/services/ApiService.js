@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores/user.ts'
+import router from '@/router';
+
 let activeRequests = 0;
 const baseDomain = import.meta.env.VITE_APP_BASE_URL;
 const { user, token } = useUserStore()
@@ -42,6 +44,10 @@ instance.interceptors.response.use(
         return response
     },
     (error) => {
+        if (error.response.status === 404) {
+            router.push({name: 'NotFound'})
+        }
+        console.log(error.response)
         const { response, config } = error;
         // check if config errorHandler is on
         if (config?.globalErrorHandler?.on) {

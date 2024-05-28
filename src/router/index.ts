@@ -74,6 +74,12 @@ const router = createRouter({
       meta: { layout: 'AppLayoutDefault', middleware: [auth] }
     },
     {
+      path: '/not-found',
+      name: 'NotFound',
+      component: () => import('@/views/NotFound.vue'),
+      meta: { layout: 'GuestLayout', middleware: [auth] }
+    },
+    {
       path: '/documents/:id',
       name: 'DocumentDetail',
       component: () => import('@/views/DocumentDetail.vue'),
