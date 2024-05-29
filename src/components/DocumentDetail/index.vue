@@ -1,8 +1,12 @@
 <template>
   <div class="flex gap-5">
-    <div class="left basis-2/3">
+    <div class="left basis-2/3" v-if="document">
       <DocumentInfo v-model:document="document" />
-      <Recipient class="mt-5" v-if="document" v-model:recipients="document.request.receivers" />
+      <Recipient
+        class="mt-5"
+        v-if="document.request"
+        v-model:recipients="document.request.receivers"
+      />
     </div>
     <div class="right basis-1/3">
       <el-card class="content">

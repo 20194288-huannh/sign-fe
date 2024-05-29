@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { NotificationService } from '@/services'
 import { ref } from 'vue'
+import { ElNotification } from 'element-plus'
+import { ENotificationType } from '@/types/notification'
 
 const notifications = ref()
 
@@ -16,6 +18,21 @@ const items = ref<Array<any>>([
 const getAllNotification = async () => {
   const response = await NotificationService.getAll()
   notifications.value = response.data.data
+}
+
+const remove = async (id: number) => {
+  try {
+    await NotificationService.delete(id)
+    ElNotification({
+      type: ENotificationType.SUCCESS,
+      title: 'Success',
+      message: 'Remove notification successfully'
+    })
+    return
+  } catch (e) {
+    console.log(e)
+  }
+  getAllNotification()
 }
 
 getAllNotification()
@@ -82,7 +99,11 @@ getAllNotification()
                             />
                           </svg>
                         </a>
-                        <a title="Close" class="action-button text-[#dc3545]">
+                        <a
+                          title="Close"
+                          class="action-button text-[#dc3545]"
+                          @click="remove(notification.id)"
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"

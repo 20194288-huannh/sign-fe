@@ -11,7 +11,11 @@ const layout = ref()
 
 router.beforeEach(async (to, from) => {
   const layoutString = to.meta.layout
-  layout.value = defineAsyncComponent(() => import(`./${layoutString}.vue`))
+  if (layoutString === 'GuestLayout') {
+    layout.value = GuestLayout
+  } else {
+    layout.value = AppLayoutDefault
+  }
 })
 </script>
 

@@ -14,15 +14,22 @@
         <div
           v-for="document in documents"
           :key="document.id"
-          class="mt-6 p-3 border border-gray-300 rounded-md shadow-sm ring-1 ring-inset ring-gray-300"
+          class="mt-6 pt-4 pb-4 pl-7 pr-7 border border-gray-300 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 flex justify-between items-center"
         >
-          <div><span class="font-semibold">Document name:</span> {{ document.file.name }}</div>
-          <div><span class="font-semibold">Status :</span> {{ document.status }}</div>
           <div>
-            <span class="font-semibold">Created By :</span> {{ document.user.name }} -
-            {{ document.user.email }}
+            <div><span class="font-semibold">Document name:</span> {{ document.file.name }}</div>
+            <div><span class="font-semibold">Status :</span> {{ document.status }}</div>
+            <div>
+              <span class="font-semibold">Created By :</span> {{ document.user.name }} -
+              {{ document.user.email }}
+            </div>
+            <div><span class="font-semibold">Created On :</span> {{ document.requested_on }}</div>
           </div>
-          <div><span class="font-semibold">Created On :</span> {{ document.requested_on }}</div>
+          <el-button type="primary" plain @click="download(document.file)">
+            <el-icon size="16">
+              <Download />
+            </el-icon>
+          </el-button>
         </div>
       </div>
     </div>
@@ -32,10 +39,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Verified } from '@/components/Icon/index.ts'
+import { FileService } from '@/services'
 
 const props = defineProps(['documents'])
 
 const isShowDetail = ref<Boolean>(false)
+const download = async (file: any) => {
+  const response = await FileService.download(file.id)
+
+  const blob = new Blob([response.data], { type: 'application/pdf' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = file.name
+  link.click()
+  URL.revokeObjectURL(link.href)
+}
 </script>
 
 <style scoped></style>

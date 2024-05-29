@@ -230,12 +230,12 @@ const form = ref<any>({
     {
       name: 'Nguyen Huu Huan Signer',
       email: 'gundamakp01@gmail.com',
-      type: 0
+      type: '0'
     },
     {
       name: 'Nguyen Huu Huan Signer 2',
       email: 'gundamakp02@gmail.com',
-      type: 0
+      type: '0'
     }
   ],
   signatures: [],
@@ -324,7 +324,7 @@ const scrollToView = (idx: number) => {
 const sendSign = async () => {
   if (myDocument.value) {
     const response = await DocumentService.sendSign(myDocument.value.id, form.value)
-    router.push({ name: 'Documents' })
+    // router.push({ name: 'Documents' })
   }
 }
 
