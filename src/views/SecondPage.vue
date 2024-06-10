@@ -9,10 +9,7 @@
       </el-icon>
     </template>
     <template #main>
-      <PrepareDocument 
-        :pdf="pdf"
-        v-model:signatures="form.signatures"
-        :canvas="form.canvas" />
+      <PrepareDocument :pdf="pdf" v-model:signatures="form.signatures" :canvas="form.canvas" />
     </template>
   </StepCard>
 </template>
@@ -21,13 +18,12 @@
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import StepCard from '@/components/StepCard.vue'
 import { ref, onMounted } from 'vue'
-import Navbar from './Navbar.vue';
 import pdfjsLib from 'pdfjs-dist/build/pdf'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import { RequestService } from '@/services/index.js'
 import { useRoute } from 'vue-router'
-import type { Receiver, Signature, Canvas, SignOwn } from '@/types/send-sign';
-import type { Document } from '@/types/document.interface';
+import type { Receiver, Signature, Canvas, SignOwn } from '@/types/send-sign'
+import type { Document } from '@/types/document.interface'
 import { DocumentService } from '@/services/index.js'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -43,7 +39,7 @@ interface RequestData {
 const route = useRoute()
 const pdf = ref<any>()
 const requestData = ref<RequestData>()
-  const form = ref<SignOwn>({
+const form = ref<SignOwn>({
   signatures: [],
   canvas: {
     height: 0,
@@ -68,7 +64,6 @@ const onFinish = async () => {
 onMounted(async () => {
   fetchDocument(5)
 })
-
 </script>
 
 <style></style>
