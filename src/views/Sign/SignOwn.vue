@@ -137,7 +137,6 @@ import StepCard from '@/components/StepCard.vue'
 import AddFile from '@/components/MainStep/AddFile.vue'
 import { DocumentService } from '@/services'
 import { Contract, ethers } from 'ethers'
-import DocumentRegistryAbi from '@/contracts/artifacts/contracts/DocumentRegistry.sol/DocumentRegistry.json'
 import { useSendSignStore } from '@/stores/send-sign'
 import { SEND_SIGN_STEP } from '@/constants/send-sign'
 import { ElNotification } from 'element-plus'
@@ -147,7 +146,7 @@ import type { Document } from '@/types/document.interface'
 import type { SignOwn } from '@/types/send-sign.ts'
 import { useKeyStore } from '@/stores/key.ts'
 import { useFileStore } from '@/stores/file.ts'
-import { useDocumentContractStore } from '@/stores/document-contract.ts'
+import { useContractStore } from '@/stores/contract.ts'
 import CryptoJS from 'crypto-js'
 import { storeToRefs } from 'pinia'
 
@@ -163,9 +162,8 @@ const {
   importSignKey
 } = useKeyStore()
 
-const documentContractStore = useDocumentContractStore()
-const { documentRegistryContractWithSigner, documentRegistryContract } =
-  storeToRefs(documentContractStore)
+const contractStore = useContractStore()
+const { contractWithSigner, contract } = storeToRefs(contractStore)
 
 const { readFileAsArrayBuffer, arrayBufferToBytes, arrayBufferToWordArray } = useFileStore()
 
@@ -239,7 +237,7 @@ const download = async (pdfData: any, filename: string) => {
   return blob
 }
 
-documentContractStore.initContract()
+contractStore.initContract()
 const signOwn = async () => {
   if (typeof window.ethereum !== 'undefined') {
     try {
@@ -264,10 +262,10 @@ const signOwn = async () => {
           buffer
         )
 
-        await documentRegistryContractWithSigner.value.uploadDocument(
-          signedHash,
-          new Uint8Array(signature)
-        )
+        // await documentRegistryContractWithSigner.value.uploadDocument(
+        //   signedHash,
+        //   new Uint8Array(signature)
+        // )
         // try {
         //   const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
         // } catch (err) {
@@ -414,3 +412,4 @@ watch(
   background: #555;
 }
 </style>
+@/stores/contract

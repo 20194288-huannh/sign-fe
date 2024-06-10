@@ -1,25 +1,21 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { ethers, type Contract } from 'ethers'
-import DocumentRegistryAbi from '@/contracts/artifacts/contracts/DocumentRegistry.sol/DocumentRegistry.json'
+import SignSystemAbi from '@/contracts/artifacts/contracts/SignSystem.sol/SignSystem.json'
 
-export const useDocumentContractStore = defineStore('document-contract', () => {
-  const documentRegistryContractAddress = import.meta.env.VITE_DOCUMENT_REGISTRY_CONTRACT || ''
+export const useContractStore = defineStore('contract', () => {
+  const signSystemContractAddress = import.meta.env.VITE_SIGN_SYSTEM_CONTRACT || ''
   const signer = ref()
-  const documentRegistryContract = ref<Contract>()
-  const documentRegistryContractWithSigner = ref<Contract>()
+  const contract = ref<Contract>()
+  const contractWithSigner = ref<Contract>()
 
   const initContract = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
-    const contract = new ethers.Contract(
-      documentRegistryContractAddress,
-      DocumentRegistryAbi.abi,
-      provider
-    )
+    const tempContract = new ethers.Contract(signSystemContractAddress, SignSystemAbi.abi, provider)
     // Contract reference
-    documentRegistryContract.value = contract
-    documentRegistryContractWithSigner.value = contract.connect(signer)
+    contract.value = tempContract
+    contractWithSigner.value = tempContract.connect(signer)
     // documentRegistryContract.value.on(
     //   'DocumentUploaded',
     //   async (uploader, originalHash, hashByPrivateKey, timestamp) => {
@@ -40,5 +36,5 @@ export const useDocumentContractStore = defineStore('document-contract', () => {
     // )
   }
 
-  return { documentRegistryContractWithSigner, documentRegistryContract, initContract }
+  return { contract, contractWithSigner, initContract }
 })

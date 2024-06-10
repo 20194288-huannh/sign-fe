@@ -227,3 +227,4 @@ documentContractStore.initContract()
   padding: 25px 40px;
 }
 </style>
+@/stores/contract
