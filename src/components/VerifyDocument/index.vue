@@ -90,7 +90,7 @@ import pdfjsLib from 'pdfjs-dist/build/pdf'
 import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
 import { useKeyStore } from '@/stores/key'
 import { useFileStore } from '@/stores/file'
-import { useDocumentContractStore } from '@/stores/document-contract.ts'
+import { useContractStore } from '@/stores/contract.ts'
 import Success from '@/components/VerifyDocument/Success.vue'
 import Error from '@/components/VerifyDocument/Error.vue'
 import { Buffer } from 'buffer'
@@ -115,11 +115,8 @@ const isVerified = ref<Boolean>()
 const fileBuffer = ref<Array<any>>([])
 const documents = ref<Array<any>>()
 
-const documentContractStore = useDocumentContractStore()
-const { documentRegistryContractWithSigner, documentRegistryContract } =
-  storeToRefs(documentContractStore)
-// const { documentRegistryContractWithSigner, documentRegistryContract, initContract } =
-//   useDocumentContractStore()
+const contractStore = useContractStore()
+const { contractWithSigner, contract } = storeToRefs(contractStore)
 
 let signature = [
   47, 168, 131, 171, 39, 29, 232, 116, 2, 255, 230, 138, 228, 65, 91, 249, 40, 175, 110, 155, 204,
@@ -143,31 +140,30 @@ const verify = async () => {
     return
   }
 
-  if (!documentRegistryContractWithSigner.value) return
+  if (!contractWithSigner.value) return
   await getKey()
   const file = files.value[0]
   const buffer = await readFileAsArrayBuffer(file)
   const signedHex = CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
   const signedHash = ethers.utils.toUtf8Bytes(signedHex)
   try {
-    // const [uploader, originalHash, hashByPrivateKey, timestamp] =
-    //   await documentRegistryContractWithSigner.value.getDocument(signedHash)
-    // // Now you have the file content in buffer variable, which you can use as a BufferSource
-    // // You can pass this buffer to any function or API that accepts BufferSource
-    // isVerified.value = await window.crypto.subtle.verify(
-    //   {
-    //     name: 'ECDSA',
-    //     hash: { name: 'SHA-384' }
-    //   },
-    //   verifyKey.value as CryptoKey,
-    //   hexStringToUint8Array(hashByPrivateKey),
-    //   buffer
-    // )
+    const [uploader, originalHash, hashByPrivateKey, timestamp] =
+      await contract.value.getDocument(signedHash)
+    isVerified.value = await window.crypto.subtle.verify(
+      {
+        name: 'ECDSA',
+        hash: { name: 'SHA-384' }
+      },
+      verifyKey.value as CryptoKey,
+      hexStringToUint8Array(hashByPrivateKey),
+      buffer
+    )
     isVerified.value = true
     if (isVerified.value) {
       fetchHistory(signedHex)
     }
   } catch (e) {
+    isVerified.value = false
     console.log(e)
   }
 }
@@ -177,7 +173,7 @@ const fetchHistory = async (sha: string) => {
   documents.value = response.data.data
 }
 
-const hexStringToUint8Array = (hexString) => {
+const hexStringToUint8Array = (hexString: string) => {
   // Loại bỏ tiền tố "0x" nếu có
   if (hexString.startsWith('0x')) {
     hexString = hexString.slice(2)
@@ -219,7 +215,7 @@ const getPdf = async (id: number) => {
 
   pdfViewerSmall.setDocument(pdf.value)
 }
-documentContractStore.initContract()
+contractStore.initContract()
 </script>
 
 <style scoped>

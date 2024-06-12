@@ -33,7 +33,7 @@
                   type="email"
                   v-model="form.email"
                   autocomplete="email"
-                  required=""
+                  required="true"
                   class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -49,7 +49,7 @@
                   type="name"
                   v-model="form.name"
                   autocomplete="name"
-                  required=""
+                  required="true"
                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -65,7 +65,7 @@
                   type="password"
                   v-model="form.password"
                   autocomplete="current-password"
-                  required=""
+                  required="true"
                   class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -82,7 +82,7 @@
                   name="confirm-password"
                   type="password"
                   autocomplete="current-password"
-                  required=""
+                  required="true"
                   v-model="form.password_confirmation"
                   class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -110,7 +110,7 @@
                   aria-describedby="terms"
                   type="checkbox"
                   class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                  required=""
+                  required="true"
                 />
               </div>
               <div class="ml-3 text-sm">
@@ -148,10 +148,13 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import { AuthService } from '@/services'
-import axios from 'axios'
 import { ethers } from 'ethers'
-import UserRegistry from '@/contracts/artifacts/contracts/UserRegistry.sol/UserRegistry.json'
-import { useRouter } from 'vue-router'
+import { useContractStore } from '@/stores/contract'
+import { useRouter, useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+
+const router = useRouter()
+const route = useRoute()
 
 interface User {
   email: string
@@ -163,7 +166,7 @@ interface User {
   verifyKey: string
 }
 const form = ref<User>({
-  email: '',
+  email: (route.query.email as string) || '',
   name: '',
   password: '',
   password_confirmation: '',
@@ -174,50 +177,31 @@ const form = ref<User>({
 
 const ecryptKeyRef = ref<string>('')
 const signKeyRef = ref<string>('')
-const router = useRouter()
-const userRegistryContractAddress = import.meta.env.VITE_USER_REGISTRY_CONTRACT || ''
+const contractStore = useContractStore()
+const { contract, contractWithSigner } = storeToRefs(contractStore)
+
+contractStore.initContract()
 
 const signUp = async () => {
-  if (typeof window.ethereum !== 'undefined') {
-    //@ts-expect-error Window.ethers not TS
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner()
-    // Contract reference
-    const userRegistryContract = new ethers.Contract(
-      userRegistryContractAddress,
-      UserRegistry.abi,
-      provider
-    )
-    const userRegistryContractWithSigner = userRegistryContract.connect(signer)
+  try {
+    // Chuyển đổi chuỗi publicKey thành mảng bytes
+    const encryptKeyBytes = ethers.utils.toUtf8Bytes(form.value.encryptKey)
+    const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.verifyKey)
+    // Gọi hàm updateUser
+    const response = await AuthService.signUp(form.value)
+    // await contractWithSigner.value.createUser(encryptKeyBytes, verifyKeyBytes, form.value.email)
+    // const tx = await userRegistryContractWithSigner.getUser(
+    //   '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+    // )
+    // console.log(tx)
 
-    userRegistryContractWithSigner.on(
-      'UserUpdated',
-      async (user, verifyKey, encryptKey, email, event) => {
-        console.log('UserUpdated event:', user, verifyKey, encryptKey, email)
-        // Update your Vue.js app with the new user data here
-      }
-    )
-    try {
-      // Chuyển đổi chuỗi publicKey thành mảng bytes
-      const encryptKeyBytes = ethers.utils.toUtf8Bytes(form.value.encryptKey)
-      const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.verifyKey)
-      // Gọi hàm updateUser
-      const response = await AuthService.signUp(form.value)
-      await userRegistryContractWithSigner.createUser(
-        encryptKeyBytes,
-        verifyKeyBytes,
-        form.value.email
-      )
-      // const tx = await userRegistryContractWithSigner.getUser(
-      //   '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
-      // )
-      // console.log(tx)
-
-      router.push({ name: 'signIn' })
-      // const data = response.data.data
-    } catch (error) {
-      console.log(error)
+    if (route.query.token) {
+      route.push({})
     }
+    router.push({ name: 'home' })
+    // const data = response.data.data
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -236,23 +220,23 @@ const download = async () => {
 
 const generateKeyPair = async () => {
   // Tạo một cặp khóa mới
-  let keyPair = await window.crypto.subtle.generateKey(
-    {
-      name: 'RSA-OAEP',
-      modulusLength: 4096,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: 'SHA-256'
-    },
-    true,
-    ['encrypt', 'decrypt']
-  )
-  // Chuyển đổi khóa sang định dạng chuỗi hex
-  let exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
-  ecryptKeyRef.value = await keyToString(exported)
-  exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
-  form.value.encryptKey = await keyToString(exported)
+  // let keyPair = await window.crypto.subtle.generateKey(
+  //   {
+  //     name: 'RSA-OAEP',
+  //     modulusLength: 4096,
+  //     publicExponent: new Uint8Array([1, 0, 1]),
+  //     hash: 'SHA-256'
+  //   },
+  //   true,
+  //   ['encrypt', 'decrypt']
+  // )
+  // // Chuyển đổi khóa sang định dạng chuỗi hex
+  // let exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
+  // ecryptKeyRef.value = await keyToString(exported)
+  // exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
+  // form.value.encryptKey = await keyToString(exported)
 
-  keyPair = await window.crypto.subtle.generateKey(
+  let keyPair = await window.crypto.subtle.generateKey(
     {
       name: 'ECDSA',
       namedCurve: 'P-384'
@@ -261,11 +245,10 @@ const generateKeyPair = async () => {
     ['sign', 'verify']
   )
   // Chuyển đổi khóa sang định dạng chuỗi hex\
-  exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
+  let exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
   signKeyRef.value = await keyToString(exported)
   exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
   form.value.verifyKey = await keyToString(exported)
-  console.log(form.value.verifyKey)
 }
 
 const keyToString = async (exported: any): Promise<string> => {
