@@ -144,9 +144,9 @@ import { ENotificationType } from '@/types/notification'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
 import type { Document } from '@/types/document.interface'
 import type { SignOwn } from '@/types/send-sign.ts'
-import { useKeyStore } from '@/stores/key.ts'
-import { useFileStore } from '@/stores/file.ts'
-import { useContractStore } from '@/stores/contract.ts'
+import { useKeyStore } from '@/stores/key'
+import { useFileStore } from '@/stores/file'
+import { useContractStore } from '@/stores/contract'
 import CryptoJS from 'crypto-js'
 import { storeToRefs } from 'pinia'
 
@@ -262,10 +262,7 @@ const signOwn = async () => {
           buffer
         )
 
-        // await documentRegistryContractWithSigner.value.uploadDocument(
-        //   signedHash,
-        //   new Uint8Array(signature)
-        // )
+        await contractWithSigner.value.uploadDocument(signedHash, new Uint8Array(signature))
         // try {
         //   const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
         // } catch (err) {

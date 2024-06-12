@@ -324,7 +324,7 @@ const scrollToView = (idx: number) => {
 const sendSign = async () => {
   if (myDocument.value) {
     const response = await DocumentService.sendSign(myDocument.value.id, form.value)
-    // router.push({ name: 'Documents' })
+    router.push({ name: 'Documents' })
   }
 }
 

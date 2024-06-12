@@ -25,6 +25,8 @@ const route = useRoute()
 const router = useRouter()
 const pdf = ref<any>()
 const requestData = ref<RequestData>()
+const status = ref<number>()
+const email = ref<string>()
 
 const fetchDocument = async (id: Number) => {
   let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
@@ -32,8 +34,16 @@ const fetchDocument = async (id: Number) => {
 }
 
 const fetchRequest = async () => {
-  const response = await RequestService.get(route.query.token)
-  requestData.value = response.data.data
+  try {
+    const response = await RequestService.get(route.query.token)
+    requestData.value = response.data.data
+  } catch (e: any) {
+    status.value = e.status
+    email.value = e.data.data.email
+    if (e.status === 403) {
+      // router.push({ name: 'signUp', query: { token: route.query.token } })
+    }
+  }
 }
 
 const onFinish = async () => {
@@ -53,7 +63,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative" v-if="status">
     <Navbar @finish="onFinish" v-if="requestData" :document="requestData.document" />
     <PrepareDocument
       v-if="requestData"
@@ -63,6 +73,19 @@ onMounted(async () => {
       v-model:users="requestData.users"
       class="document"
     />
+    <div v-else-if="status == 401">
+      <el-button type="primary" @click="router.push({ name: 'signIn' })">
+        Login<el-icon class="el-icon--right"><Upload /></el-icon>
+      </el-button>
+    </div>
+    <div v-else-if="status == 403">
+      <el-button
+        type="primary"
+        @click="router.push({ name: 'signUp', query: { token: route.query.token, email: email } })"
+      >
+        Register<el-icon class="el-icon--right"><Upload /></el-icon>
+      </el-button>
+    </div>
   </div>
 </template>
 

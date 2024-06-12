@@ -1,10 +1,12 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores/user.ts'
 import router from '@/router';
+import { storeToRefs } from 'pinia'
 
 let activeRequests = 0;
 const baseDomain = import.meta.env.VITE_APP_BASE_URL;
-const { user, token } = useUserStore()
+const userStore = useUserStore() 
+const { user, token } = storeToRefs(userStore)
 
 const baseURL = `${baseDomain}`;
 const instance = axios.create({
@@ -20,7 +22,8 @@ const instance = axios.create({
 instance.interceptors.request.use(
     (request) => {
         if (token) {
-            request.headers['Authorization'] = `Bearer ${token}`;
+            console.log(token.value)
+            request.headers['Authorization'] = `Bearer ${token.value}`;
         }
         return request
     },
