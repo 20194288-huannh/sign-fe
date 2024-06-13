@@ -87,8 +87,9 @@ const router = createRouter({
     },
     {
       path: '/signed-document',
+      name: 'ViewSignedDocument',
       component: () => import('@/views/ViewSignedDocument/index.vue'),
-      meta: { layout: 'GuestLayout', middleware: [auth] }
+      meta: { layout: 'GuestLayout' }
     },
     {
       path: '/thanks-for-signing',

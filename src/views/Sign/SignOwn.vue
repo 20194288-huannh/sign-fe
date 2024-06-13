@@ -165,7 +165,7 @@ const {
 const contractStore = useContractStore()
 const { contractWithSigner, contract } = storeToRefs(contractStore)
 
-const { readFileAsArrayBuffer, arrayBufferToBytes, arrayBufferToWordArray } = useFileStore()
+const { arrayBufferToWordArray } = useFileStore()
 
 const refElement = ref()
 const files = ref<File[]>([])
@@ -263,11 +263,6 @@ const signOwn = async () => {
         )
 
         await contractWithSigner.value.uploadDocument(signedHash, new Uint8Array(signature))
-        // try {
-        //   const tx = await documentRegistryContractWithSigner.value.getDocument('0x1234')
-        // } catch (err) {
-        //   console.log(err)
-        // }
 
         var signedHashString = new TextDecoder().decode(signedHash)
         const response = await DocumentService.saveSignOwn(myDocument.value.id, {

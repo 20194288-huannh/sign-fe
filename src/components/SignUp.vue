@@ -196,9 +196,10 @@ const signUp = async () => {
     // console.log(tx)
 
     if (route.query.token) {
-      route.push({})
+      router.push({ name: 'ViewSignedDocument', query: {token: route.query.token} })
+    } else {
+      router.push({ name: 'Home' })
     }
-    router.push({ name: 'home' })
     // const data = response.data.data
   } catch (error) {
     console.log(error)
