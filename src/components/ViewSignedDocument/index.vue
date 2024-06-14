@@ -36,12 +36,7 @@ const email = ref<string>()
 const { arrayBufferToWordArray } = useFileStore()
 const contractStore = useContractStore()
 const { contractWithSigner, contract } = storeToRefs(contractStore)
-const {
-  key,
-  compareArrayBuffers,
-  importVerifyKey,
-  importSignKey
-} = useKeyStore()
+const { key, compareArrayBuffers, importVerifyKey, importSignKey } = useKeyStore()
 let signK = `-----BEGIN PRIVATE KEY-----
 MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU=
 -----END PRIVATE KEY-----`
@@ -63,10 +58,30 @@ const fetchRequest = async () => {
   }
 }
 
+const createFileFromPDF = (pdfData: any, filename: string) => {
+  const blob = new Blob([pdfData], { type: 'application/pdf' })
+
+  const file = new File([blob], filename, { lastModified: Date.now() })
+  return file
+}
+
+const download = async (pdfData: any, filename: string) => {
+  const blob = new Blob([pdfData], { type: 'application/pdf' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(link.href)
+  return blob
+}
+
 const onFinish = async () => {
   if (requestData.value) {
     requestData.value.token = route.query.token as string
     const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
+
+    let signedPdf = createFileFromPDF(response.data, 'signed-' + '123')
+    download(response.data, 'signed-' + '123')
 
     // let signedPdf = createFileFromPDF(response.data, 'signed-' + file.name)
     // download(response.data, 'signed-' + file.name)
@@ -108,19 +123,30 @@ contractStore.initContract()
 <template>
   <div class="relative" v-if="!status">
     <Navbar @finish="onFinish" v-if="requestData" :document="requestData.document" />
-    <PrepareDocument v-if="requestData" :pdf="pdf" v-model:signatures="requestData.signatures"
-      v-model:canvas="requestData.canvas" v-model:users="requestData.users" class="document" />
+    <PrepareDocument
+      v-if="requestData"
+      :pdf="pdf"
+      v-model:signatures="requestData.signatures"
+      v-model:canvas="requestData.canvas"
+      v-model:users="requestData.users"
+      class="document"
+    />
   </div>
   <div v-else-if="status == 401">
-    <el-button type="primary" @click="router.push({ name: 'signIn', query: { token: route.query.token, email: email } })">
+    <el-button
+      type="primary"
+      @click="router.push({ name: 'signIn', query: { token: route.query.token, email: email } })"
+    >
       Login<el-icon class="el-icon--right">
         <Upload />
       </el-icon>
     </el-button>
   </div>
   <div v-else-if="status == 403">
-    <el-button type="primary"
-      @click="router.push({ name: 'signUp', query: { token: route.query.token, email: email } })">
+    <el-button
+      type="primary"
+      @click="router.push({ name: 'signUp', query: { token: route.query.token, email: email } })"
+    >
       Register<el-icon class="el-icon--right">
         <Upload />
       </el-icon>

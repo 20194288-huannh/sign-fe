@@ -146,6 +146,7 @@ const verify = async () => {
   const buffer = await readFileAsArrayBuffer(file)
   const signedHex = CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
   const signedHash = ethers.utils.toUtf8Bytes(signedHex)
+  console.log(signedHash)
   try {
     const [uploader, originalHash, hashByPrivateKey, timestamp] =
       await contract.value.getDocument(signedHash)
