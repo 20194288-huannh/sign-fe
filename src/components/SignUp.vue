@@ -162,8 +162,8 @@ interface User {
   password: string
   password_confirmation: string
   wallet_address: string | null
-  encryptKey: string
-  verifyKey: string
+  public_key: string
+  private_key: string
 }
 const form = ref<User>({
   email: (route.query.email as string) || '',
@@ -171,8 +171,8 @@ const form = ref<User>({
   password: '',
   password_confirmation: '',
   wallet_address: localStorage.getItem('walletAddress'),
-  encryptKey: '',
-  verifyKey: ''
+  public_key: '',
+  private_key: ''
 })
 
 const ecryptKeyRef = ref<string>('')
@@ -184,16 +184,13 @@ contractStore.initContract()
 
 const signUp = async () => {
   try {
+
     // Chuyển đổi chuỗi publicKey thành mảng bytes
-    const encryptKeyBytes = ethers.utils.toUtf8Bytes(form.value.encryptKey)
-    const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.verifyKey)
-    // Gọi hàm updateUser
+    // const encryptKeyBytes = ethers.utils.toUtf8Bytes(form.value.encryptKey)
+    const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.public_key)
+
     const response = await AuthService.signUp(form.value)
     // await contractWithSigner.value.createUser(encryptKeyBytes, verifyKeyBytes, form.value.email)
-    // const tx = await userRegistryContractWithSigner.getUser(
-    //   '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
-    // )
-    // console.log(tx)
 
     if (route.query.token) {
       router.push({ name: 'ViewSignedDocument', query: {token: route.query.token} })
@@ -247,9 +244,9 @@ const generateKeyPair = async () => {
   )
   // Chuyển đổi khóa sang định dạng chuỗi hex\
   let exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
-  signKeyRef.value = await keyToString(exported)
+  form.value.private_key = await keyToString(exported) // sign key
   exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
-  form.value.verifyKey = await keyToString(exported)
+  form.value.public_key = await keyToString(exported) // verify key
 }
 
 const keyToString = async (exported: any): Promise<string> => {

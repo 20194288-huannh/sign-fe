@@ -43,7 +43,7 @@ interface RuleForm {
   content: string
 }
 
-const props = defineModel('email')
+const props = defineModel('email', {required: true})
 const emit = defineEmits(['sign'])
 
 const editor = ref(ClassicEditor)

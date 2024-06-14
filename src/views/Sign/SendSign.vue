@@ -227,14 +227,19 @@ interface Form {
 }
 const form = ref<any>({
   users: [
+    // {
+    //   name: 'Nguyen Huu Huan Signer',
+    //   email: 'gundamakp01@gmail.com',
+    //   type: '0'
+    // },
+    // {
+    //   name: 'Nguyen Huu Huan Signer 2',
+    //   email: 'gundamakp02@gmail.com',
+    //   type: '0'
+    // },
     {
-      name: 'Nguyen Huu Huan Signer',
-      email: 'gundamakp01@gmail.com',
-      type: '0'
-    },
-    {
-      name: 'Nguyen Huu Huan Signer 2',
-      email: 'gundamakp02@gmail.com',
+      name: '',
+      email: '',
       type: '0'
     }
   ],

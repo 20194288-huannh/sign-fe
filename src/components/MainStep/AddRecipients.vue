@@ -5,7 +5,7 @@
     class="demo-form-inline ms-3 me-3"
     ref="formRef"
   >
-    <div v-for="(user, idx) in users" :key="user.id">
+    <div v-for="(user, idx) in users" :key="idx">
       <el-form-item
         class="w-[30%] min-w-48 2xl:w-[35%]"
         :prop="idx + '.name'"
@@ -81,10 +81,10 @@ import { useSendSignStore } from '@/stores/send-sign'
 const formRef = ref<FormInstance>()
 const { arrSignSecondStepValue } = useSendSignStore()
 const buttonIndex = ref(0)
-const users = defineModel('users', {required: true})
+const users = defineModel('users', {required: true, type: Array<User>})
 interface User {
   name: string,
-  type: number,
+  type: string,
   email: string
 }
 
@@ -103,7 +103,7 @@ const addRecipients = () => {
   users.value.push({
     email: '',
     name: '',
-    type: 0,
+    type: '0',
   })
   buttonIndex.value++
 }

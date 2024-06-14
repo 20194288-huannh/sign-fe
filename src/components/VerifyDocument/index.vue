@@ -147,6 +147,7 @@ const verify = async () => {
   const signedHex = CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
   const signedHash = ethers.utils.toUtf8Bytes(signedHex)
   try {
+    console.log(signedHash)
     const [uploader, originalHash, hashByPrivateKey, timestamp] =
       await contract.value.getDocument(signedHash)
     isVerified.value = await window.crypto.subtle.verify(

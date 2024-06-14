@@ -2,6 +2,8 @@ import axios from 'axios'
 import { useUserStore } from '@/stores/user.ts'
 import router from '@/router';
 import { storeToRefs } from 'pinia'
+import { ElNotification } from 'element-plus'
+import { ENotificationType } from '@/types/notification'
 
 let activeRequests = 0;
 const baseDomain = import.meta.env.VITE_APP_BASE_URL;
@@ -49,6 +51,13 @@ instance.interceptors.response.use(
     (error) => {
         if (error.response.status === 404) {
             router.push({name: 'NotFound'})
+        }
+        if (error.response.status = 422) {
+            ElNotification({
+                type: ENotificationType.ERROR,
+                title: 'Error',
+                message: error.response.data.errors
+            })
         }
         console.log(error.response)
         const { response, config } = error;
