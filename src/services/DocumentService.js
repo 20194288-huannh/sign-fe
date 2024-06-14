@@ -22,7 +22,7 @@ const DocumentService  = {
         return ApiService.post(`documents/${id}/send-sign`, data)
     },
     sign(id, data) {
-        return ApiService.post(`documents/${id}/sign`, data)
+        return ApiService.post(`documents/${id}/sign`, data, { responseType: 'blob' })
     },
     saveSignOwn(id, data) {
         return ApiService.post(`documents/${id}/sign-own`, data, {headers : { 'Content-Type': 'multipart/form-data'}})
