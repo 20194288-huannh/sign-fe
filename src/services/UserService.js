@@ -6,5 +6,8 @@ const UserService  = {
     save(data) {
         return ApiService.post('documents/save', data, {headers : { 'Content-Type': 'multipart/form-data'}})
     },
+    verifyPrivateKey (data) {
+        return ApiService.post('users/key', data, {headers : { 'Content-Type': 'multipart/form-data'}})
+    }
 }
-export default DocumentService
+export default UserService

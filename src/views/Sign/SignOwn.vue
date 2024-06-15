@@ -125,6 +125,7 @@
         </div>
       </div>
     </div>
+    <UploadPrivateKey :showModal="showModal" />
   </div>
 </template>
 
@@ -149,6 +150,7 @@ import { useFileStore } from '@/stores/file'
 import { useContractStore } from '@/stores/contract'
 import CryptoJS from 'crypto-js'
 import { storeToRefs } from 'pinia'
+import UploadPrivateKey from '@/components/UploadPrivateKey.vue'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -174,6 +176,7 @@ const checkMouseMove = ref<boolean>(false)
 const pdf = ref()
 const documentId = ref<Number>()
 const myDocument = ref()
+const showModal = ref<Boolean>(false)
 const form = ref<SignOwn>({
   signatures: [],
   canvas: {
@@ -238,7 +241,11 @@ const download = async (pdfData: any, filename: string) => {
 }
 
 contractStore.initContract()
-const signOwn = async () => {
+const signOwn = () => {
+  showModal.value = true
+}
+
+const submit = async () => {
   if (typeof window.ethereum !== 'undefined') {
     try {
       const file = files.value[0]
@@ -273,63 +280,8 @@ const signOwn = async () => {
       // const data = response.data.data
     } catch (error) {}
   }
-  // // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
-  // if (typeof window.ethereum !== 'undefined') {
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum)
-  //   const signer = provider.getSigner()
-  //   // Contract reference
-  //   const documentRegistryContract = new ethers.Contract(
-  //     contractAddress,
-  //     DocumentRegistryAbi.abi,
-  //     provider
-  //   )
-  //   const documentRegistryContractWithSigner = documentRegistryContract.connect(signer)
-  //   try {
-  //     // call contract public method
-  //     // documentRegistryContractWithSigner.uploadDocument('filename')
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 }
-// const signOwn = async () => {
-//   let privateKey = await importPrivateKey(privateK)
-//   let publicKey = await importPublicKey(publicK)
-//   let encoded = getMessageEncoding('123')
-//   let encrypt = await window.crypto.subtle.encrypt(
-//     {
-//       name: "RSA-OAEP",
-//     },
-//     privateKey,
-//     encoded,
-//   );
-//   let result = await window.crypto.subtle.decrypt(
-//     {
-//       name: "RSA-OAEP",
-//     },
-//     publicKey,
-//     encrypt,
-//   );
-//   let a = compareArrayBuffers(result, encoded.buffer)
-//   // const response = await DocumentService.signOwn(myDocument.value.id, form.value)
-//   if (typeof window.ethereum !== 'undefined') {
-//     const provider = new ethers.providers.Web3Provider(window.ethereum)
-//     const signer = provider.getSigner()
-//     // Contract reference
-//     const documentRegistryContract = new ethers.Contract(
-//       contractAddress,
-//       DocumentRegistryAbi.abi,
-//       provider
-//     )
-//     const documentRegistryContractWithSigner = documentRegistryContract.connect(signer)
-//     try {
-//       // call contract public method
-//       // documentRegistryContractWithSigner.uploadDocument('filename')
-//     } catch (error) {
-//       console.error(error)
-//     }
-//   }
-// }
+
 const getPdf = async () => {
   let container = document.getElementById('pageContainer')
   let containerSmall = document.getElementById('page-container-small')

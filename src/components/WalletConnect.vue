@@ -40,6 +40,7 @@ import { ref, onMounted } from 'vue'
 
 import { useWalletStore } from '@/stores/wallet'
 
+const addressWallet = defineModel('addressWallet')
 onMounted(async () => {
   await checkNetwork()
 })
@@ -80,6 +81,7 @@ const connectWallet = async () => {
     console.log('data :>> ', data)
 
     walletStore.saveWalletData({ address: data[0] })
+    addressWallet.value = data[0]
     console.log('DApp connected to your wallet 💰')
   } catch (error) {
     console.error('Error connecting DApp to your wallet')

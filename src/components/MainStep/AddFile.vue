@@ -13,8 +13,8 @@
       >Upload File</el-button
     >
     <div v-else class="text-blue-700" @click.stop>
-      <p>IMAGE TYPE: {{ files?.[0]?.type }}</p>
-      <p>IMAGE NAME: {{ files?.[0]?.name }}</p>
+      <p>DOCUMENT TYPE: {{ files?.[0]?.type }}</p>
+      <p>DOCUMENT NAME: {{ files?.[0]?.name }}</p>
     </div>
   </el-upload>
 </template>
