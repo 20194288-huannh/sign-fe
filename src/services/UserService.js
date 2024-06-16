@@ -8,6 +8,9 @@ const UserService  = {
     },
     verifyPrivateKey (data) {
         return ApiService.post('users/key', data, {headers : { 'Content-Type': 'multipart/form-data'}})
+    },
+    getUserByEmail (data) {
+        return ApiService.get('users/email', data)
     }
 }
 export default UserService

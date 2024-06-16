@@ -31,11 +31,15 @@ import { ElNotification, type UploadInstance, type UploadProps } from 'element-p
 import { UserService } from '@/services'
 
 const showModal = defineModel('showModal')
+const emit = defineEmits(['submit'])
 const form = ref<{ private_key: File }>()
 const files = ref()
 
-const confirm = () => {
-  const response = UserService.verifyPrivateKey({ file: files.value[0].raw })
+const confirm = async () => {
+  const response = await UserService.verifyPrivateKey({ file: files.value[0].raw })
+  const privateKey = response.data.data.private_key
+  showModal.value = false
+  emit('submit', privateKey)
 }
 </script>
 

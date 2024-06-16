@@ -184,13 +184,10 @@ contractStore.initContract()
 
 const signUp = async () => {
   try {
-
-    // Chuyển đổi chuỗi publicKey thành mảng bytes
-    // const encryptKeyBytes = ethers.utils.toUtf8Bytes(form.value.encryptKey)
     const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.public_key)
 
     const response = await AuthService.signUp(form.value)
-    // await contractWithSigner.value.createUser(encryptKeyBytes, verifyKeyBytes, form.value.email)
+    await contractWithSigner.value.createUser('0x1234', verifyKeyBytes, form.value.email)
 
     if (route.query.token) {
       router.push({ name: 'ViewSignedDocument', query: {token: route.query.token} })
@@ -207,7 +204,7 @@ const download = async () => {
   // Tạo cặp khóa công khai và khóa riêng tư
   await generateKeyPair()
 
-  const pemExported = `-----BEGIN PRIVATE KEY-----\n${signKeyRef.value}\n-----END PRIVATE KEY-----`
+  const pemExported = `-----BEGIN PRIVATE KEY-----\n${form.value.private_key}\n-----END PRIVATE KEY-----`
   const blob = new Blob([pemExported], { type: 'application/pdf' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
@@ -217,23 +214,6 @@ const download = async () => {
 }
 
 const generateKeyPair = async () => {
-  // Tạo một cặp khóa mới
-  // let keyPair = await window.crypto.subtle.generateKey(
-  //   {
-  //     name: 'RSA-OAEP',
-  //     modulusLength: 4096,
-  //     publicExponent: new Uint8Array([1, 0, 1]),
-  //     hash: 'SHA-256'
-  //   },
-  //   true,
-  //   ['encrypt', 'decrypt']
-  // )
-  // // Chuyển đổi khóa sang định dạng chuỗi hex
-  // let exported = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
-  // ecryptKeyRef.value = await keyToString(exported)
-  // exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
-  // form.value.encryptKey = await keyToString(exported)
-
   let keyPair = await window.crypto.subtle.generateKey(
     {
       name: 'ECDSA',
@@ -247,6 +227,8 @@ const generateKeyPair = async () => {
   form.value.private_key = await keyToString(exported) // sign key
   exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
   form.value.public_key = await keyToString(exported) // verify key
+  console.log(form.value.private_key)
+  console.log(form.value.public_key)
 }
 
 const keyToString = async (exported: any): Promise<string> => {

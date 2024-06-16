@@ -47,7 +47,7 @@
         :step="1"
         title="Add file"
         sub-title="What do you want to upload?"
-        @some-event="verify()"
+        @some-event="showModal = true"
       >
         <template #header-icon>
           <el-icon color="#00b3b3" size="30" class="mr-5"><UploadFilled /></el-icon>
@@ -78,6 +78,7 @@
     <Success v-if="isVerified" :documents="documents" />
     <Error v-if="!isVerified && isVerified !== undefined" />
   </div>
+  <EmailModal @get-user="getUser" v-model:show-modal="showModal"/>
 </template>
 
 <script setup lang="ts">
@@ -93,11 +94,11 @@ import { useFileStore } from '@/stores/file'
 import { useContractStore } from '@/stores/contract.ts'
 import Success from '@/components/VerifyDocument/Success.vue'
 import Error from '@/components/VerifyDocument/Error.vue'
-import { Buffer } from 'buffer'
 import { ethers } from 'ethers'
 import CryptoJS from 'crypto-js'
 import { storeToRefs } from 'pinia'
-import { DocumentService, ActionService } from '@/services'
+import { DocumentService, ActionService, UserService } from '@/services'
+import EmailModal from '../EmailModal.vue'
 
 const files = ref<Array<File>>([])
 const checkMouseMove = ref<boolean>(false)
@@ -114,20 +115,20 @@ const isShowDetail = ref<Boolean>(false)
 const isVerified = ref<Boolean>()
 const fileBuffer = ref<Array<any>>([])
 const documents = ref<Array<any>>()
+const showModal = ref<Boolean>(false)
 
 const contractStore = useContractStore()
 const { contractWithSigner, contract } = storeToRefs(contractStore)
 
-let signature = [
-  47, 168, 131, 171, 39, 29, 232, 116, 2, 255, 230, 138, 228, 65, 91, 249, 40, 175, 110, 155, 204,
-  36, 124, 177, 30, 252, 86, 199, 54, 121, 80, 51, 116, 255, 57, 221, 88, 185, 112, 25, 25, 60, 226,
-  214, 89, 142, 70, 184, 216, 226, 232, 133, 71, 245, 88, 227, 203, 83, 130, 135, 55, 154, 186, 56,
-  129, 195, 55, 137, 43, 144, 146, 169, 227, 45, 134, 237, 223, 239, 206, 33, 170, 111, 3, 253, 39,
-  180, 136, 37, 175, 254, 85, 79, 25, 63, 174, 12
-]
 let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE+0vkr/der5sGbVb3ytGncU14RFxl7t/6G2gpeVb/1WC8WAtDPWfgBANw+Be3cJgq4ZR2OKoxnLnOvjNoxfQOq8O/sJZdebyAQaLCfmEz3A7LodMpD9C8GwkSs+4EeaaV`
-const getKey = async () => {
-  verifyKey.value = await importVerifyKey(verifyK)
+
+const getUser = async (data: {email: string}) => {
+  const response = await UserService.getUserByEmail(data)
+  if (!response.data.data.public_key) {
+    isVerified.value = false
+  }
+  verifyKey.value = await importVerifyKey(response.data.data.public_key)
+  verify()
 }
 
 const verify = async () => {
@@ -141,14 +142,11 @@ const verify = async () => {
   }
 
   if (!contractWithSigner.value) return
-  await getKey()
   const file = files.value[0]
   const buffer = await readFileAsArrayBuffer(file)
   const signedHex = CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
   const signedHash = ethers.utils.toUtf8Bytes(signedHex)
-  console.log(signedHash)
   try {
-    console.log(signedHash)
     const [uploader, originalHash, hashByPrivateKey, timestamp] =
       await contract.value.getDocument(signedHash)
     isVerified.value = await window.crypto.subtle.verify(
@@ -160,7 +158,6 @@ const verify = async () => {
       hexStringToUint8Array(hashByPrivateKey),
       buffer
     )
-    isVerified.value = true
     if (isVerified.value) {
       fetchHistory(signedHex)
     }

@@ -125,7 +125,7 @@
         </div>
       </div>
     </div>
-    <UploadPrivateKey :showModal="showModal" />
+    <UploadPrivateKey :showModal="showModal" v-model:privateKey="privateKey" @submit="submit"/>
   </div>
 </template>
 
@@ -177,6 +177,7 @@ const pdf = ref()
 const documentId = ref<Number>()
 const myDocument = ref()
 const showModal = ref<Boolean>(false)
+const privateKey = ref<string>('MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU=')
 const form = ref<SignOwn>({
   signatures: [],
   canvas: {
@@ -198,29 +199,11 @@ const clickAddFile = async () => {
   scrollToView(SEND_SIGN_STEP.SECOND_STEP)
 }
 
-const readFile = async (file: File) => {
-  const blob = new Blob([file])
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = (error) => reject(error)
-    reader.readAsArrayBuffer(blob)
-  })
-}
-
 const clearFile = () => {
   files.value = []
   changeStep(SEND_SIGN_STEP.FIRST_STEP)
 }
 
-let privateK = `-----BEGIN PRIVATE KEY-----
-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
------END PRIVATE KEY-----`
-
-let publicK = `MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnYKMaYl4tUnmKeQG+DVX0TZLKCplKvCpP0NLvYMTBlrPnEmPfOM9mXGH5wBlSxNe4j72B+p4Ugx1ICef9/hVJMTszfqgehJE4VPSoJWmo4PncxKV5v5KZrpMBFJWIGjppdrHMetE1gCAD43t+Tu3xp7IcjnXyQQMIsSI1TAWRuylLEjyYIq82d0LBZu2lOyPOxppNiks5IaqOxP42gvoROcV8gQ0irYVZgEz5b6m9rCpqyw3A5gp/WWY9XmTUa0gyJX+tctceGwd6mxE9ZLchSUhigp2GADz0CNeg4f4HBuP9qDB7PqZ0yiZuoJU9K3neX9yaO4sk/6SqsE+xA22U3/oyBOcWedVygOQNVXfp1VWC3SUCW9ipO5RORDNveqChpwmHtQxF7bbx0lwpTdDCXfE5A2GqrrE5zXc4yiEhZeB5Q4ihY1XJ+IN4ueDc4KajyvsZyYmimCbKGSX5r4oG0tJz3oXUx+XSncBz4lw83vlxhliauue8ZGsGL10u6HbuYQ2uTiPcLhDgnykQdP8cn8Qt8t/Uk31LsZmGwXnV//1Vwx3PPQqRmHzA/wxkMRDJMMDPfF+TdJ+NWSwzZgO7lEYPin3MEGV5bzttURk5+2AJZF13lOST+lUeCUN3IOtJAWycguLBYH1jGaqTBOE5OBGs7NpHH081VoEpMVL2DkCAwEAAQ==`
-let signK = `-----BEGIN PRIVATE KEY-----
-MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU=
------END PRIVATE KEY-----`
 let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE+0vkr/der5sGbVb3ytGncU14RFxl7t/6G2gpeVb/1WC8WAtDPWfgBANw+Be3cJgq4ZR2OKoxnLnOvjNoxfQOq8O/sJZdebyAQaLCfmEz3A7LodMpD9C8GwkSs+4EeaaV`
 
 const createFileFromPDF = (pdfData: any, filename: string) => {
@@ -245,7 +228,8 @@ const signOwn = () => {
   showModal.value = true
 }
 
-const submit = async () => {
+const submit = async (key: string) => {
+  privateKey.value = key
   if (typeof window.ethereum !== 'undefined') {
     try {
       const file = files.value[0]
@@ -258,7 +242,8 @@ const submit = async () => {
         const signedHash = ethers.utils.toUtf8Bytes(
           CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
         )
-        const signKey = await importSignKey(signK) // Assuming you have a method to get the sign key
+        console.log(privateKey.value)
+        const signKey = await importSignKey(privateKey.value) // Assuming you have a method to get the sign key
 
         const signature = await window.crypto.subtle.sign(
           {

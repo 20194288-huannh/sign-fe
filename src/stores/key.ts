@@ -39,15 +39,8 @@ export const useKeyStore = defineStore('key', () => {
   }
 
   async function importSignKey(pem: string): Promise<CryptoKey> {
-    // fetch the part of the PEM string between header and footer
-    const pemHeader = "-----BEGIN PRIVATE KEY-----";
-    const pemFooter = "-----END PRIVATE KEY-----";
-    const pemContents = pem.substring(
-      pemHeader.length,
-      pem.length - pemFooter.length - 1,
-    );
     // base64 decode the string to get the binary data
-    const binaryDerString = window.atob(pemContents);
+    const binaryDerString = window.atob(pem);
     // convert from a binary string to an ArrayBuffer
     const binaryDer = str2ab(binaryDerString);
 

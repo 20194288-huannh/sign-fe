@@ -90,7 +90,8 @@ import WalletConnect from './WalletConnect.vue'
 const form = ref({
   email: '',
   password: '',
-  wallet_address: ''
+  // wallet_address: ''
+  wallet_address: localStorage.getItem('walletAddress')
 })
 
 const userStore = useUserStore()
