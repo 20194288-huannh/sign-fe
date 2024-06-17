@@ -2,10 +2,10 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 interface User {
-    id: Number,
-    name: string,
-    email: string,
-    address_wallet: string
+  id: Number
+  name: string
+  email: string
+  address_wallet: string
 }
 
 export const useUserStore = defineStore('user', () => {

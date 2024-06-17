@@ -9,12 +9,13 @@ import { useRoute, useRouter } from 'vue-router'
 import type { Receiver, Signature, Canvas } from '@/types/send-sign'
 import type { Document } from '@/types/document.interface'
 import { DocumentService } from '@/services/index.js'
-import { Contract, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { useKeyStore } from '@/stores/key'
 import { useFileStore } from '@/stores/file'
 import { useContractStore } from '@/stores/contract'
 import { storeToRefs } from 'pinia'
 import CryptoJS from 'crypto-js'
+import UploadPrivateKey from '@/components/UploadPrivateKey.vue'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -37,9 +38,10 @@ const { arrayBufferToWordArray } = useFileStore()
 const contractStore = useContractStore()
 const { contractWithSigner, contract } = storeToRefs(contractStore)
 const { key, compareArrayBuffers, importVerifyKey, importSignKey } = useKeyStore()
-let signK = `-----BEGIN PRIVATE KEY-----
-MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU=
------END PRIVATE KEY-----`
+const showModal = ref<Boolean>(false)
+const privateKey = ref<string>(
+  'MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU='
+)
 
 const fetchDocument = async (id: Number) => {
   let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
@@ -75,7 +77,12 @@ const download = async (pdfData: any, filename: string) => {
   return blob
 }
 
-const onFinish = async () => {
+const onFinish = () => {
+  showModal.value = true
+}
+
+const submit = async (key: string) => {
+  privateKey.value = key
   if (requestData.value) {
     requestData.value.token = route.query.token as string
     const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
@@ -91,7 +98,7 @@ const onFinish = async () => {
       const signedHash = ethers.utils.toUtf8Bytes(
         CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
       )
-      const signKey = await importSignKey(signK) // Assuming you have a method to get the sign key
+      const signKey = await importSignKey(privateKey.value) // Assuming you have a method to get the sign key
 
       const signature = await window.crypto.subtle.sign(
         {
@@ -103,7 +110,6 @@ const onFinish = async () => {
       )
 
       // await contractWithSigner.value.uploadDocument(signedHash, new Uint8Array(signature))
-      console.log(signedHash)
 
       var signedHashString = new TextDecoder().decode(signedHash)
     }
@@ -152,6 +158,7 @@ contractStore.initContract()
       </el-icon>
     </el-button>
   </div>
+  <UploadPrivateKey v-model:showModal="showModal" @submit="submit" />
 </template>
 
 <style scoped>

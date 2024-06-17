@@ -78,7 +78,7 @@
     <Success v-if="isVerified" :documents="documents" />
     <Error v-if="!isVerified && isVerified !== undefined" />
   </div>
-  <EmailModal @get-user="getUser" v-model:show-modal="showModal"/>
+  <EmailModal @get-user="getUser" v-model:show-modal="showModal" />
 </template>
 
 <script setup lang="ts">
@@ -122,11 +122,12 @@ const { contractWithSigner, contract } = storeToRefs(contractStore)
 
 let verifyK = `MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE+0vkr/der5sGbVb3ytGncU14RFxl7t/6G2gpeVb/1WC8WAtDPWfgBANw+Be3cJgq4ZR2OKoxnLnOvjNoxfQOq8O/sJZdebyAQaLCfmEz3A7LodMpD9C8GwkSs+4EeaaV`
 
-const getUser = async (data: {email: string}) => {
+const getUser = async (data: { email: string }) => {
   const response = await UserService.getUserByEmail(data)
   if (!response.data.data.public_key) {
     isVerified.value = false
   }
+
   verifyKey.value = await importVerifyKey(response.data.data.public_key)
   verify()
 }

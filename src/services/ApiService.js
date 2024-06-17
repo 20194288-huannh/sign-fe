@@ -49,17 +49,30 @@ instance.interceptors.response.use(
         return response
     },
     (error) => {
-        if (error.response.status === 404) {
+        if (error.response.status == 404) {
             router.push({name: 'NotFound'})
         }
-        if (error.response.status = 422) {
+        if (error.response.status == 422) {
             ElNotification({
                 type: ENotificationType.ERROR,
                 title: 'Error',
                 message: error.response.data.errors
             })
         }
-        console.log(error.response)
+        if (error.response.status == 401 && router.currentRoute.value.name !== 'ViewSignedDocument') {
+            ElNotification({
+                type: ENotificationType.ERROR,
+                title: 'Error',
+                message: error.response.data.errors
+            })
+            localStorage.removeItem('token')
+            router.push({name: 'signIn'})
+        }
+        ElNotification({
+            type: ENotificationType.ERROR,
+            title: 'Error',
+            message: error.response.data.errors
+        })
         const { response, config } = error;
         // check if config errorHandler is on
         if (config?.globalErrorHandler?.on) {

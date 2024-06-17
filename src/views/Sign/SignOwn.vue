@@ -125,7 +125,7 @@
         </div>
       </div>
     </div>
-    <UploadPrivateKey :showModal="showModal" v-model:privateKey="privateKey" @submit="submit"/>
+    <UploadPrivateKey v-model:showModal="showModal" @submit="submit" />
   </div>
 </template>
 
@@ -177,7 +177,9 @@ const pdf = ref()
 const documentId = ref<Number>()
 const myDocument = ref()
 const showModal = ref<Boolean>(false)
-const privateKey = ref<string>('MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU=')
+const privateKey = ref<string>(
+  'MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU='
+)
 const form = ref<SignOwn>({
   signatures: [],
   canvas: {
@@ -242,7 +244,6 @@ const submit = async (key: string) => {
         const signedHash = ethers.utils.toUtf8Bytes(
           CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
         )
-        console.log(privateKey.value)
         const signKey = await importSignKey(privateKey.value) // Assuming you have a method to get the sign key
 
         const signature = await window.crypto.subtle.sign(

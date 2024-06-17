@@ -27,7 +27,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { UploadFilled } from '@element-plus/icons-vue'
-import { ElNotification, type UploadInstance, type UploadProps } from 'element-plus'
 import { UserService } from '@/services'
 
 const showModal = defineModel('showModal')
