@@ -117,6 +117,7 @@
                     :pdf="pdf"
                     v-model:signatures="form.signatures"
                     :canvas="form.canvas"
+                    :canClose="true"
                   />
                 </template>
               </StepCard>
@@ -239,7 +240,9 @@ const submit = async (key: string) => {
       let signedPdf = createFileFromPDF(response.data, 'signed-' + file.name)
       download(response.data, 'signed-' + file.name)
 
+      console.log(response.data)
       const buffer = await response.data.arrayBuffer()
+      console.log(buffer)
       if (buffer) {
         const signedHash = ethers.utils.toUtf8Bytes(
           CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
@@ -255,7 +258,7 @@ const submit = async (key: string) => {
           buffer
         )
 
-        await contractWithSigner.value.uploadDocument(signedHash, new Uint8Array(signature))
+        // await contractWithSigner.value.uploadDocument(signedHash, new Uint8Array(signature))
 
         var signedHashString = new TextDecoder().decode(signedHash)
         const response = await DocumentService.saveSignOwn(myDocument.value.id, {

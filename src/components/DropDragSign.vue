@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import VueDragResize from 'vue-drag-resize/src/component/vue-drag-resize.vue'
 
 const props = defineProps({
+  idx: Number,
   width: Number,
   height: Number,
   top: Number,
@@ -14,7 +15,7 @@ const props = defineProps({
 })
 
 const mouseHover = ref<boolean>(false)
-const emit = defineEmits(['resize', 'dragStop', 'drag'])
+const emit = defineEmits(['resize', 'dragStop', 'drag', 'close'])
 const resize = (newRect: { width: number; height: number; top: number; left: number }) => {
   emit('resize', newRect)
 }
@@ -25,6 +26,10 @@ const onDrag = (newRect: { width: number; height: number; top: number; left: num
 
 const onDragstop = () => {
   emit('dragStop', false)
+}
+
+const close = () => {
+  emit('close', props.idx)
 }
 </script>
 
@@ -79,6 +84,7 @@ const onDragstop = () => {
       <div
         class="absolute top-[-10px] right-[-8px] bg-gray-200 h-4 w-4"
         v-if="(props.top !== 0 || props.left !== 0) && mouseHover"
+        @click="close"
       >
         <el-icon><Close /></el-icon>
       </div>

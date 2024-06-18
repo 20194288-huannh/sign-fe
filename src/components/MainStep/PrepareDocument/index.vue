@@ -20,7 +20,8 @@
           <DropDragSign
             v-for="(item, idx) in signatures"
             :isShow="item.page === pageNum"
-            :key="item.id"
+            :key="idx"
+            :idx="idx"
             :width="item.position.width"
             :height="item.position.height"
             :top="item.position.top"
@@ -31,6 +32,7 @@
             @drag="(newRect) => resize(newRect, idx)"
             @drag-stop="dragStop(idx)"
             @click="selectedSignature = item"
+            @close="removeItem"
             :style="`background-color: ${background[item.receiverId]}`"
           >
             <el-date-picker
@@ -138,7 +140,7 @@ import type { NumberTypes } from 'web3'
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
-const props = defineProps(['pdf'])
+const props = defineProps(['pdf', 'canClose'])
 
 const { arrSignSecondStepValue } = useSendSignStore()
 const dragger = ref(false)
@@ -316,6 +318,11 @@ function onNextPage() {
   renderPage(pageNum.value)
 }
 
+const removeItem = (idx: number) => {
+  // console.log(signatures.value)
+  // signatures.value = signatures.value.filter((item, index) => index !== idx)
+  // console.log(signatures.value)
+}
 /**
  * Asynchronously downloads PDF.
  */
