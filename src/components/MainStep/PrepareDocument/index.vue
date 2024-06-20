@@ -33,7 +33,7 @@
             @drag-stop="dragStop(idx)"
             @click="selectedSignature = item"
             @close="removeItem"
-            :style="item.receiverId ? `background-color: ${background[item.receiverId]}` : ''"
+            :style="item.receiver ? `background-color: ${background[item.receiverId as number]}` : ''"
           >
             <el-date-picker
               v-model="item.data"
@@ -50,7 +50,8 @@
               v-model="item.data"
               v-if="item.type === SIGNATURE_TYPE.TEXT && item.page === pageNum"
               :resizeTextarea="resizeTextarea"
-              style="width: 100%"
+              :style="`width: 100%;`"
+              ref="textArea"
               autosize
               type="textarea"
               placeholder="Please input"
@@ -86,7 +87,7 @@
               :style="`width: ${item.position.width}px; height: ${item.position.height}px`"
             />
             <div
-              v-if="item.receiverId && item.receiver"
+              v-if="item.receiver"
               :style="`background-color: ${background[item.receiverId as number]}`"
               class="truncate"
             >
@@ -94,7 +95,8 @@
             </div>
             <div
               v-if="!item.type"
-              class="border-dashed border-2 border-indigo-600"
+              class="border-sky-600 border-2 border-dashed h-full w-full flex items-center justify-center"
+              :style="`background-color: ${background[0]}`"
               @click="
                 () => {
                   signModal = 2
@@ -102,7 +104,7 @@
                 }
               "
             >
-              {{ item.position }}
+              Need Your Signature!
             </div>
           </DropDragSign>
           <canvas id="the-canvas" ref="canvas" class=""></canvas>
@@ -162,6 +164,7 @@ const scale = ref<number>(1.2)
 const signModal = ref<number>(0)
 const selectedSignature = ref<Signature>()
 const receiverId = ref<number>(0)
+const textArea = ref()
 
 const background: { [key: number]: string } = {
   0: 'rgb(188, 225, 255)',
@@ -245,7 +248,7 @@ const save = async (signaturePad: any) => {
         return item
       })
     } else {
-      let signature = {
+      let signature: Signature = {
         type: SIGNATURE_TYPE.IMAGE,
         scale: Number(scale.value),
         page: pageNum.value,
@@ -262,7 +265,7 @@ const save = async (signaturePad: any) => {
           name: drawSign.file.name
         }
       }
-      signatures.value.push(signature as never)
+      signatures.value.push(signature)
     }
     signaturePad.clearSignature()
     signModal.value = 0
@@ -378,7 +381,6 @@ const resize = (
   // }
 }
 
-const resizeTextarea = () => {}
 
 const getPdf = async () => {
   // pdfjsLib.getDocument(`http://localhost:8868/api/files/2`).promise.then(function (pdfDoc_: any) {
@@ -409,6 +411,10 @@ watch(
   height: 850px;
   overflow: scroll;
 }
+
+/* textarea {
+  height: 100% !important;
+} */
 
 /* .border {
   border: 1px solid red;

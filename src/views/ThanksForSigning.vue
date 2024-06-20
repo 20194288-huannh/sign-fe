@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import SignUp from '../components/SignUp.vue'
+
+const router = useRouter()
 </script>
 
 <template>
@@ -39,8 +42,8 @@ import SignUp from '../components/SignUp.vue'
           <p class="text-lg">Get your document signed anywhere, anytime without any hassle</p>
         </div>
         <div class="flex justify-center mt-4">
-          <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md">
-            Try for Free
+          <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md" @click="router.push({name: 'Documents'})">
+            Documents Detail
           </button>
         </div>
       </div>

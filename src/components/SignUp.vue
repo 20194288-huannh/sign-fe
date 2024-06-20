@@ -188,7 +188,7 @@ const signUp = async () => {
     const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.public_key)
 
     const response = await AuthService.signUp(form.value)
-    await contractWithSigner.value.createUser('0x1234', verifyKeyBytes, form.value.email)
+    // await contractWithSigner.value.createUser('0x1234', verifyKeyBytes, form.value.email)
 
     if (route.query.token) {
       router.push({ name: 'ViewSignedDocument', query: {token: route.query.token} })

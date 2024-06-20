@@ -71,6 +71,7 @@ const props = defineProps(['document'])
   height: 52px;
   background-color: #f8f9fa;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  z-index:200;
 }
 
 .logo::after {

@@ -422,7 +422,7 @@ const createRadio = () => {
   position: relative;
   user-select: none;
   white-space: nowrap;
-  z-index: 3;
+  z-index: 200;
 }
 
 .text {

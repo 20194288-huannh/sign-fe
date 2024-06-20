@@ -9,7 +9,7 @@
       <div class="dialog-footer">
         <el-button
           @click="
-            closeModal()
+            closeModal(),
             resetModal()
           "
           >Cancel</el-button
