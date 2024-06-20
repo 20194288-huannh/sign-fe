@@ -119,7 +119,7 @@
         </template>
       </el-dropdown>
       <div class="flex items-center">
-        <button class="dropdown button-icon border-left" title="Drawing" aria-label="Drawing" aria-pressed="false"
+        <button v-if="users" class="dropdown button-icon border-left" title="Drawing" aria-label="Drawing" aria-pressed="false"
           type="button" @click="emit('note')">
           <span class="tool-button-icon PSPDFKit-Icon-Ink" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
               width="24" height="24" fill="currentColor" viewBox="0 0 24 24" focusable="false">
@@ -129,7 +129,7 @@
             </svg></span></button><button id="downshift-8-toggle-button" aria-haspopup="true" aria-expanded="false"
           aria-labelledby="downshift-8-label downshift-8-toggle-button" class="pl-[5px] pr-[5px]" type="button"
           style="min-width: 0px">
-          <span class="tool-button-icon PSPDFKit-6511p928m8fcbcd7nb8arydjxe PSPDFKit-Icon-CaretDown" aria-hidden="true"
+          <span v-if="users" class="tool-button-icon PSPDFKit-6511p928m8fcbcd7nb8arydjxe PSPDFKit-Icon-CaretDown" aria-hidden="true"
             style="width: 12px; height: 100%"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
               fill="currentColor" viewBox="0 0 12 12" focusable="false">
               <path fill-rule="evenodd"
@@ -315,15 +315,17 @@
 </template>
 
 <script setup lang="ts">
-import { SIGNATURE_TYPE } from '@/types/send-sign';
+import type { User } from '@/types/document.interface';
+import type { Receiver } from '@/types/send-sign';
+import { SIGNATURE_TYPE, type Signature } from '@/types/send-sign';
 import { isNumber } from 'element-plus/es/utils/types.mjs';
 
 const totalPage = defineModel('totalPage')
-const pageNum = defineModel('pageNum')
+const pageNum = defineModel<Number>('pageNum', { required: true })
 const signModal = defineModel('signModal')
-const users = defineModel('users')
+const users = defineModel<Array<Receiver>>('users')
 const scale = defineModel('scale')
-const signatures = defineModel('signatures')
+const signatures = defineModel<Array<Signature>>('signatures', { required: true })
 const receiverId = defineModel('receiverId')
 const emit = defineEmits(['onNextPage', 'onPrevPage', 'scaleUp', 'scaleDown', 'note', 'addCalendar'])
 
@@ -339,7 +341,7 @@ const createCalendar = () => {
   let signature = {
     type: SIGNATURE_TYPE.DATE,
     scale: Number(scale.value),
-    page: pageNum.value,
+    page: Number(pageNum.value),
     can_resize: true,
     position: {
       width: 200,
@@ -356,7 +358,7 @@ const createText = () => {
   let signature = {
     type: SIGNATURE_TYPE.TEXT,
     scale: Number(scale.value),
-    page: pageNum.value,
+    page: Number(pageNum.value),
     can_resize: true,
     position: {
       width: 200,
@@ -373,7 +375,7 @@ const createCheckbox = () => {
   let signature = {
     type: SIGNATURE_TYPE.CHECKBOX,
     scale: Number(scale.value),
-    page: pageNum.value,
+    page: Number(pageNum.value),
     can_resize: true,
     position: {
       width: 200,
@@ -390,7 +392,7 @@ const createRadio = () => {
   let signature = {
     type: SIGNATURE_TYPE.RADIO,
     scale: Number(scale.value),
-    page: pageNum.value,
+    page: Number(pageNum.value),
     can_resize: true,
     position: {
       width: 200,

@@ -30,8 +30,9 @@ import Expired from '../Icon/Expired.vue'
 import InProgress from '../Icon/InProgress.vue'
 import NeedsReview from '../Icon/NeedsReview.vue'
 import Sent from '../Icon/Sent.vue'
+import type { Receiver } from '@/types/send-sign'
 
-const recipients = defineModel('recipients')
+const recipients = defineModel<Receiver[]>('recipients')
 const items = ref<Array<any>>([
   { component: Completed, bgColor: 'rgb(50, 195, 135)', title: 'Completed', count: 0 },
   { component: Draft, bgColor: 'rgb(160, 160, 160)', title: 'Draft', count: 0 },

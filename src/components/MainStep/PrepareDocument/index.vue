@@ -27,13 +27,13 @@
             :top="item.position.top"
             :left="item.position.left"
             :canResize="item.can_resize"
-            :text="item.text"
+            :text="item.data"
             @resize="(newRect) => resize(newRect, idx)"
             @drag="(newRect) => resize(newRect, idx)"
             @drag-stop="dragStop(idx)"
             @click="selectedSignature = item"
             @close="removeItem"
-            :style="`background-color: ${background[item.receiverId]}`"
+            :style="item.receiverId ? `background-color: ${background[item.receiverId]}` : ''"
           >
             <el-date-picker
               v-model="item.data"
@@ -46,9 +46,14 @@
                 }
               "
             />
-            <input
+            <el-input
               v-model="item.data"
               v-if="item.type === SIGNATURE_TYPE.TEXT && item.page === pageNum"
+              :resizeTextarea="resizeTextarea"
+              style="width: 100%"
+              autosize
+              type="textarea"
+              placeholder="Please input"
             />
             <p
               v-if="
@@ -81,8 +86,8 @@
               :style="`width: ${item.position.width}px; height: ${item.position.height}px`"
             />
             <div
-              v-if="isNumber(item.receiverId)"
-              :style="`background-color: ${background[item.receiverId]}`"
+              v-if="item.receiverId && item.receiver"
+              :style="`background-color: ${background[item.receiverId as number]}`"
               class="truncate"
             >
               {{ item.receiver.name }}
@@ -120,6 +125,7 @@
 </template>
 
 <script lang="ts" setup>
+// @ts-ignore
 import pdfjsLib from 'pdfjs-dist/build/pdf'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import { onMounted, ref, watch } from 'vue'
@@ -128,14 +134,12 @@ import { useSendSignStore } from '@/stores/send-sign'
 import Logo from '@/assets/img/signature.png'
 import ToolBar from '@/components/MainStep/PrepareDocument/ToolBar.vue'
 import Draw from '@/components/MySignature/Draw.vue'
-import { SignatureService } from '@/services/index.js'
+import { SignatureService } from '@/services'
 import type { Receiver, Signature } from '@/types/send-sign'
 import { SIGNATURE_TYPE } from '@/types/send-sign'
 import SigntureInfo from '@/components/MainStep/PrepareDocument/SignatureInfo.vue'
-import type { ISendSignSecondStep, SendForSignature } from '@/types/send-sign'
 import SignatureModal from '@/components/SignatureModal.vue'
 import { isNumber } from 'element-plus/es/utils/types.mjs'
-import type { NumberTypes } from 'web3'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
@@ -146,17 +150,20 @@ const { arrSignSecondStepValue } = useSendSignStore()
 const dragger = ref(false)
 const value = ref('2021-10-29')
 const signatureValue = ref()
-const signatures = defineModel('signatures', { required: true, type: Array<Signature> })
-const canvasPdf = defineModel('canvas', { required: true })
-const users = defineModel('users', { required: true })
+const signatures = defineModel('signatures', {
+  required: true,
+  type: Array<Signature>
+})
+const canvasPdf = defineModel<any>('canvas', { required: true })
+const users = defineModel<Array<Receiver>>('users', { required: true })
 const pdfContent = ref()
-const totalPage = ref<Number>()
-const scale = ref<Number>(1.2)
-const signModal = ref<Number>(0)
+const totalPage = ref<number>()
+const scale = ref<number>(1.2)
+const signModal = ref<number>(0)
 const selectedSignature = ref<Signature>()
-const receiverId = ref<Number>(0)
+const receiverId = ref<number>(0)
 
-const background = {
+const background: { [key: number]: string } = {
   0: 'rgb(188, 225, 255)',
   1: 'rgb(239, 114, 97)',
   2: 'rgb(213, 156, 156)',
@@ -224,7 +231,7 @@ const save = async (signaturePad: any) => {
     const response = await SignatureService.create(form)
     const drawSign = response.data.data
     if (signModal.value === 2) {
-      signatures.value.map(function (item: Signature) {
+      signatures.value.map((item: Signature) => {
         if (selectedSignature.value && item.id === selectedSignature.value.id) {
           item.type = SIGNATURE_TYPE.IMAGE
           item.scale = Number(scale.value)
@@ -267,9 +274,9 @@ const sign = (selected: number) => {
 }
 
 const note = async () => {
-  let signature = {
+  let signature: Signature = {
     type: SIGNATURE_TYPE.REQUIRED,
-    scale: Number(scale.value),
+    scale: scale.value,
     page: pageNum.value,
     can_resize: true,
     position: {
@@ -278,8 +285,8 @@ const note = async () => {
       top: 50,
       left: 50
     },
-    receiver: (users.value as Array<SendForSignature>)[receiverId.value],
-    receiverId: receiverId.value
+    receiver: users.value[receiverId.value],
+    receiverId: Number(receiverId.value)
   }
   signatures.value.push(signature)
 }
@@ -370,6 +377,8 @@ const resize = (
   //   })
   // }
 }
+
+const resizeTextarea = () => {}
 
 const getPdf = async () => {
   // pdfjsLib.getDocument(`http://localhost:8868/api/files/2`).promise.then(function (pdfDoc_: any) {

@@ -1,6 +1,6 @@
 import ApiService from './ApiService';
 const RequestService  = {
-    get(token) {
+    get(token: string) {
         return ApiService.get(`requests`, {token: token})
     }
 }

@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import Navbar from './Navbar.vue'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
+// @ts-ignore
 import pdfjsLib from 'pdfjs-dist/build/pdf'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import { RequestService } from '@/services/index.js'
@@ -14,6 +15,7 @@ import { useKeyStore } from '@/stores/key'
 import { useFileStore } from '@/stores/file'
 import { useContractStore } from '@/stores/contract'
 import { storeToRefs } from 'pinia'
+// @ts-ignore
 import CryptoJS from 'crypto-js'
 import UploadPrivateKey from '@/components/UploadPrivateKey.vue'
 
@@ -21,8 +23,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
 interface RequestData {
-  signatures: Signature
-  users: Receiver
+  signatures: Signature[]
+  users: Receiver[]
   document: Document
   canvas: Canvas
   token: string
@@ -49,7 +51,7 @@ const fetchDocument = async (id: Number) => {
 }
 const fetchRequest = async () => {
   try {
-    const response = await RequestService.get(route.query.token)
+    const response = await RequestService.get(route.query.token as string)
     requestData.value = response.data.data
   } catch (e: any) {
     status.value = e.status
@@ -85,7 +87,10 @@ const submit = async (key: string) => {
   privateKey.value = key
   if (requestData.value) {
     requestData.value.token = route.query.token as string
-    const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
+    const response = await DocumentService.sign(
+      requestData.value?.document.id,
+      requestData.value
+    )
 
     let signedPdf = createFileFromPDF(response.data, 'signed-' + '123')
     download(response.data, 'signed-' + '123')

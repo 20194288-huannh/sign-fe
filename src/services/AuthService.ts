@@ -1,10 +1,10 @@
 import ApiService from './ApiService';
 const AuthService  = {
-    signIn(data) {
+    signIn(data: any) {
         return ApiService.post('auth/login', data)
     },
 
-    signUp(data) {
+    signUp(data: any) {
         return ApiService.post('auth/register', data)
     }
 }

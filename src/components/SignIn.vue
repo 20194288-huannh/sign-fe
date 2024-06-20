@@ -24,7 +24,7 @@
               name="email"
               type="email"
               autocomplete="email"
-              required=""
+              required="true"
               class="block w-full rounded-md border-0 p-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
@@ -48,7 +48,7 @@
               name="password"
               type="password"
               autocomplete="current-password"
-              required=""
+              required="true"
               class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
@@ -87,11 +87,11 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import WalletConnect from './WalletConnect.vue'
 
-const form = ref({
+const form = ref<{ email: string; password: string; wallet_address: string }>({
   email: '',
   password: '',
   // wallet_address: ''
-  wallet_address: localStorage.getItem('walletAddress')
+  wallet_address: localStorage.getItem('walletAddress') || ''
 })
 
 const userStore = useUserStore()
@@ -115,7 +115,7 @@ const signIn = async () => {
 
 const setup = () => {
   if (route.query.token) {
-    form.value.email = route.query.email
+    form.value.email = (route.query.email as string) || ''
   }
 }
 setup()

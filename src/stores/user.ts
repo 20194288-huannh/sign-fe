@@ -10,7 +10,7 @@ interface User {
 
 export const useUserStore = defineStore('user', () => {
   const user = ref<User>(JSON.parse(localStorage.getItem('user') as string))
-  const token = ref<string | null>(localStorage.getItem('token'))
+  const token = ref<string>(localStorage.getItem('token') || '')
 
   return { user, token }
 })

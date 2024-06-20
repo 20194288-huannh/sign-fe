@@ -184,6 +184,7 @@ contractStore.initContract()
 
 const signUp = async () => {
   try {
+    if (!contractWithSigner.value) return
     const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.public_key)
 
     const response = await AuthService.signUp(form.value)

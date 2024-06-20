@@ -1,6 +1,6 @@
 import ApiService from './ApiService';
 const FileService  = {
-    download(id) {
+    download(id: number) {
         return ApiService.get(`files/${id}`, [], { responseType: 'blob' })
     }
 }

@@ -131,7 +131,9 @@
 </template>
 
 <script setup lang="ts">
+// @ts-ignore
 import pdfjsLib from 'pdfjs-dist/build/pdf'
+// @ts-ignore
 import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import { ref, watch, onMounted } from 'vue'
@@ -149,6 +151,7 @@ import type { SignOwn } from '@/types/send-sign.ts'
 import { useKeyStore } from '@/stores/key'
 import { useFileStore } from '@/stores/file'
 import { useContractStore } from '@/stores/contract'
+// @ts-ignore
 import CryptoJS from 'crypto-js'
 import { storeToRefs } from 'pinia'
 import UploadPrivateKey from '@/components/UploadPrivateKey.vue'
@@ -240,7 +243,6 @@ const submit = async (key: string) => {
       let signedPdf = createFileFromPDF(response.data, 'signed-' + file.name)
       download(response.data, 'signed-' + file.name)
 
-      console.log(response.data)
       const buffer = await response.data.arrayBuffer()
       console.log(buffer)
       if (buffer) {

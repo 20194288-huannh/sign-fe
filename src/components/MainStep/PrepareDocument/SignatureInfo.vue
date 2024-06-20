@@ -19,9 +19,6 @@
             </td>
           </tr>
           <tr v-if="signature.data && typeof signature.data == 'string'">
-            {{
-              data
-            }}
             <th width="40%" class="font-weight-normal" style="vertical-align: middle">Data</th>
             <td width="60%" style="padding: 15px">
               <input
@@ -65,7 +62,9 @@
 
 <script setup lang="ts">
 import { watch } from 'vue'
-const signature = defineModel('signature')
+import type { Signature, Position } from '@/types/send-sign'
+
+const signature = defineModel<Signature>('signature')
 const emit = defineEmits(['resize'])
 
 // watch(
@@ -74,8 +73,8 @@ const emit = defineEmits(['resize'])
 //         emit('resize', signature.position, signature.id)
 //     }
 // )
-const onBlur = () => {
-  console.log(signature.position)
+const onBlur = (position: Position) => {
+  console.log(position)
 }
 </script>
 

@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { Disclosure } from '@headlessui/vue'
-import { routes } from '@/router/routes.ts'
+import { routes } from '@/router/routes'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { Statistic, Signature } from '@/components/Icon'

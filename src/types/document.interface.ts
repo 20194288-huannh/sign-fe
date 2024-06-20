@@ -1,5 +1,5 @@
 export interface Document {
-  id: string
+  id: number
   sha256: string
   status: number
   user: User

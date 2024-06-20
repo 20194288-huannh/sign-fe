@@ -87,14 +87,17 @@ import { ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import { ENotificationType } from '@/types/notification'
 import AddFile from '../MainStep/AddFile.vue'
+// @ts-ignore
 import pdfjsLib from 'pdfjs-dist/build/pdf'
+// @ts-ignore
 import { PDFViewer } from 'pdfjs-dist/web/pdf_viewer'
 import { useKeyStore } from '@/stores/key'
 import { useFileStore } from '@/stores/file'
-import { useContractStore } from '@/stores/contract.ts'
+import { useContractStore } from '@/stores/contract'
 import Success from '@/components/VerifyDocument/Success.vue'
 import Error from '@/components/VerifyDocument/Error.vue'
 import { ethers } from 'ethers'
+// @ts-ignore
 import CryptoJS from 'crypto-js'
 import { storeToRefs } from 'pinia'
 import { DocumentService, ActionService, UserService } from '@/services'
@@ -113,7 +116,7 @@ const {
 const verifyKey = ref<CryptoKey>()
 const isShowDetail = ref<Boolean>(false)
 const isVerified = ref<Boolean>()
-const fileBuffer = ref<Array<any>>([])
+const fileBuffer = ref<string | ArrayBuffer | null>()
 const documents = ref<Array<any>>()
 const showModal = ref<Boolean>(false)
 
@@ -142,7 +145,7 @@ const verify = async () => {
     return
   }
 
-  if (!contractWithSigner.value) return
+  if (!contractWithSigner.value || !contract.value) return
   const file = files.value[0]
   const buffer = await readFileAsArrayBuffer(file)
   const signedHex = CryptoJS.SHA256(arrayBufferToWordArray(buffer)).toString()
@@ -157,7 +160,7 @@ const verify = async () => {
       },
       verifyKey.value as CryptoKey,
       hexStringToUint8Array(hashByPrivateKey),
-      buffer
+      buffer as BufferSource
     )
     if (isVerified.value) {
       fetchHistory(signedHex)

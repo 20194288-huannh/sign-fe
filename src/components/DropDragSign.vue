@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+// ts-ignore
 import VueDragResize from 'vue-drag-resize/src/component/vue-drag-resize.vue'
 
 const props = defineProps({
@@ -82,14 +83,16 @@ const close = () => {
       @mouseleave="mouseHover = false"
     >
       <div
-        class="absolute top-[-10px] right-[-8px] bg-gray-200 h-4 w-4"
+        class="absolute top-[-10px] right-[-8px] bg-gray-200 h-4 w-4 z-[120]"
         v-if="(props.top !== 0 || props.left !== 0) && mouseHover"
         @click="close"
       >
-        <el-icon><Close /></el-icon>
+        <el-icon :size="16"><Close /></el-icon>
       </div>
       <p v-if="props.top === 0 && props.left === 0">{{ text }}</p>
       <slot />
     </div>
   </VueDragResize>
 </template>
+
+<style scope></style>

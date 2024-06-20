@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Verified } from '@/components/Icon/index.ts'
+import { Verified } from '@/components/Icon'
 import { FileService } from '@/services'
 
 const props = defineProps(['documents'])

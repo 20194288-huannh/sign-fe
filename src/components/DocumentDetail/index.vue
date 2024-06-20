@@ -31,14 +31,14 @@ const route = useRoute()
 const document = ref()
 
 const fetchDocument = async () => {
-  const response = await DocumentService.find(route.params.id)
+  const response = await DocumentService.find(Number(route.params.id))
   document.value = response.data.data
 }
 
 const actions = ref()
 
 const getActionsOfDocument = async () => {
-  const response = await DocumentService.getActionsOfDocument(route.params.id)
+  const response = await DocumentService.getActionsOfDocument(Number(route.params.id))
   actions.value = response.data.data
 }
 

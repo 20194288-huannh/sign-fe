@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Verified } from '@/components/Icon/index.ts'
+import { Verified } from '@/components/Icon'
 
 const isShowDetail = ref<Boolean>(false)
 </script>

@@ -1,37 +1,37 @@
 import ApiService from './ApiService';
 const DocumentService  = {
-    create(data) {
+    create(data: any) {
         return ApiService.post('documents/save', data, {headers : { 'Content-Type': 'multipart/form-data'}})
     },
-    save(data) {
+    save(data: any) {
         return ApiService.post('documents/save', data, {headers : { 'Content-Type': 'multipart/form-data'}})
     },
-    find(id) {
+    find(id: number) {
         return ApiService.get(`documents/${id}`)
     },
-    getByUserId(data) {
+    getByUserId(data: any) {
         return ApiService.get(`users/documents`, data)
     },
-    signOwn(id, data) {
+    signOwn(id: number, data: any) {
         return ApiService.post(`documents/${id}/view-own`, data, { responseType: 'blob' })
     },
     getStatistics() {
         return ApiService.get(`documents/statistics`)
     },
-    sendSign(id, data) {
+    sendSign(id: number, data: any) {
         return ApiService.post(`documents/${id}/send-sign`, data)
     },
-    sign(id, data) {
+    sign(id: number, data: any) {
         return ApiService.post(`documents/${id}/sign`, data, { responseType: 'blob' })
     },
-    saveSignOwn(id, data) {
+    saveSignOwn(id: number, data: any) {
         return ApiService.post(`documents/${id}/sign-own`, data, {headers : { 'Content-Type': 'multipart/form-data'}})
     },
-    fetchHistory(sha) {
-        return ApiService.post(`documents/${sha}/history`)
+    fetchHistory(sha: string) {
+        return ApiService.post(`documents/${sha}/history`, {})
     },
-    getActionsOfDocument(sha) {
-        return ApiService.get(`documents/${sha}/actions`)
+    getActionsOfDocument(id: number) {
+        return ApiService.get(`documents/${id}/actions`)
     }
 }
 export default DocumentService

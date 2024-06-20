@@ -48,9 +48,9 @@ import Expired from '../Icon/Expired.vue'
 import InProgress from '../Icon/InProgress.vue'
 import NeedsReview from '../Icon/NeedsReview.vue'
 import Sent from '../Icon/Sent.vue'
-import type { DocumentInfo } from '@/types/document.interface.ts'
+import type { Document, DocumentInfo } from '@/types/document.interface.ts'
 
-const document = defineModel('document', { required: true })
+const document = defineModel<Document>('document', { required: true })
 
 const items = ref<Array<any>>([
   { component: Completed, bgColor: 'rgb(50, 195, 135)', title: 'Completed', count: 0 },

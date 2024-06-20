@@ -136,7 +136,7 @@
 <script setup lang="ts">
 import DocumentFilter from '@/components/Documents/DocumentFilter.vue'
 import { DocumentService, FileService } from '@/services'
-import type { Document, Pagination } from '@/types/document.interface'
+import type { Document } from '@/types/document.interface'
 import { ref, onMounted, watch } from 'vue'
 import { Status } from '@/types/document.interface'
 import type { FileInfo } from '@/types/document.interface'
@@ -155,7 +155,7 @@ const mappingStatus: { [key: number]: string } = {
   5: 'sent'
 }
 const loading = ref<boolean>(false)
-const pagination = ref<Pagination>()
+const pagination = ref<any>()
 const router = useRouter()
 
 function capitalizeFirstLetter(string: string) {
