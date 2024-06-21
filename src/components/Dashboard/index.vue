@@ -59,7 +59,7 @@ fetchActions()
   <div class="flex w-100 gap-10 mt-8">
     <el-card class="content">
       <h3 class="title p-5">Audit Trail</h3>
-      <el-scrollbar>
+      <el-scrollbar height="60vh">
         <AuditTrailItem class="scrollbar-demo-item" v-for="action in actions" :action="action" />
       </el-scrollbar>
     </el-card>

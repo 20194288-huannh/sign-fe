@@ -42,14 +42,7 @@
           </tr>
           <!---->
           <tr>
-            <th width="40%" class="font-weight-normal" style="vertical-align: middle">
-              Visibility Condition
-            </th>
-            <td>
-              <label class="switch top-3"
-                ><input type="checkbox" autocomplete="off" /><span class="slider round"></span
-              ></label>
-            </td>
+            <el-button @click="onRemoveItem">Delete</el-button>
           </tr>
           <!----><!---->
         </tbody>
@@ -65,7 +58,11 @@ import { watch } from 'vue'
 import type { Signature, Position } from '@/types/send-sign'
 
 const signature = defineModel<Signature>('signature')
-const emit = defineEmits(['resize'])
+const emit = defineEmits(['resize', 'removeItem'])
+
+const onRemoveItem = () => {
+  emit('removeItem')
+}
 
 // watch(
 //     () => signature.position,

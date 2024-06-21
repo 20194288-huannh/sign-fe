@@ -33,7 +33,9 @@
             @drag-stop="dragStop(idx)"
             @click="selectedSignature = item"
             @close="removeItem"
-            :style="item.receiver ? `background-color: ${background[item.receiverId as number]}` : ''"
+            :style="
+              item.receiver ? `background-color: ${background[item.receiverId as number]}` : ''
+            "
           >
             <el-date-picker
               v-model="item.data"
@@ -113,6 +115,7 @@
       <SigntureInfo
         class="mt-5 flex-shrink w-1/4"
         v-model:signature="selectedSignature"
+        @remove-item="removeItem"
         @resize="resize"
       />
     </div>
@@ -157,14 +160,14 @@ const signatures = defineModel('signatures', {
   type: Array<Signature>
 })
 const canvasPdf = defineModel<any>('canvas', { required: true })
-const users = defineModel<Array<Receiver>>('users', { required: true })
+const users = defineModel<Array<Receiver>>('users')
 const pdfContent = ref()
 const totalPage = ref<number>()
 const scale = ref<number>(1.2)
 const signModal = ref<number>(0)
 const selectedSignature = ref<Signature>()
+const seletecdIndex = ref<number>()
 const receiverId = ref<number>(0)
-const textArea = ref()
 
 const background: { [key: number]: string } = {
   0: 'rgb(188, 225, 255)',
@@ -179,6 +182,7 @@ const pageRendering = ref(false)
 const pageNumPending = ref()
 const canvas = ref<any>()
 const pdfDoc = ref<any>()
+const textArea = ref()
 
 /**
  * Get page info from document, resize canvas accordingly, and render page.
@@ -277,6 +281,7 @@ const sign = (selected: number) => {
 }
 
 const note = async () => {
+  if (!users.value) return
   let signature: Signature = {
     type: SIGNATURE_TYPE.REQUIRED,
     scale: scale.value,
@@ -328,10 +333,13 @@ function onNextPage() {
   renderPage(pageNum.value)
 }
 
+const onSelect = (item: Signature, idx: number) => {
+  selectedSignature.value = item
+  seletecdIndex.value = idx
+}
+
 const removeItem = (idx: number) => {
-  // console.log(signatures.value)
-  // signatures.value = signatures.value.filter((item, index) => index !== idx)
-  // console.log(signatures.value)
+  const data = signatures.value.splice(idx, 1)
 }
 /**
  * Asynchronously downloads PDF.
@@ -381,6 +389,16 @@ const resize = (
   // }
 }
 
+const resizeTextarea = () => {
+  console.log(textArea.value)
+}
+
+watch(
+  () => textArea.value,
+  () => {
+    console.log(textArea.value)
+  }
+)
 
 const getPdf = async () => {
   // pdfjsLib.getDocument(`http://localhost:8868/api/files/2`).promise.then(function (pdfDoc_: any) {
@@ -412,9 +430,18 @@ watch(
   overflow: scroll;
 }
 
-/* textarea {
+:deep(.el-date-editor.el-input) {
   height: 100% !important;
-} */
+  widows: 100% !important;
+}
+
+:deep(.el-textarea__inner) {
+  height: 100% !important;
+}
+
+textarea {
+  height: 100% !important;
+}
 
 /* .border {
   border: 1px solid red;

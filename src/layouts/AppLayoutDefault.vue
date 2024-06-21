@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div class="w-[calc(100vw-18px)] h-16 items-center flex p-5 justify-between shadow-lg">
-      <div>Sign.co</div>
+    <div class="items-center flex p-5 justify-between shadow-lg h-16 w-[calc(100vw-18px)]">
+      <div class="flex items-center">
+        <img src="/Logo2.png" class="logo" />
+        <span class="ml-2 font-semibold text-[#38BDF8] text-lg">Signature</span>
+      </div>
       <el-button
         class="cursor-pointer flex items-center gap-2"
         v-popover="popoverRef"
@@ -26,7 +29,12 @@
           </div>
         </div>
         <div class="mt-4">
-          <router-link :to="item.to" v-for="item in actionPopover" :key="item.label" @click="item.action">
+          <router-link
+            :to="item.to"
+            v-for="item in actionPopover"
+            :key="item.label"
+            @click="item.action"
+          >
             <div
               class="flex items-center gap-2 cursor-pointer hover:bg-purple-400 hover:text-white p-1"
             >
@@ -67,3 +75,9 @@ const onClickOutside = () => {
   unref(popoverRef).popperRef?.delayHide?.()
 }
 </script>
+
+<style scoped>
+.logo {
+  height: 45px;
+}
+</style>
