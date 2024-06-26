@@ -208,12 +208,13 @@ const loadFile = (file: any) => {
   reader.readAsArrayBuffer(file)
 }
 
+const baseDomain = import.meta.env.VITE_APP_BASE_URL
 const getPdf = async (id: number) => {
   let containerSmall = document.getElementById('page-container-small')
   let pdfViewerSmall = new PDFViewer({
     container: containerSmall
   })
-  let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
+  let loadingTask = pdfjsLib.getDocument(`${baseDomain}files/${id}`)
   pdf.value = await loadingTask.promise
 
   pdfViewerSmall.setDocument(pdf.value)

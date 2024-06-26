@@ -20,8 +20,8 @@ const actions = ref<Array<any>>([])
 
 const fetchStatistics = async () => {
   const response = await DocumentService.getStatistics()
-  const statistics = response.data.data
-  statistics.forEach(function (statistic) {
+  const statistics: Array<{ status: number; count: number }> = response.data.data
+  statistics.forEach(function (statistic: { status: number; count: number }) {
     let currentStatus = items.value.find(function (item, index) {
       return index == statistic.status
     })

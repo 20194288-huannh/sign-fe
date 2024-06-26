@@ -14,7 +14,7 @@
           >
           <el-input
             id="current-password"
-            v-model="password"
+            v-model="form.password"
             class="basis-3/4"
             type="password"
             placeholder="Current Password"
@@ -29,7 +29,7 @@
           >
           <el-input
             id="new-password"
-            v-model="newPassword"
+            v-model="form.newPassword"
             class="basis-3/4"
             type="password"
             placeholder="New Password"
@@ -46,7 +46,7 @@
           >
           <el-input
             id="confirm-new-password"
-            v-model="confirmPassword"
+            v-model="form.confirmPassword"
             class="basis-3/4"
             type="password"
             placeholder="Confirm New Password"
@@ -59,6 +59,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
+const form = ref<{ password: String; newPassword: String; confirmPassword: String }>({
+  password: '',
+  newPassword: '',
+  confirmPassword: ''
+})
 </script>
 
 <style scoped>

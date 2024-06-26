@@ -105,10 +105,6 @@ const ApiService = {
     instance.defaults.withCredentials = false
     instance.defaults.headers.common['Content-Type'] = 'application/json'
     instance.defaults.headers.common['Accept'] = 'application/json'
-    instance.defaults.globalErrorHandler = {
-      on: true,
-      exclude: []
-    }
   }
 }
 

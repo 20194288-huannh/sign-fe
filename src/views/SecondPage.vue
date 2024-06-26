@@ -47,18 +47,21 @@ const form = ref<SignOwn>({
   }
 })
 
+const baseDomain = import.meta.env.VITE_APP_BASE_URL
 const fetchDocument = async (id: Number) => {
-  let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
+  let loadingTask = pdfjsLib.getDocument(`${baseDomain}files/${id}`)
   pdf.value = await loadingTask.promise
 }
 
 const fetchRequest = async () => {
-  const response = await RequestService.get(route.query.token)
+  const response = await RequestService.get(route.query.token || '')
   requestData.value = response.data.data
 }
 
 const onFinish = async () => {
-  const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
+  if (requestData.value) {
+    const response = await DocumentService.sign(requestData.value.document.id, requestData.value)
+  }
 }
 
 onMounted(async () => {

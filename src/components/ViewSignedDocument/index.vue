@@ -45,8 +45,9 @@ const privateKey = ref<string>(
   'MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDCpGhexCSi6kHmCjllsvmsll43wnBS1SBrqn9yj0VWHg7HMpjcD3m+kxtDRB2iQBiahZANiAAT7S+Sv916vmwZtVvfK0adxTXhEXGXu3/obaCl5Vv/VYLxYC0M9Z+AEA3D4F7dwmCrhlHY4qjGcuc6+M2jF9A6rw7+wll15vIBBosJ+YTPcDsuh0ykP0LwbCRKz7gR5ppU='
 )
 
+const baseDomain = import.meta.env.VITE_APP_BASE_URL
 const fetchDocument = async (id: Number) => {
-  let loadingTask = pdfjsLib.getDocument(`http://localhost:8868/api/files/${id}`)
+  let loadingTask = pdfjsLib.getDocument(`${baseDomain}files/${id}`)
   pdf.value = await loadingTask.promise
 }
 const fetchRequest = async () => {
@@ -87,10 +88,7 @@ const submit = async (key: string) => {
   privateKey.value = key
   if (requestData.value) {
     requestData.value.token = route.query.token as string
-    const response = await DocumentService.sign(
-      requestData.value?.document.id,
-      requestData.value
-    )
+    const response = await DocumentService.sign(requestData.value?.document.id, requestData.value)
 
     let signedPdf = createFileFromPDF(response.data, 'signed-' + '123')
     download(response.data, 'signed-' + '123')

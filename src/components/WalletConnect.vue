@@ -40,6 +40,10 @@ import { ref, onMounted } from 'vue'
 
 import { useWalletStore } from '@/stores/wallet'
 
+interface Window {
+  ethereum?: any
+}
+
 const addressWallet = defineModel('addressWallet')
 onMounted(async () => {
   await checkNetwork()
@@ -63,12 +67,14 @@ const checkNetwork = async () => {
 }
 // switches network to the one provided in env variable
 const switchNetwork = async () => {
-  await window.ethereum.request({
-    method: 'wallet_switchEthereumChain',
-    params: [{ chainId: targetNetworkId }]
-  })
-  // refresh
-  window.location.reload()
+  if (window.ethereum) {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: targetNetworkId }]
+    })
+    // refresh
+    window.location.reload()
+  }
 }
 // checks network and connects wallet
 const connectWallet = async () => {

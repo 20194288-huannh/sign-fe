@@ -1,6 +1,6 @@
-import ApiService from './ApiService';
+import ApiService from './ApiService'
 const NotificationService = {
-  getAll(id: number) {
+  getAll() {
     return ApiService.get(`notifications`)
   },
   delete(id: number) {
