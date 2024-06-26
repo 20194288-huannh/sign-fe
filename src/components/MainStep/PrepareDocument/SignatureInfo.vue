@@ -42,7 +42,7 @@
           </tr>
           <!---->
           <tr>
-            <el-button @click="onRemoveItem">Delete</el-button>
+            <el-button @click="onRemoveItem" v-if="false">Delete</el-button>
           </tr>
           <!----><!---->
         </tbody>

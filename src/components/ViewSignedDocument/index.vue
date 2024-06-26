@@ -138,6 +138,7 @@ contractStore.initContract()
       v-model:signatures="requestData.signatures"
       v-model:canvas="requestData.canvas"
       v-model:users="requestData.users"
+      :screen="`SignRequest`"
       class="document"
     />
   </div>

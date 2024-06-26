@@ -89,7 +89,7 @@ const close = () => {
       >
         <el-icon :size="16"><Close /></el-icon>
       </div>
-      <p v-if="props.top === 0 && props.left === 0">{{ text }}</p>
+      <!-- <p v-if="props.top === 0 && props.left === 0">{{ text }}</p> -->
       <slot />
     </div>
   </VueDragResize>

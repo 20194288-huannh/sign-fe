@@ -22,6 +22,7 @@
             label="Pick a time"
             placeholder="Pick a time"
             style="width: 100%"
+            value-format="YYYY-MM-DD"
           />
         </el-form-item>
       </el-col>
@@ -43,7 +44,7 @@ interface RuleForm {
   content: string
 }
 
-const props = defineModel('email', {required: true})
+const props = defineModel('email', { required: true })
 const emit = defineEmits(['sign'])
 
 const editor = ref(ClassicEditor)

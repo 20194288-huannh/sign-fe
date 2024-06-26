@@ -97,7 +97,7 @@
         <span id="downshift-8-label" for="downshift-8-toggle-button">Ink tools, toggle menu</span>
       </div>
       <el-dropdown trigger="click" class="p-2 border-2 border-indigo-600" @command="handleCommand"
-        v-if="users && isNumber(receiverId)">
+        v-if="users && isNumber(receiverId) && props.screen == 'sendSign'">
         <span class="el-dropdown-link flex w-36">
           <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" viewBox="0 0 24 24" fill="#000" width="16" height="16">
             <path
@@ -114,13 +114,15 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item :command="index" v-for="(value, index) in users">{{ value.name }}</el-dropdown-item>
+            <el-dropdown-item :command="index" v-for="(value, index) in users">{{
+    value.name
+  }}</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <div class="flex items-center">
-        <button v-if="users" class="dropdown button-icon border-left" title="Drawing" aria-label="Drawing" aria-pressed="false"
-          type="button" @click="emit('note')">
+      <div class="flex items-center" v-if="users && isNumber(receiverId) && props.screen == 'sendSign'">
+        <button v-if="users" class="dropdown button-icon border-left" title="Drawing" aria-label="Drawing"
+          aria-pressed="false" type="button" @click="emit('note')">
           <span class="tool-button-icon PSPDFKit-Icon-Ink" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
               width="24" height="24" fill="currentColor" viewBox="0 0 24 24" focusable="false">
               <path
@@ -129,9 +131,9 @@
             </svg></span></button><button id="downshift-8-toggle-button" aria-haspopup="true" aria-expanded="false"
           aria-labelledby="downshift-8-label downshift-8-toggle-button" class="pl-[5px] pr-[5px]" type="button"
           style="min-width: 0px">
-          <span v-if="users" class="tool-button-icon PSPDFKit-6511p928m8fcbcd7nb8arydjxe PSPDFKit-Icon-CaretDown" aria-hidden="true"
-            style="width: 12px; height: 100%"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-              fill="currentColor" viewBox="0 0 12 12" focusable="false">
+          <span v-if="users" class="tool-button-icon PSPDFKit-6511p928m8fcbcd7nb8arydjxe PSPDFKit-Icon-CaretDown"
+            aria-hidden="true" style="width: 12px; height: 100%"><svg xmlns="http://www.w3.org/2000/svg" width="12"
+              height="12" fill="currentColor" viewBox="0 0 12 12" focusable="false">
               <path fill-rule="evenodd"
                 d="M9.53 3.97a.75.75 0 0 0-1.06 0L6 6.44 3.53 3.97a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 0 0 0-1.06Z"
                 clip-rule="evenodd"></path>
@@ -147,10 +149,11 @@
       <div class="flex">
         <button
           class="dropdown button-icon PSPDFKit-Toolbar-Button-InkSignature-Annotation PSPDFKit-Toolbar-Button-Signature border-left"
-          title="Sign" aria-label="Sign" aria-pressed="false" type="button" @click="openSignModal">
+          title="Sign" aria-label="Sign" aria-pressed="false" type="button" @click="openSignModal"
+          :disabled="props.screen != 'signOwn' && props.screen != 'sendSign'">
           <span class="tool-button-icon PSPDFKit-Icon-Signature" aria-hidden="true"><svg
-              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"
-              focusable="false">
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : 'currentColor'" viewBox="0 0 24 24" focusable="false">
               <path fill-rule="evenodd"
                 d="M22.5 15.75h-8.64c.31-1.16.59-2.39.81-3.62.22-1.24.39-2.48.49-3.66.64-.38 1.29-.72 1.95-1 .04.21.08.45.13.72.02.16.05.33.08.5.1.54.22 1.13.38 1.63.09.25.19.51.33.74.13.21.34.46.63.61.32.16.69.08.92-.19.87-1.05 2.74-3.88 3.16-6.87a.747.747 0 0 0-.63-.85.747.747 0 0 0-.85.63c-.29 2.02-1.36 4.02-2.19 5.26-.11-.35-.19-.77-.27-1.22-.02-.14-.05-.29-.07-.44-.07-.37-.13-.73-.19-1.02-.05-.2-.11-.42-.19-.61a1.25 1.25 0 0 0-.22-.33.85.85 0 0 0-.63-.28c-.09 0-.18.02-.26.05-.67.25-1.33.55-1.98.89.01-.57 0-1.11-.03-1.61-.06-.97-.21-1.86-.51-2.52-.29-.67-.83-1.31-1.72-1.31-.65 0-1.56.27-2.5.63-.98.37-2.1.88-3.22 1.45-2.22 1.14-4.53 2.54-5.77 3.6-.31.27-.35.74-.08 1.06.27.31.74.35 1.06.08 1.1-.94 3.28-2.28 5.48-3.4 1.08-.56 2.15-1.04 3.06-1.39.95-.36 1.62-.53 1.97-.53.03 0 .17 0 .35.41.19.43.33 1.11.38 2.01.05.72.04 1.54-.01 2.42-.85.54-1.65 1.14-2.39 1.78-1.74 1.48-3.19 3.18-4 4.79-.2.41-.33.98-.4 1.59H2c-.41 0-.75.34-.75.75s.34.75.75.75h4.86c.01.54.05 1.11.12 1.66.11.88.32 1.77.67 2.46.33.67.91 1.38 1.85 1.38.8 0 1.43-.56 1.9-1.15.48-.62.93-1.47 1.33-2.44.24-.58.47-1.23.69-1.91h9.08c.41 0 .75-.34.75-.75s-.34-.75-.75-.75Zm-11.16 2.84c-.37.91-.76 1.62-1.13 2.09-.39.5-.63.57-.71.57-.06 0-.26-.04-.51-.55-.24-.48-.42-1.18-.53-1.99-.06-.48-.09-.98-.1-1.46h3.48c-.16.47-.33.92-.5 1.34Zm1.85-6.72c-.24 1.33-.54 2.66-.88 3.88H8.45c.06-.44.14-.75.22-.91.69-1.39 1.99-2.94 3.63-4.33.4-.34.81-.67 1.24-.98-.09.76-.21 1.55-.35 2.34ZM1.97 9.97c.29-.29.77-.29 1.06 0l.97.97.97-.97c.29-.29.77-.29 1.06 0 .29.29.29.77 0 1.06l-.97.97.97.97c.29.29.29.77 0 1.06-.29.29-.77.29-1.06 0L4 13.06l-.97.97c-.29.29-.77.29-1.06 0a.754.754 0 0 1 0-1.06l.97-.97-.97-.97a.754.754 0 0 1 0-1.06Z"
                 clip-rule="evenodd"></path>
@@ -195,10 +198,10 @@
       </div>
     </div>
     <button class="dropdown button-icon PSPDFKit-Toolbar-Button-Note-Annotation border-left" title="Note"
-      aria-label="Note" aria-pressed="false" type="button" @click="createText">
+      aria-label="Note" aria-pressed="false" type="button" @click="createText" :disabled="props.screen != 'signOwn' && props.screen != 'sendSign'">
       <span class="tool-button-icon PSPDFKit-Icon-Note" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
           width="24" height="24" viewBox="0 0 24 24" focusable="false">
-          <path fill="currentColor"
+          <path :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '6c757d' : 'currentColor'"
             d="M7.25 9c0-.41.34-.75.75-.75h8c.41 0 .75.34.75.75s-.34.75-.75.75H8c-.41 0-.75-.34-.75-.75ZM8 12.25c-.41 0-.75.34-.75.75s.34.75.75.75h8c.41 0 .75-.34.75-.75s-.34-.75-.75-.75H8Zm11-9H5C3.48 3.25 2.25 4.48 2.25 6v10c0 1.52 1.23 2.75 2.75 2.75h3.47c.4 0 .78.19 1.02.52l1.16 1.63c.66.92 2.01.98 2.75.12l1.57-1.83c.24-.28.59-.44.95-.44H19c1.52 0 2.75-1.23 2.75-2.75V6c0-1.52-1.23-2.75-2.75-2.75ZM20.25 16c0 .69-.56 1.25-1.25 1.25h-3.08c-.8 0-1.57.35-2.09.96l-1.57 1.83c-.1.13-.3.12-.39 0l-1.16-1.63a2.762 2.762 0 0 0-2.24-1.15H5c-.69 0-1.25-.56-1.25-1.25V6c0-.69.56-1.25 1.25-1.25h14c.69 0 1.25.56 1.25 1.25v10Z">
           </path>
         </svg></span>
@@ -236,12 +239,15 @@
       <div class="flex">
         <button
           class="dropdown button-icon PSPDFKit-Toolbar-Button-Shape-Annotation PSPDFKit-Toolbar-Button-Line-Annotation border-left"
-          title="Line" aria-label="Line" aria-pressed="false" type="button" @click="createCalendar">
+          title="Line" aria-label="Line" aria-pressed="false" type="button" @click="createCalendar"
+          :disabled="props.screen != 'signOwn' && props.screen != 'sendSign'">
           <span class="tool-button-icon PSPDFKit-Icon-Line" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24" fill="#000" width="20" height="20">&gt;<path
+              viewBox="0 0 24 24" :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : '#000'" width="20" height="20">
+              &gt;
+              <path
                 d="M9,4.5v1H5v22H27V5.5H23v-1H21v1H11v-1Zm-2,3H9v1h2v-1H21v1h2v-1h2v2H7Zm0,4H25v14H7Zm6,2v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Z"
-                fill="currentcolor" transform="translate(-5 -4.5)"></path></svg></span></button><button
-          id="downshift-12-toggle-button" aria-haspopup="true" aria-expanded="false"
+                :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : '#000'" transform="translate(-5 -4.5)"></path>
+            </svg></span></button><button id="downshift-12-toggle-button" aria-haspopup="true" aria-expanded="false"
           aria-labelledby="downshift-12-label downshift-12-toggle-button" class="pl-[5px] pr-[5px]" type="button"
           style="min-width: 0px">
           <span class="tool-button-icon PSPDFKit-6511p928m8fcbcd7nb8arydjxe PSPDFKit-Icon-CaretDown" aria-hidden="true"
@@ -315,10 +321,10 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '@/types/document.interface';
-import type { Receiver } from '@/types/send-sign';
-import { SIGNATURE_TYPE, type Signature } from '@/types/send-sign';
-import { isNumber } from 'element-plus/es/utils/types.mjs';
+import type { User } from '@/types/document.interface'
+import type { Receiver } from '@/types/send-sign'
+import { SIGNATURE_TYPE, type Signature } from '@/types/send-sign'
+import { isNumber } from 'element-plus/es/utils/types.mjs'
 
 const totalPage = defineModel('totalPage')
 const pageNum = defineModel<Number>('pageNum', { required: true })
@@ -327,7 +333,17 @@ const users = defineModel<Array<Receiver>>('users')
 const scale = defineModel('scale')
 const signatures = defineModel<Array<Signature>>('signatures', { required: true })
 const receiverId = defineModel('receiverId')
-const emit = defineEmits(['onNextPage', 'onPrevPage', 'scaleUp', 'scaleDown', 'note', 'addCalendar'])
+const emit = defineEmits([
+  'onNextPage',
+  'onPrevPage',
+  'scaleUp',
+  'scaleDown',
+  'note',
+  'addCalendar'
+])
+const props = defineProps({
+  screen: { type: String, required: true }
+})
 
 const handleCommand = (command: string | number | object) => {
   receiverId.value = command
@@ -355,6 +371,7 @@ const createCalendar = () => {
 }
 
 const createText = () => {
+  console.log(scale.value)
   let signature = {
     type: SIGNATURE_TYPE.TEXT,
     scale: Number(scale.value),

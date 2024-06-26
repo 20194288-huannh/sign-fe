@@ -5,7 +5,12 @@ const props = defineProps(['document'])
 
 <template>
   <div class="navbar">
-    <div class="logo bg-[#00b3b3] w-230">Sign</div>
+    <div class="logo bg-[#00b3b3] w-230 flex item-center pl-2">
+      <div class="flex items-center">
+        <img src="/Logo2.png" class="h-[40px]" />
+        <span class="ml-2 font-semibold text-[#fff] text-lg">Signature</span>
+      </div>
+    </div>
     <div class="main-content">
       <div class="filename">{{ props.document.file.name }}</div>
       <div class="navbar-nav">
@@ -71,7 +76,7 @@ const props = defineProps(['document'])
   height: 52px;
   background-color: #f8f9fa;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  z-index:200;
+  z-index: 200;
 }
 
 .logo::after {

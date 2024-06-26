@@ -6,8 +6,9 @@
       v-model:signModal="signModal"
       v-model:users="users"
       v-model:receiverId="receiverId"
-      v-model="scale"
+      v-model:scale="scale"
       v-model:signatures="signatures"
+      :screen="props.screen"
       @on-next-page="onNextPage"
       @on-prev-page="onPrevPage"
       @scale-up="scaleUp"
@@ -52,7 +53,7 @@
               v-model="item.data"
               v-if="item.type === SIGNATURE_TYPE.TEXT && item.page === pageNum"
               :resizeTextarea="resizeTextarea"
-              :style="`width: 100%;`"
+              :style="`width: 100%; height: 100%`"
               ref="textArea"
               autosize
               type="textarea"
@@ -123,8 +124,8 @@
       v-model:signModal="signModal"
       @save="save"
       @sign="sign"
-      :height="selectedSignature?.position.height || 175"
-      :width="selectedSignature?.position.width || 350"
+      :height="selectedSignature?.id ? selectedSignature?.position.height : 175"
+      :width="selectedSignature?.id ? selectedSignature?.position.width : 350"
     />
   </div>
 </template>
@@ -149,7 +150,7 @@ import { isNumber } from 'element-plus/es/utils/types.mjs'
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.943/build/pdf.worker.min.js'
 
-const props = defineProps(['pdf', 'canClose'])
+const props = defineProps(['pdf', 'canClose', 'screen'])
 
 const { arrSignSecondStepValue } = useSendSignStore()
 const dragger = ref(false)
@@ -433,10 +434,6 @@ watch(
 :deep(.el-date-editor.el-input) {
   height: 100% !important;
   widows: 100% !important;
-}
-
-:deep(.el-textarea__inner) {
-  height: 100% !important;
 }
 
 textarea {

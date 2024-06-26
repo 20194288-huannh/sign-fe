@@ -144,6 +144,7 @@
               >
                 <template #pdfViewer>
                   <PrepareDocument
+                    :screen="`sendSign`"
                     :pdf="pdf"
                     v-model:signatures="form.signatures"
                     :canvas="form.canvas"
