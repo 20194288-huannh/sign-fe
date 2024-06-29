@@ -10,11 +10,6 @@ export const routes = [
     name: 'action-center'
   },
   {
-    path: '/second-page',
-    icon: 'Edit',
-    name: 'first-page'
-  },
-  {
     path: '/documents',
     icon: 'Document',
     name: 'documents'
