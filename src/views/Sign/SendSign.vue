@@ -228,16 +228,6 @@ interface Form {
 }
 const form = ref<any>({
   users: [
-    // {
-    //   name: 'Nguyen Huu Huan Signer',
-    //   email: 'gundamakp01@gmail.com',
-    //   type: '0'
-    // },
-    // {
-    //   name: 'Nguyen Huu Huan Signer 2',
-    //   email: 'gundamakp02@gmail.com',
-    //   type: '0'
-    // },
     {
       name: '',
       email: '',
@@ -267,21 +257,6 @@ const clickAddFile = async () => {
   }
   changeStep(SEND_SIGN_STEP.SECOND_STEP)
   scrollToView(SEND_SIGN_STEP.SECOND_STEP)
-  // if (typeof window.ethereum !== 'undefined') {
-  //   //@ts-expect-error Window.ethers not TS
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum)
-  //   // Contract reference
-  //   const contract = new ethers.Contract(contractAddress, BlockSig.abi, provider)
-  //   try {
-  //     // call contract public method
-  //     const fileContent = await readFile(files.value[0] as File);
-  //     const fileBytes = Array.from(new Uint8Array(fileContent as ArrayBuffer));
-  //     const fileHash = ethers.utils.keccak256(fileBytes);
-  //     const data = await contract.createDoc(fileHash, [], false);
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 }
 // address of the contract loaded from an environment variable
 const contractAddress = import.meta.env.VITE_BLOCKSIG_CONTRACT || ''

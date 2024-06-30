@@ -2,7 +2,7 @@
   <div class="flex justify-between border p-4 rounded" v-if="document">
     <div class="flex">
       <div class="border p-3 w-[155px]">
-        <img src="@/assets/img/profilebg128x128px.png" />
+        <img src="@/assets/img/document.png" />
         <div class="pt-1 flex justify-center truncate">{{ document.file.name }} ...</div>
       </div>
       <div class="flex flex-col justify-between p-5">

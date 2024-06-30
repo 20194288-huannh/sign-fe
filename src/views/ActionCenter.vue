@@ -73,11 +73,12 @@ getAllNotification()
                     <div class="text-[#6c757d] text-xs mb-0">
                       <p class="text-[#6c757d] text-xs mb-0">{{ notification.content }}</p>
                       <div>
-                        <a
+                        <router-link
                           class="font-semibold text-sm text-[#0e72ce]"
-                          title="LỊCH TRỰC NHẬT KIAI.xlsx - February_2024 (1)"
+                          :to="`/documents/${notification.document.id}`"
+                          :title="notification.document.file.name"
                         >
-                          {{ notification.document.file.name }}</a
+                          {{ notification.document.file.name }}</router-link
                         >
                       </div>
                     </div>

@@ -71,12 +71,12 @@
               <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
             </div>
           </td>
-          <td class="px-6">
+          <td class="px-6 max-w-[400px]">
             <div
               scope="row"
               class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-sm font-semibold"
             >
-              <div class="text-sm font-semibold">{{ document.file?.name }}</div>
+              <div class="text-sm font-semibold truncate">{{ document.file?.name }}</div>
             </div>
           </td>
           <td class="px-6">

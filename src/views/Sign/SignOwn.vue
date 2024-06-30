@@ -261,7 +261,7 @@ const submit = async (key: string) => {
           buffer
         )
 
-        // await contractWithSigner.value.uploadDocument(signedHash, new Uint8Array(signature))
+        await contractWithSigner.value.uploadDocument(signedHash, new Uint8Array(signature))
 
         var signedHashString = new TextDecoder().decode(signedHash)
         const response = await DocumentService.saveSignOwn(myDocument.value.id, {

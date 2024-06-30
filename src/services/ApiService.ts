@@ -52,13 +52,6 @@ instance.interceptors.response.use(
     if (error.response.status == 404) {
       router.push({ name: 'NotFound' })
     }
-    if (error.response.status == 422) {
-      ElNotification({
-        type: ENotificationType.ERROR,
-        title: 'Error',
-        message: error.response.data.errors
-      })
-    }
     if (error.response.status == 401 && router.currentRoute.value.name !== 'ViewSignedDocument') {
       ElNotification({
         type: ENotificationType.ERROR,
@@ -67,17 +60,14 @@ instance.interceptors.response.use(
       })
       localStorage.removeItem('token')
       router.push({ name: 'signIn' })
+    } else {
+      ElNotification({
+        type: ENotificationType.ERROR,
+        title: 'Error',
+        message: error.response.data.errors
+      })
     }
-    ElNotification({
-      type: ENotificationType.ERROR,
-      title: 'Error',
-      message: error.response.data.errors
-    })
     const { response, config } = error
-    // check if config errorHandler is on
-    if (config?.globalErrorHandler?.on) {
-      // service.handleError(response, config.globalErrorHandler.exclude)
-    }
     // userStore().finishLoading()
     return Promise.reject(response)
   }

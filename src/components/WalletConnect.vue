@@ -2,6 +2,7 @@
   <div class="flex flex-col">
     <button
       v-if="!network_ok"
+      type="button"
       @click="switchNetwork()"
       class="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-pink-700"
     >
@@ -31,7 +32,7 @@
         walletStore.address != '' ? `Connected Acc ${walletStore.acc_short}` : `Connect Wallet`
       }}</span>
     </button>
-    <p class="pt-3">You have to connect your wallet first!</p>
+    <p class="pt-3 text-rose-500" v-if="!walletStore.address">You have to connect your wallet first!</p>
   </div>
 </template>
 

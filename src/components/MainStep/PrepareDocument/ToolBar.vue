@@ -115,8 +115,8 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item :command="index" v-for="(value, index) in users">{{
-    value.name
-  }}</el-dropdown-item>
+              value.name
+            }}</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -153,7 +153,8 @@
           :disabled="props.screen != 'signOwn' && props.screen != 'sendSign'">
           <span class="tool-button-icon PSPDFKit-Icon-Signature" aria-hidden="true"><svg
               xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-              :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : 'currentColor'" viewBox="0 0 24 24" focusable="false">
+              :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : 'currentColor'"
+              viewBox="0 0 24 24" focusable="false">
               <path fill-rule="evenodd"
                 d="M22.5 15.75h-8.64c.31-1.16.59-2.39.81-3.62.22-1.24.39-2.48.49-3.66.64-.38 1.29-.72 1.95-1 .04.21.08.45.13.72.02.16.05.33.08.5.1.54.22 1.13.38 1.63.09.25.19.51.33.74.13.21.34.46.63.61.32.16.69.08.92-.19.87-1.05 2.74-3.88 3.16-6.87a.747.747 0 0 0-.63-.85.747.747 0 0 0-.85.63c-.29 2.02-1.36 4.02-2.19 5.26-.11-.35-.19-.77-.27-1.22-.02-.14-.05-.29-.07-.44-.07-.37-.13-.73-.19-1.02-.05-.2-.11-.42-.19-.61a1.25 1.25 0 0 0-.22-.33.85.85 0 0 0-.63-.28c-.09 0-.18.02-.26.05-.67.25-1.33.55-1.98.89.01-.57 0-1.11-.03-1.61-.06-.97-.21-1.86-.51-2.52-.29-.67-.83-1.31-1.72-1.31-.65 0-1.56.27-2.5.63-.98.37-2.1.88-3.22 1.45-2.22 1.14-4.53 2.54-5.77 3.6-.31.27-.35.74-.08 1.06.27.31.74.35 1.06.08 1.1-.94 3.28-2.28 5.48-3.4 1.08-.56 2.15-1.04 3.06-1.39.95-.36 1.62-.53 1.97-.53.03 0 .17 0 .35.41.19.43.33 1.11.38 2.01.05.72.04 1.54-.01 2.42-.85.54-1.65 1.14-2.39 1.78-1.74 1.48-3.19 3.18-4 4.79-.2.41-.33.98-.4 1.59H2c-.41 0-.75.34-.75.75s.34.75.75.75h4.86c.01.54.05 1.11.12 1.66.11.88.32 1.77.67 2.46.33.67.91 1.38 1.85 1.38.8 0 1.43-.56 1.9-1.15.48-.62.93-1.47 1.33-2.44.24-.58.47-1.23.69-1.91h9.08c.41 0 .75-.34.75-.75s-.34-.75-.75-.75Zm-11.16 2.84c-.37.91-.76 1.62-1.13 2.09-.39.5-.63.57-.71.57-.06 0-.26-.04-.51-.55-.24-.48-.42-1.18-.53-1.99-.06-.48-.09-.98-.1-1.46h3.48c-.16.47-.33.92-.5 1.34Zm1.85-6.72c-.24 1.33-.54 2.66-.88 3.88H8.45c.06-.44.14-.75.22-.91.69-1.39 1.99-2.94 3.63-4.33.4-.34.81-.67 1.24-.98-.09.76-.21 1.55-.35 2.34ZM1.97 9.97c.29-.29.77-.29 1.06 0l.97.97.97-.97c.29-.29.77-.29 1.06 0 .29.29.29.77 0 1.06l-.97.97.97.97c.29.29.29.77 0 1.06-.29.29-.77.29-1.06 0L4 13.06l-.97.97c-.29.29-.77.29-1.06 0a.754.754 0 0 1 0-1.06l.97-.97-.97-.97a.754.754 0 0 1 0-1.06Z"
                 clip-rule="evenodd"></path>
@@ -176,29 +177,21 @@
         <span id="downshift-5-label" for="downshift-5-toggle-button">Image tools, toggle menu</span>
       </div>
       <div class="flex">
-        <button class="dropdown button-icon PSPDFKit-Toolbar-Button-Image-Annotation border-left" title="Image"
-          aria-label="Image" type="button">
+        <label class="dropdown button-icon PSPDFKit-Toolbar-Button-Image-Annotation border-left" title="Image"
+          aria-label="Image" type="button" for="hiddle-upload">
+          <input id="hiddle-upload" ref="signatureUpload" type="file" @change="onFileChange"  class="hidden" />
           <span class="tool-button-icon PSPDFKit-Icon-Image" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
               width="24" height="24" fill="currentColor" viewBox="0 0 24 24" focusable="false">
               <path
                 d="M6.5 10C7.33 10 8 9.33 8 8.5S7.33 7 6.5 7 5 7.67 5 8.5 5.67 10 6.5 10ZM23 15.94V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-2l.03-.03-.03-.03ZM21.5 18c0 .28-.22.5-.5.5H3c-.12 0-.23-.04-.32-.12l3.82-3.82 2.47 2.47a.75.75 0 0 0 1.06 0L16 11.06l5.5 5.5V18Zm0-3.56-4.97-4.97a.75.75 0 0 0-1.06 0L9.5 15.44l-2.47-2.47a.754.754 0 0 0-1.06 0L2.5 16.44V6c0-.28.22-.5.5-.5h18c.28 0 .5.22.5.5v8.44Z">
               </path>
-            </svg></span></button><button id="downshift-5-toggle-button" aria-haspopup="true" aria-expanded="false"
-          aria-labelledby="downshift-5-label downshift-5-toggle-button" class="pl-[5px] pr-[5px]" type="button"
-          style="min-width: 0px">
-          <span class="tool-button-icon PSPDFKit-6511p928m8fcbcd7nb8arydjxe PSPDFKit-Icon-CaretDown" aria-hidden="true"
-            style="width: 12px; height: 100%"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-              fill="currentColor" viewBox="0 0 12 12" focusable="false">
-              <path fill-rule="evenodd"
-                d="M9.53 3.97a.75.75 0 0 0-1.06 0L6 6.44 3.53 3.97a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 0 0 0-1.06Z"
-                clip-rule="evenodd"></path>
-            </svg></span>
-          <div class="text"><span>Image</span></div>
-        </button>
+            </svg></span></label>
+        <div class="text"><span>Image</span></div>
       </div>
     </div>
     <button class="dropdown button-icon PSPDFKit-Toolbar-Button-Note-Annotation border-left" title="Note"
-      aria-label="Note" aria-pressed="false" type="button" @click="createText" :disabled="props.screen != 'signOwn' && props.screen != 'sendSign'">
+      aria-label="Note" aria-pressed="false" type="button" @click="createText"
+      :disabled="props.screen != 'signOwn' && props.screen != 'sendSign'">
       <span class="tool-button-icon PSPDFKit-Icon-Note" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
           width="24" height="24" viewBox="0 0 24 24" focusable="false">
           <path :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '6c757d' : 'currentColor'"
@@ -242,11 +235,13 @@
           title="Line" aria-label="Line" aria-pressed="false" type="button" @click="createCalendar"
           :disabled="props.screen != 'signOwn' && props.screen != 'sendSign'">
           <span class="tool-button-icon PSPDFKit-Icon-Line" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24" :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : '#000'" width="20" height="20">
+              viewBox="0 0 24 24" :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : '#000'"
+              width="20" height="20">
               &gt;
               <path
                 d="M9,4.5v1H5v22H27V5.5H23v-1H21v1H11v-1Zm-2,3H9v1h2v-1H21v1h2v-1h2v2H7Zm0,4H25v14H7Zm6,2v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Zm-12,4v2h2v-2Zm4,0v2h2v-2Zm4,0v2h2v-2Z"
-                :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : '#000'" transform="translate(-5 -4.5)"></path>
+                :fill="props.screen != 'signOwn' && props.screen != 'sendSign' ? '#6c757d' : '#000'"
+                transform="translate(-5 -4.5)"></path>
             </svg></span></button><button id="downshift-12-toggle-button" aria-haspopup="true" aria-expanded="false"
           aria-labelledby="downshift-12-label downshift-12-toggle-button" class="pl-[5px] pr-[5px]" type="button"
           style="min-width: 0px">
@@ -321,10 +316,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import type { User } from '@/types/document.interface'
 import type { Receiver } from '@/types/send-sign'
 import { SIGNATURE_TYPE, type Signature } from '@/types/send-sign'
 import { isNumber } from 'element-plus/es/utils/types.mjs'
+import { ElNotification, type UploadInstance, type UploadProps } from 'element-plus'
+import { SignatureService } from '@/services'
 
 const totalPage = defineModel('totalPage')
 const pageNum = defineModel<Number>('pageNum', { required: true })
@@ -341,6 +339,7 @@ const emit = defineEmits([
   'note',
   'addCalendar'
 ])
+const signatureUpload = ref()
 const props = defineProps({
   screen: { type: String, required: true }
 })
@@ -351,6 +350,32 @@ const handleCommand = (command: string | number | object) => {
 
 const openSignModal = () => {
   signModal.value = true
+}
+
+const onFileChange = async (event) => {
+  // upload.value!.clearFiles()
+  var form = new FormData()
+  form.append('signature', event.target.files[0])
+  const response = await SignatureService.create(form)
+  const drawSign = response.data.data
+  let signature: Signature = {
+    type: SIGNATURE_TYPE.IMAGE,
+    scale: Number(scale.value),
+    page: pageNum.value,
+    can_resize: true,
+    position: {
+      width: 200,
+      height: 120,
+      top: 0,
+      left: 0
+    },
+    data: {
+      id: drawSign.file.id,
+      path: drawSign.file.path,
+      name: drawSign.file.name
+    }
+  }
+  signatures.value.push(signature)
 }
 
 const createCalendar = () => {
@@ -371,7 +396,6 @@ const createCalendar = () => {
 }
 
 const createText = () => {
-  console.log(scale.value)
   let signature = {
     type: SIGNATURE_TYPE.TEXT,
     scale: Number(scale.value),
@@ -421,6 +445,13 @@ const createRadio = () => {
   }
   signatures.value.push(signature)
 }
+
+watch(
+  () => signatureUpload.value,
+  () => {
+    console.log(1)
+    console.log(signatureUpload.value[0])
+  })
 </script>
 
 <style lang="css" scoped>

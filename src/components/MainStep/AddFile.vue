@@ -41,11 +41,11 @@ const beforeUploadFile: UploadProps['beforeUpload'] = (rawFile) => {
       message: 'can upload jpg or pdf file'
     })
     return false
-  } else if (rawFile.size / 1024 / 1024 > 0.5) {
+  } else if (rawFile.size / 1024 / 1024 > 10) {
     ElNotification({
       type: ENotificationType.ERROR,
       title: 'Error',
-      message: 'jpg/png files with a size less than 500kb'
+      message: 'jpg/png files with a size less than 10MB'
     })
     return false
   }

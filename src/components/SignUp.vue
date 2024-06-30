@@ -101,6 +101,7 @@
                 <span>Download</span>
               </button>
             </div>
+            <WalletConnect v-model:addressWallet="form.wallet_address" />
             <div class="flex items-start">
               <div class="flex items-center h-5">
                 <input
@@ -150,6 +151,7 @@ import { ethers } from 'ethers'
 import { useContractStore } from '@/stores/contract'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import WalletConnect from './WalletConnect.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -168,7 +170,7 @@ const form = ref<User>({
   name: '',
   password: '',
   password_confirmation: '',
-  wallet_address: localStorage.getItem('walletAddress'),
+  wallet_address: localStorage.getItem('walletAddress') || '',
   public_key: '',
   private_key: ''
 })
@@ -186,7 +188,7 @@ const signUp = async () => {
     const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.public_key)
 
     const response = await AuthService.signUp(form.value)
-    // await contractWithSigner.value.createUser('0x1234', verifyKeyBytes, form.value.email)
+    await contractWithSigner.value.createUser('0x1234', verifyKeyBytes, form.value.email)
 
     if (route.query.token) {
       router.push({ name: 'ViewSignedDocument', query: { token: route.query.token } })
