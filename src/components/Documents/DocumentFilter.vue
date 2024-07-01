@@ -31,7 +31,7 @@ import FilterCard from '@/components/Documents/FilterCard.vue'
 const status = defineModel('status')
 const emit = defineEmits(['remove-filter-status'])
 
-const types = ['Completed', 'Draft', 'Expired', 'In-Progress', 'Need Reviews', 'Sent', 'Expired']
+const types = ['Completed', 'Draft', 'Expired', 'In-Progress', 'Need Reviews', 'Sent']
 
 const remove = (index: Number) => {
   emit('remove-filter-status', index)

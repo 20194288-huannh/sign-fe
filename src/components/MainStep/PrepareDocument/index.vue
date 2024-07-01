@@ -20,28 +20,30 @@
         <div class="pdfContent">
           <DropDragSign
             v-for="(item, idx) in signatures"
-            :isShow="item.page === pageNum"
+            :isShow="item?.page === pageNum"
             :key="idx"
             :idx="idx"
-            :width="item.position.width"
-            :height="item.position.height"
-            :top="item.position.top"
-            :left="item.position.left"
-            :canResize="item.can_resize"
-            :text="item.data"
+            :width="item?.position.width"
+            :height="item?.position.height"
+            :top="item?.position.top"
+            :left="item?.position.left"
+            :canResize="item?.can_resize"
+            :text="item?.data"
             @resize="(newRect) => resize(newRect, idx)"
             @drag="(newRect) => resize(newRect, idx)"
             @drag-stop="dragStop(idx)"
             @click="selectedSignature = item"
             @close="removeItem"
             :style="
-              item.receiver ? `background-color: ${background[item.receiverId as number]}` : ''
+              item?.receiver ? `background-color: ${background[item?.receiverId as number]}` : ''
             "
           >
             <el-date-picker
               v-model="item.data"
-              format="YYYY-MM-DD"
               v-if="item.type === SIGNATURE_TYPE.DATE && item.page === pageNum"
+              format="YYYY/MM/DD"
+              value-format="x"
+              :style="`height: 100%`"
               @click="
                 () => {
                   signModal = 2
@@ -340,7 +342,8 @@ const onSelect = (item: Signature, idx: number) => {
 }
 
 const removeItem = (idx: number) => {
-  const data = signatures.value.splice(idx, 1)
+  delete signatures.value[idx]
+  // signatures.value.splice(idx, 1)
 }
 /**
  * Asynchronously downloads PDF.
@@ -429,11 +432,6 @@ watch(
   margin: auto;
   height: 850px;
   overflow: scroll;
-}
-
-:deep(.el-date-editor.el-input) {
-  height: 100% !important;
-  widows: 100% !important;
 }
 
 textarea {

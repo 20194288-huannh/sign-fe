@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="flex items-center justify-center">
-      <div>
+      <div class="flex-col justify-center">
         <div
           class="w-[75px] h-[75px] rounded-full flex items-center justify-center"
           :style="`background-color: ${items[document.status].bgColor};`"
@@ -34,7 +34,7 @@
             height="45px"
           />
         </div>
-        <span class="text-sm pt-1">{{ items[document.status].title }}</span>
+        <div class="text-sm pt-1 text-center">{{ items[document.status].title }}</div>
       </div>
     </div>
   </div>
