@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import Navbar from './Navbar.vue'
 import PrepareDocument from '@/components/MainStep/PrepareDocument/index.vue'
+import RequestRegistration from '@/components/RequestRegistration.vue'
+import RequestLogin from '@/components/RequestLogin.vue'
 // @ts-ignore
 import pdfjsLib from 'pdfjs-dist/build/pdf'
 import 'pdfjs-dist/web/pdf_viewer.css'
@@ -139,28 +141,15 @@ contractStore.initContract()
       v-model:canvas="requestData.canvas"
       v-model:users="requestData.users"
       :screen="`SignRequest`"
+      :canClose="false"
       class="document"
     />
   </div>
   <div v-else-if="status == 401">
-    <el-button
-      type="primary"
-      @click="router.push({ name: 'signIn', query: { token: route.query.token, email: email } })"
-    >
-      Login<el-icon class="el-icon--right">
-        <Upload />
-      </el-icon>
-    </el-button>
+    <RequestLogin :token="route.query.token" :email="email"/>
   </div>
   <div v-else-if="status == 403">
-    <el-button
-      type="primary"
-      @click="router.push({ name: 'signUp', query: { token: route.query.token, email: email } })"
-    >
-      Register<el-icon class="el-icon--right">
-        <Upload />
-      </el-icon>
-    </el-button>
+    <RequestRegistration :token="route.query.token" :email="email"/>
   </div>
   <UploadPrivateKey v-model:showModal="showModal" @submit="submit" />
 </template>

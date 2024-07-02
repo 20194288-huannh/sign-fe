@@ -4,6 +4,7 @@
     :show-file-list="false"
     ref="uploadRef"
     :before-upload="beforeUploadFile"
+    accept=".pdf"
   >
     <div class="text-center text-gray-500" @click.stop v-if="props.files && props.files.length < 1">
       <el-icon :size="60"><upload-filled /></el-icon>

@@ -11,6 +11,7 @@ const props = defineProps({
   left: Number,
   text: String,
   canResize: Boolean,
+  canClose: Boolean,
   color: String,
   isShow: Boolean
 })
@@ -84,7 +85,7 @@ const close = () => {
     >
       <div
         class="absolute top-[-10px] right-[-8px] bg-gray-200 h-4 w-4 z-[120]"
-        v-if="(props.top !== 0 || props.left !== 0) && mouseHover"
+        v-if="(props.top !== 0 || props.left !== 0) && mouseHover && props.canClose"
         @click="close"
       >
         <el-icon :size="16"><Close /></el-icon>

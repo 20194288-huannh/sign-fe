@@ -29,6 +29,7 @@
             :left="item?.position.left"
             :canResize="item?.can_resize"
             :text="item?.data"
+            :canClose="props.canClose"
             @resize="(newRect) => resize(newRect, idx)"
             @drag="(newRect) => resize(newRect, idx)"
             @drag-stop="dragStop(idx)"
