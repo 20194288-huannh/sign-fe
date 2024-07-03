@@ -185,9 +185,11 @@ contractStore.initContract()
 const signUp = async () => {
   try {
     if (!contractWithSigner.value) return
+    let response = await AuthService.verify(form.value)
+
     const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.public_key)
 
-    const response = await AuthService.signUp(form.value)
+    response = await AuthService.signUp(form.value)
     await contractWithSigner.value.createUser('0x1234', verifyKeyBytes, form.value.email)
 
     if (route.query.token) {

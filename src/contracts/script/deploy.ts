@@ -1,20 +1,10 @@
 const hre = require('hardhat')
 const main = async () => {
   // name of the contract should match with the file name!!
-  const documentRegistryContractFactory = await hre.ethers.getContractFactory('DocumentRegistry')
-  const documentRegistryContract = await documentRegistryContractFactory.deploy({})
+  const contractFactory = await hre.ethers.getContractFactory('SignSystem')
+  const contract = await contractFactory.deploy({})
 
-  await documentRegistryContract.deployed()
-
-  console.log('documentRegistryContract address: ', documentRegistryContract.address)
-
-  // name of the contract should match with the file name!!
-  const userRegistryContractFactory = await hre.ethers.getContractFactory('UserRegistry')
-  const userRegistryContract = await userRegistryContractFactory.deploy({})
-
-  await userRegistryContract.deployed()
-
-  console.log('documentRegistryContract address: ', userRegistryContract.address)
+  console.log('documentRegistryContract address: ', contract.address)
 }
 
 const runMain = async () => {
