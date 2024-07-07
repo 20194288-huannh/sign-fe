@@ -7,6 +7,7 @@ export interface Document {
   parent_id: number
   file: FileInfo
   requested_on: string
+  request?: Request
 }
 
 export interface FileInfo {
@@ -47,4 +48,13 @@ export interface DocumentInfo {
     id: number
     name: string
   }
+}
+
+export interface Request {
+  id: number
+  content: string
+  expired_date: string
+  status: number
+  type: number
+  title: string
 }

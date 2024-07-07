@@ -18,7 +18,11 @@
           <span class="text-[#6c757d] font-semibold mr-2">Requested On: </span
           >{{ document.requested_on }}
         </p>
-        <p><span class="text-[#6c757d] font-semibold mr-2">Expiry Date: </span>05/22/2024</p>
+        <p>
+          <span class="text-[#6c757d] font-semibold mr-2">Expiry Date: </span>
+          <span v-if="document?.request">{{ document.request.expired_date }}</span>
+          <span v-else>None</span>
+        </p>
       </div>
     </div>
     <div class="flex items-center justify-center">

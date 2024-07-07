@@ -18,7 +18,7 @@
               />
             </td>
           </tr>
-          <tr v-if="signature.data && typeof signature.data == 'string'">
+          <tr v-if="typeof signature.data == 'string'">
             <th width="40%" class="font-weight-normal" style="vertical-align: middle">Data</th>
             <td width="60%" style="padding: 15px">
               <input

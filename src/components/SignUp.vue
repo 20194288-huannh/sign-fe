@@ -48,7 +48,7 @@
                   v-model="form.name"
                   autocomplete="name"
                   required="true"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -189,8 +189,8 @@ const signUp = async () => {
 
     const verifyKeyBytes = ethers.utils.toUtf8Bytes(form.value.public_key)
 
-    response = await AuthService.signUp(form.value)
     await contractWithSigner.value.createUser('0x1234', verifyKeyBytes, form.value.email)
+    response = await AuthService.signUp(form.value)
 
     if (route.query.token) {
       router.push({ name: 'ViewSignedDocument', query: { token: route.query.token } })
@@ -230,8 +230,6 @@ const generateKeyPair = async () => {
   form.value.private_key = await keyToString(exported) // sign key
   exported = await crypto.subtle.exportKey('spki', keyPair.publicKey)
   form.value.public_key = await keyToString(exported) // verify key
-  console.log(form.value.private_key)
-  console.log(form.value.public_key)
 }
 
 const keyToString = async (exported: any): Promise<string> => {
